@@ -32,6 +32,7 @@
   letter-spacing: 0.02em;
   color: var(--color-accent);
   text-decoration: none;
+  line-height: normal;
 
   &.is-active {
     color: var(--color-text);
