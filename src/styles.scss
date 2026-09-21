@@ -186,3 +186,10 @@ textarea.input { min-height: 90px; resize: vertical; }
   font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-neutral-700);
 }
 .tt-section-note { font-size: 11px; color: var(--color-neutral-700); }
+.tt-lead { font-size: 13px; color: var(--color-neutral-700); max-width: 70ch; }
+
+/* — helpers for rows and columns inside a .table — */
+.tt-clickable-row { cursor: pointer; }
+.tt-row-name { font-family: var(--font-heading); font-weight: 800; font-size: 14px; }
+.tt-row-meta { font-size: 12px; color: var(--color-neutral-700); }
+.tt-col-metric { width: 150px; }

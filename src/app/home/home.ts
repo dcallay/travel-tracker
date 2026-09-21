@@ -9,6 +9,8 @@ import { TravelStore } from '../core/travel-store';
 import { FeedbackDialog } from '../dialogs/feedback-dialog/feedback-dialog';
 import { HowItWorksDialog } from '../dialogs/how-it-works-dialog/how-it-works-dialog';
 import { PhotoConfirmDialog } from '../dialogs/photo-confirm-dialog/photo-confirm-dialog';
+import { AddVisit } from '../features/add-visit/add-visit';
+import { Timeline } from '../features/timeline/timeline';
 import { CityMarker, CoverageMap } from '../shared/ui/coverage-map/coverage-map';
 import { EmptyNote } from '../shared/ui/empty-note/empty-note';
 import { LksPanel } from '../shared/ui/lks-panel/lks-panel';
@@ -91,6 +93,7 @@ const LANGS: [string, string][] = [
 @Component({
   selector: 'app-home',
   imports: [
+    AddVisit,
     CoverageMap,
     EmptyNote,
     FeedbackDialog,
@@ -101,6 +104,7 @@ const LANGS: [string, string][] = [
     ScoreBreakdown,
     ScoreSummary,
     StatTile,
+    Timeline,
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss',
@@ -110,7 +114,6 @@ export class Home {
   protected readonly dialogs = inject(DialogState);
   protected readonly metricLabel = METRIC_LABEL;
   protected readonly metricLower = METRIC_LOWER;
-  protected readonly timeline = this.store.timeline;
   protected readonly leftRows = this.store.leftRows;
 
   protected readonly nav = signal<NavId>('explore');
@@ -138,7 +141,7 @@ export class Home {
     const defs: { id: NavId; label: string; count: string }[] = [
       { id: 'explore', label: 'Explore', count: `${this.store.tree().length} continents` },
       { id: 'left', label: "What's left", count: `${this.leftRows().length} places` },
-      { id: 'timeline', label: 'Timeline', count: `${this.timeline.length} recent` },
+      { id: 'timeline', label: 'Timeline', count: `${this.store.timeline.length} recent` },
     ];
     return defs.map((d) => ({ ...d, active: nav === d.id }));
   });
@@ -354,10 +357,6 @@ export class Home {
     if (country) return `${country.kicker} · ${country.name}`;
     return '';
   });
-
-  protected tagClass(source: string): string {
-    return source === 'Manual' ? 'tag tag-outline' : 'tag tag-accent';
-  }
 
   protected go(path: number[]): void {
     this.nav.set('explore');

@@ -319,66 +319,11 @@
       }
 
       @if (nav() === 'timeline') {
-        <div class="tt-timeline">
-          <h4>Travel history</h4>
-          <p class="tt-lead">Every visit, newest first, with how it got logged.</p>
-          <div class="tt-timeline__list">
-            @for (t of timeline; track t.date + t.place) {
-              <div class="tt-timeline__item">
-                <div class="tt-timeline__date">{{ t.date }}</div>
-                <div>
-                  <div class="tt-timeline__place">{{ t.place }}</div>
-                  <div class="tt-timeline__detail">{{ t.detail }}</div>
-                </div>
-                <div class="tt-timeline__tags">
-                  <span class="tag tag-neutral">{{ t.weight }}</span>
-                  <span [class]="tagClass(t.source)">{{ t.source }}</span>
-                </div>
-              </div>
-            }
-          </div>
-        </div>
+        <app-timeline />
       }
 
       @if (nav() === 'add') {
-        <div class="tt-add">
-          <h4>Add a visit</h4>
-          <p class="tt-lead">Manual entry. Geolocation and photo recognition fill this same form.</p>
-          <div class="tt-add__fields">
-            <div class="field">
-              <label for="tt-place">Place</label>
-              <input id="tt-place" class="input" type="text" value="Quito, Ecuador" />
-            </div>
-            <div>
-              <div class="tt-add__seg-label">Coverage type</div>
-              <div class="seg">
-                <label class="seg-opt"><input type="radio" name="tt-cov" checked /><span>Neighbourhood</span></label>
-                <label class="seg-opt"><input type="radio" name="tt-cov" /><span>Landmark</span></label>
-                <label class="seg-opt"><input type="radio" name="tt-cov" /><span>Personal discovery</span></label>
-              </div>
-              <div class="tt-add__hint">Neighbourhood counts 1, landmark counts 2. Personal discoveries raise your Local Knowledge Score instead of the percentage.</div>
-            </div>
-            <div class="tt-add__row">
-              <div class="field">
-                <label for="tt-name">Neighbourhood or landmark</label>
-                <input id="tt-name" class="input" type="text" placeholder="e.g. La Floresta" />
-              </div>
-              <div class="field">
-                <label for="tt-date">Date visited</label>
-                <input id="tt-date" class="input" type="text" value="16 Sep 2026" />
-              </div>
-            </div>
-            <div class="field">
-              <label for="tt-notes">Notes</label>
-              <textarea id="tt-notes" class="input" placeholder="Optional"></textarea>
-            </div>
-            <div class="tt-add__actions">
-              <button type="button" class="btn btn-primary" (click)="goExplore()">Save visit</button>
-              <button type="button" class="btn btn-secondary" (click)="goExplore()">Cancel</button>
-              <span class="tt-add__source">Source: manual</span>
-            </div>
-          </div>
-        </div>
+        <app-add-visit (finished)="goExplore()" />
       }
     </div>
   </main>

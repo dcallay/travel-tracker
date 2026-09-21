@@ -1,0 +1,45 @@
+:host {
+  display: block;
+}
+
+.tt-timeline {
+  padding: 24px 20px 32px;
+}
+
+.tt-timeline__list {
+  margin-top: 16px;
+}
+
+.tt-timeline__item {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: baseline;
+  padding: 14px 0;
+  border-top: 1px solid var(--color-divider);
+}
+
+.tt-timeline__date {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-neutral-700);
+}
+
+.tt-timeline__place {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.tt-timeline__detail {
+  font-size: 12px;
+  color: var(--color-neutral-700);
+  margin-top: 2px;
+}
+
+.tt-timeline__tags {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}

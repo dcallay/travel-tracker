@@ -502,106 +502,13 @@
   padding-top: 12px;
 }
 
-/* — what's left / timeline / add — */
-.tt-lead {
-  font-size: 13px;
-  color: var(--color-neutral-700);
-  max-width: 70ch;
-}
-
+/* — what's left — */
 .tt-left {
   padding: 24px 20px 32px;
 }
 
 .tt-left__table {
   margin-top: 12px;
-}
-
-.tt-timeline {
-  padding: 24px 20px 32px;
-}
-
-.tt-timeline__list {
-  margin-top: 16px;
-}
-
-.tt-timeline__item {
-  display: grid;
-  grid-template-columns: 104px minmax(0, 1fr) auto;
-  gap: 16px;
-  align-items: baseline;
-  padding: 14px 0;
-  border-top: 1px solid var(--color-divider);
-}
-
-.tt-timeline__date {
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--color-neutral-700);
-}
-
-.tt-timeline__place {
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 15px;
-}
-
-.tt-timeline__detail {
-  font-size: 12px;
-  color: var(--color-neutral-700);
-  margin-top: 2px;
-}
-
-.tt-timeline__tags {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
-
-.tt-add {
-  padding: 24px 20px 32px;
-  max-width: 620px;
-}
-
-.tt-add__fields {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  margin-top: 20px;
-}
-
-.tt-add__seg-label {
-  font-size: 12px;
-  color: var(--color-neutral-700);
-  margin-bottom: 6px;
-}
-
-.tt-add__hint {
-  font-size: 11px;
-  color: var(--color-neutral-700);
-  margin-top: 8px;
-}
-
-.tt-add__row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.tt-add__actions {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  border-top: 2px solid var(--color-divider);
-  padding-top: 16px;
-  flex-wrap: wrap;
-}
-
-.tt-add__source {
-  margin-left: auto;
-  font-size: 11px;
-  color: var(--color-neutral-700);
 }
 
 /* — responsive — */
