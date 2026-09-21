@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, HostListener, computed, inject, signal } from '@angular/core';
 
 import {
   CITY_GEO,
@@ -14,6 +14,7 @@ import { METRIC_LABEL, METRIC_LOWER } from '../core/metric';
 import { FeedbackDialog } from '../dialogs/feedback-dialog/feedback-dialog';
 import { HowItWorksDialog } from '../dialogs/how-it-works-dialog/how-it-works-dialog';
 import { PhotoConfirmDialog } from '../dialogs/photo-confirm-dialog/photo-confirm-dialog';
+import { CityMarker, CoverageMap } from '../shared/ui/coverage-map/coverage-map';
 import { EmptyNote } from '../shared/ui/empty-note/empty-note';
 import { LksPanel } from '../shared/ui/lks-panel/lks-panel';
 import { ProgressBar } from '../shared/ui/progress-bar/progress-bar';
@@ -57,7 +58,7 @@ interface ListViewModel {
   mapFit: string;
   mapHeight: number;
   mapCaption: string;
-  mapData: string;
+  mapData: Record<string, number>;
 }
 
 interface CountryViewModel {
@@ -76,7 +77,7 @@ interface CountryViewModel {
   cities: Row[];
   isEmpty: boolean;
   emptyNote: string;
-  citiesGeo: string;
+  citiesGeo: CityMarker[];
 }
 
 interface CityViewModel {
@@ -118,6 +119,7 @@ const COUNTRY_ALIAS: Record<string, string> = { 'United States': 'United States 
 @Component({
   selector: 'app-home',
   imports: [
+    CoverageMap,
     EmptyNote,
     FeedbackDialog,
     HowItWorksDialog,
@@ -130,9 +132,8 @@ const COUNTRY_ALIAS: Record<string, string> = { 'United States': 'United States 
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss',
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class Home implements OnInit, OnDestroy {
+export class Home {
   protected readonly dialogs = inject(DialogState);
   protected readonly metricLabel = METRIC_LABEL;
   protected readonly metricLower = METRIC_LOWER;
@@ -144,21 +145,12 @@ export class Home implements OnInit, OnDestroy {
   protected readonly lang = signal('EN');
   protected readonly langOpen = signal(false);
 
-  private readonly onCountrySelect = (event: Event): void => {
-    const hit = (event as CustomEvent<{ name?: string }>).detail?.name ?? '';
+  protected onCountrySelect(hit: string): void {
     TRAVEL_TREE.forEach((cn, i) =>
       cn.countries.forEach((co, j) => {
         if (co.name === hit || COUNTRY_ALIAS[co.name] === hit) this.go([i, j]);
       }),
     );
-  };
-
-  ngOnInit(): void {
-    document.addEventListener('country-select', this.onCountrySelect);
-  }
-
-  ngOnDestroy(): void {
-    document.removeEventListener('country-select', this.onCountrySelect);
   }
 
   @HostListener('document:keydown.escape')
@@ -250,7 +242,6 @@ export class Home implements OnInit, OnDestroy {
     const path = this.path();
     const metricLower = this.metricLower;
     const totals = this.worldTotals();
-    const mapDataJson = JSON.stringify(totals.mapData);
 
     if (path.length === 0) {
       const rows = TRAVEL_TREE.map((cn, i) => {
@@ -278,7 +269,7 @@ export class Home implements OnInit, OnDestroy {
         mapFit: '',
         mapHeight: 250,
         mapCaption: `Countries shaded by ${metricLower} — click one for its detail`,
-        mapData: mapDataJson,
+        mapData: totals.mapData,
       };
     }
 
@@ -314,7 +305,7 @@ export class Home implements OnInit, OnDestroy {
       mapFit: cn.name,
       mapHeight: 360,
       mapCaption: `${cn.name} — shaded by ${metricLower}, click a country for its detail`,
-      mapData: mapDataJson,
+      mapData: totals.mapData,
     };
   });
 
@@ -346,7 +337,7 @@ export class Home implements OnInit, OnDestroy {
       })
       .sort((a, b) => b.cp - a.cp)
       .map(({ row }) => row);
-    const citiesGeo = co.cities.map((ct: CityData) => {
+    const citiesGeo: CityMarker[] = co.cities.map((ct: CityData) => {
       const g = CITY_GEO[ct.name] ?? [0, 0];
       return { name: ct.name, lon: g[0], lat: g[1], visited: cityWeight(ct).v > 0, pct: pct(cityWeight(ct)) };
     });
@@ -367,7 +358,7 @@ export class Home implements OnInit, OnDestroy {
       cities,
       isEmpty: w.v === 0,
       emptyNote: `No visits in ${co.name} yet. Its ${w.t} weighted places still count against the world figure — that is the point of the denominator.`,
-      citiesGeo: JSON.stringify(citiesGeo),
+      citiesGeo,
     };
   });
 

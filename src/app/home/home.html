@@ -160,11 +160,12 @@
                       <span class="tt-map-legend__item"><span class="tt-dot tt-dot--saved"></span>Saved only</span>
                     </div>
                   </div>
-                  <world-coverage-map
-                    [attr.country]="country.name"
-                    [attr.cities]="country.citiesGeo"
-                    height="260"
-                  ></world-coverage-map>
+                  <app-coverage-map
+                    [country]="country.name"
+                    [cities]="country.citiesGeo"
+                    [height]="260"
+                    (countrySelected)="onCountrySelect($event)"
+                  />
                 </div>
 
                 @if (country.isEmpty) {
@@ -236,11 +237,12 @@
                   <span>25%+</span>
                 </div>
               </div>
-              <world-coverage-map
-                [attr.data]="view.mapData"
-                [attr.fit]="view.mapFit"
-                [attr.height]="view.mapHeight"
-              ></world-coverage-map>
+              <app-coverage-map
+                [data]="view.mapData"
+                [fit]="view.mapFit"
+                [height]="view.mapHeight"
+                (countrySelected)="onCountrySelect($event)"
+              />
             </div>
 
             <div class="tt-table-section">

@@ -28,6 +28,13 @@ describe('App flows', () => {
   };
   const clickByText = async (sel: string, label: string) =>
     click(all(sel).find((n) => n.textContent?.trim().startsWith(label)));
+  /** Mimics the map element reporting a click on a country. */
+  const clickMapCountry = async (name: string) => {
+    el.querySelector('world-coverage-map')!.dispatchEvent(
+      new CustomEvent('country-select', { detail: { name }, bubbles: true, composed: true }),
+    );
+    await settle();
+  };
   const pressEscape = async () => {
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     await settle();
@@ -91,15 +98,11 @@ describe('App flows', () => {
     });
 
     it('opens a country when the map reports a click, including the US alias', async () => {
-      document.dispatchEvent(new CustomEvent('country-select', { detail: { name: 'Portugal' } }));
-      await settle();
+      await clickMapCountry('Portugal');
       expect(text('.tt-detail__title')).toBe('Portugal');
 
       await clickByText('.tt-crumb', 'World');
-      document.dispatchEvent(
-        new CustomEvent('country-select', { detail: { name: 'United States of America' } }),
-      );
-      await settle();
+      await clickMapCountry('United States of America');
       expect(text('.tt-detail__title')).toBe('United States');
     });
 
