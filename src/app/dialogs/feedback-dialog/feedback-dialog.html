@@ -1,0 +1,56 @@
+@if (copy(); as c) {
+  <app-dialog (dismissed)="dialogs.closeFeedback()">
+    <div class="dialog-kicker">{{ c.kicker }}</div>
+    <div class="dialog-title">{{ c.title }}</div>
+    @if (dialogs.feedbackSent()) {
+      <div>
+        <div class="dialog-body">{{ c.thanks }}</div>
+        <div class="dialog-actions">
+          <button type="button" class="btn btn-primary" (click)="dialogs.closeFeedback()">
+            Close
+          </button>
+        </div>
+      </div>
+    } @else {
+      <div>
+        @if (c.hasPlace) {
+          <div class="tt-dialog-about">
+            <div class="tt-section-label">About</div>
+            <div class="tt-dialog-about__place">{{ c.place }}</div>
+          </div>
+        }
+        @if (c.isReport) {
+          <div class="field tt-dialog-seg">
+            <label>What is wrong</label>
+            <div class="seg">
+              <label class="seg-opt">
+                <input type="radio" name="tt-fb" checked /><span>Wrong count</span>
+              </label>
+              <label class="seg-opt"><input type="radio" name="tt-fb" /><span>Wrong city</span></label>
+              <label class="seg-opt">
+                <input type="radio" name="tt-fb" /><span>Missing place</span>
+              </label>
+              <label class="seg-opt">
+                <input type="radio" name="tt-fb" /><span>Visit I didn't make</span>
+              </label>
+            </div>
+          </div>
+        }
+        <div class="field">
+          <label>{{ c.fieldLabel }}</label>
+          <textarea class="input" rows="4" [placeholder]="c.placeholder"></textarea>
+        </div>
+        <div class="field tt-dialog-email">
+          <label>Email, if you want a reply</label>
+          <input class="input" type="email" placeholder="optional" />
+        </div>
+        <div class="dialog-actions">
+          <button type="button" class="btn btn-secondary" (click)="dialogs.closeFeedback()">
+            Cancel
+          </button>
+          <button type="button" class="btn btn-primary" (click)="dialogs.sendFeedback()">Send</button>
+        </div>
+      </div>
+    }
+  </app-dialog>
+}

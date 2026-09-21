@@ -1,0 +1,21 @@
+.tt-dialog-about {
+  border-top: 2px solid var(--color-divider);
+  border-bottom: 2px solid var(--color-divider);
+  padding: 12px 0;
+  margin-bottom: 16px;
+}
+
+.tt-dialog-about__place {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 18px;
+  margin-top: 2px;
+}
+
+.tt-dialog-seg {
+  margin-bottom: 16px;
+}
+
+.tt-dialog-email {
+  margin-top: 12px;
+}

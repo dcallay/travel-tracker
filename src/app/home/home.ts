@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, OnDestroy, OnInit, computed, signal } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 
 import {
   CITY_GEO,
@@ -9,6 +9,11 @@ import {
   flagImageUrl,
 } from '../data/travel-data';
 import { barWidth, cityWeight, continentWeight, countryWeight, fmtPct, pct } from '../data/travel-calc';
+import { DialogState } from '../core/dialog-state';
+import { METRIC_LABEL, METRIC_LOWER } from '../core/metric';
+import { FeedbackDialog } from '../dialogs/feedback-dialog/feedback-dialog';
+import { HowItWorksDialog } from '../dialogs/how-it-works-dialog/how-it-works-dialog';
+import { PhotoConfirmDialog } from '../dialogs/photo-confirm-dialog/photo-confirm-dialog';
 import { EmptyNote } from '../shared/ui/empty-note/empty-note';
 import { LksPanel } from '../shared/ui/lks-panel/lks-panel';
 import { ProgressBar } from '../shared/ui/progress-bar/progress-bar';
@@ -17,7 +22,6 @@ import { ScoreSummary } from '../shared/ui/score-summary/score-summary';
 import { StatTile } from '../shared/ui/stat-tile/stat-tile';
 
 type NavId = 'explore' | 'left' | 'timeline' | 'add';
-type FeedbackKind = 'general' | 'report' | null;
 
 interface Row {
   name: string;
@@ -113,14 +117,25 @@ const COUNTRY_ALIAS: Record<string, string> = { 'United States': 'United States 
 
 @Component({
   selector: 'app-home',
-  imports: [EmptyNote, LksPanel, ProgressBar, ScoreBreakdown, ScoreSummary, StatTile],
+  imports: [
+    EmptyNote,
+    FeedbackDialog,
+    HowItWorksDialog,
+    LksPanel,
+    PhotoConfirmDialog,
+    ProgressBar,
+    ScoreBreakdown,
+    ScoreSummary,
+    StatTile,
+  ],
   templateUrl: './home.html',
   styleUrl: './home.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class Home implements OnInit, OnDestroy {
-  protected readonly metricLabel = 'Explored';
-  protected readonly metricLower = this.metricLabel.toLowerCase();
+  protected readonly dialogs = inject(DialogState);
+  protected readonly metricLabel = METRIC_LABEL;
+  protected readonly metricLower = METRIC_LOWER;
   protected readonly timeline = TIMELINE;
 
   protected readonly nav = signal<NavId>('explore');
@@ -128,10 +143,6 @@ export class Home implements OnInit, OnDestroy {
 
   protected readonly lang = signal('EN');
   protected readonly langOpen = signal(false);
-  protected readonly howOpen = signal(false);
-  protected readonly photoDialogOpen = signal(false);
-  protected readonly fb = signal<FeedbackKind>(null);
-  protected readonly fbSent = signal(false);
 
   private readonly onCountrySelect = (event: Event): void => {
     const hit = (event as CustomEvent<{ name?: string }>).detail?.name ?? '';
@@ -152,11 +163,7 @@ export class Home implements OnInit, OnDestroy {
 
   @HostListener('document:keydown.escape')
   protected onEscape(): void {
-    this.howOpen.set(false);
-    this.photoDialogOpen.set(false);
     this.langOpen.set(false);
-    this.fb.set(null);
-    this.fbSent.set(false);
   }
 
   protected readonly isListView = computed(() => this.nav() === 'explore' && this.path().length < 2);
@@ -458,26 +465,6 @@ export class Home implements OnInit, OnDestroy {
     return '';
   });
 
-  protected readonly feedback = computed(() => {
-    const kind = this.fb();
-    const sent = this.fbSent();
-    const placeLabel = this.placeLabel();
-    const isReport = kind === 'report';
-    return {
-      kicker: isReport ? 'Report a problem' : 'Feedback',
-      title: sent ? 'Thanks — it is logged' : isReport ? 'Something wrong here?' : 'Send feedback',
-      thanks:
-        isReport && placeLabel
-          ? `Logged against ${placeLabel} with your current view. We look at reports weekly and correct the place data at the source.`
-          : 'Logged with your current view. We read everything, and reply when you leave an email.',
-      hasPlace: isReport && !!placeLabel,
-      place: placeLabel,
-      fieldLabel: isReport ? 'What did you expect to see?' : 'Would you like to tell us?',
-      placeholder: isReport ? 'e.g. Guápulo is in Quito, not Cuenca' : 'Anything — a bug, a missing city, an idea',
-      isReport,
-    };
-  });
-
   protected tagClass(source: string): string {
     return source === 'Manual' ? 'tag tag-outline' : 'tag tag-accent';
   }
@@ -499,41 +486,6 @@ export class Home implements OnInit, OnDestroy {
   protected selectLang(code: string): void {
     this.lang.set(code);
     this.langOpen.set(false);
-  }
-
-  protected openHow(): void {
-    this.howOpen.set(true);
-  }
-
-  protected closeHow(): void {
-    this.howOpen.set(false);
-  }
-
-  protected openPhotoDialog(): void {
-    this.photoDialogOpen.set(true);
-  }
-
-  protected closePhotoDialog(): void {
-    this.photoDialogOpen.set(false);
-  }
-
-  protected openFeedback(): void {
-    this.fb.set('general');
-    this.fbSent.set(false);
-  }
-
-  protected openReport(): void {
-    this.fb.set('report');
-    this.fbSent.set(false);
-  }
-
-  protected closeFeedback(): void {
-    this.fb.set(null);
-    this.fbSent.set(false);
-  }
-
-  protected sendFeedback(): void {
-    this.fbSent.set(true);
   }
 
   protected goAdd(): void {

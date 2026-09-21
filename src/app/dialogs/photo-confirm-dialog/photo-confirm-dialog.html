@@ -1,0 +1,28 @@
+@if (dialogs.photoOpen()) {
+  <app-dialog (dismissed)="dialogs.closePhoto()">
+    <div class="dialog-kicker">Photo recognition</div>
+    <div class="dialog-title">Is this Basílica del Voto Nacional?</div>
+    <div class="dialog-body">
+      Matched from a photo taken in Quito on 14 Mar 2026, with a location fix 140 m away. Confirming
+      logs it as a landmark — weight 2.
+    </div>
+    <div class="tt-dialog-meta">
+      <div>
+        <div class="tt-section-label">Confidence</div>
+        <div class="tt-dialog-meta__value">91%</div>
+      </div>
+      <div>
+        <div class="tt-section-label">Source</div>
+        <div class="tt-dialog-meta__value">Photo + GPS</div>
+      </div>
+    </div>
+    <div class="dialog-actions">
+      <button type="button" class="btn btn-secondary" (click)="dialogs.closePhoto()">
+        Not this place
+      </button>
+      <button type="button" class="btn btn-primary" (click)="dialogs.closePhoto()">
+        Confirm visit
+      </button>
+    </div>
+  </app-dialog>
+}

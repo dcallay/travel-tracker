@@ -29,7 +29,7 @@
         </div>
       }
       <div class="tt-sidebar__feedback">
-        <button type="button" class="btn btn-ghost" (click)="openFeedback()">Send feedback</button>
+        <button type="button" class="btn btn-ghost" (click)="dialogs.openFeedback()">Send feedback</button>
       </div>
     </div>
   </aside>
@@ -64,7 +64,7 @@
         }
       </div>
 
-      <button type="button" class="btn btn-secondary" (click)="openPhotoDialog()">Confirm 2 detections</button>
+      <button type="button" class="btn btn-secondary" (click)="dialogs.openPhoto()">Confirm 2 detections</button>
       <button type="button" class="btn btn-primary" (click)="goAdd()">Add a visit</button>
     </header>
 
@@ -85,7 +85,7 @@
                   [label]="metricLabel"
                   [bar]="city.bar"
                   [formula]="city.formula"
-                  (infoActivate)="openHow()"
+                  (infoActivate)="dialogs.openHow()"
                 />
                 <app-score-breakdown
                   [cells]="[
@@ -118,7 +118,7 @@
             </div>
 
             <div class="tt-report-row">
-              <button type="button" class="btn btn-ghost" (click)="openReport()">Something wrong here?</button>
+              <button type="button" class="btn btn-ghost" (click)="dialogs.openReport(placeLabel())">Something wrong here?</button>
             </div>
           </div>
         }
@@ -142,7 +142,7 @@
                   [label]="metricLabel"
                   [bar]="country.bar"
                   [formula]="country.formula"
-                  (infoActivate)="openHow()"
+                  (infoActivate)="dialogs.openHow()"
                 />
                 <app-score-breakdown
                   [cells]="[
@@ -200,7 +200,7 @@
             </div>
 
             <div class="tt-report-row">
-              <button type="button" class="btn btn-ghost" (click)="openReport()">Something wrong here?</button>
+              <button type="button" class="btn btn-ghost" (click)="dialogs.openReport(placeLabel())">Something wrong here?</button>
             </div>
           </div>
         }
@@ -216,7 +216,7 @@
                   [value]="s.value"
                   [note]="s.note"
                   [hasInfo]="s.hasInfo"
-                  (infoActivate)="openHow()"
+                  (infoActivate)="dialogs.openHow()"
                 />
               }
             </div>
@@ -382,108 +382,6 @@
   </main>
 </div>
 
-@if (fb()) {
-  <div class="dialog-backdrop" (click)="closeFeedback()">
-    <div class="dialog" (click)="$event.stopPropagation()">
-      <div class="dialog-kicker">{{ feedback().kicker }}</div>
-      <div class="dialog-title">{{ feedback().title }}</div>
-      @if (fbSent()) {
-        <div>
-          <div class="dialog-body">{{ feedback().thanks }}</div>
-          <div class="dialog-actions">
-            <button type="button" class="btn btn-primary" (click)="closeFeedback()">Close</button>
-          </div>
-        </div>
-      } @else {
-        <div>
-          @if (feedback().hasPlace) {
-            <div class="tt-dialog-about">
-              <div class="tt-section-label">About</div>
-              <div class="tt-dialog-about__place">{{ feedback().place }}</div>
-            </div>
-          }
-          @if (feedback().isReport) {
-            <div class="field tt-dialog-seg">
-              <label>What is wrong</label>
-              <div class="seg">
-                <label class="seg-opt"><input type="radio" name="tt-fb" checked /><span>Wrong count</span></label>
-                <label class="seg-opt"><input type="radio" name="tt-fb" /><span>Wrong city</span></label>
-                <label class="seg-opt"><input type="radio" name="tt-fb" /><span>Missing place</span></label>
-                <label class="seg-opt"><input type="radio" name="tt-fb" /><span>Visit I didn't make</span></label>
-              </div>
-            </div>
-          }
-          <div class="field">
-            <label>{{ feedback().fieldLabel }}</label>
-            <textarea class="input" rows="4" [placeholder]="feedback().placeholder"></textarea>
-          </div>
-          <div class="field tt-dialog-email">
-            <label>Email, if you want a reply</label>
-            <input class="input" type="email" placeholder="optional" />
-          </div>
-          <div class="dialog-actions">
-            <button type="button" class="btn btn-secondary" (click)="closeFeedback()">Cancel</button>
-            <button type="button" class="btn btn-primary" (click)="sendFeedback()">Send</button>
-          </div>
-        </div>
-      }
-    </div>
-  </div>
-}
-
-@if (howOpen()) {
-  <div class="dialog-backdrop" (click)="closeHow()">
-    <div class="dialog" (click)="$event.stopPropagation()">
-      <div class="dialog-kicker">Method</div>
-      <div class="dialog-title">How the score is calculated</div>
-      <div class="dialog-body">
-        Every curated place in a city is worth a fixed weight. Your {{ metricLower }} figure is the weight you have checked off
-        divided by the weight on file, so a landmark moves the number twice as far as a neighbourhood.
-      </div>
-      <div class="tt-breakdown tt-breakdown--2col tt-breakdown--dialog">
-        <div class="tt-breakdown__cell">
-          <div class="tt-section-label">Neighbourhood</div>
-          <div class="tt-breakdown__value">weight 1</div>
-        </div>
-        <div class="tt-breakdown__cell">
-          <div class="tt-section-label">Landmark</div>
-          <div class="tt-breakdown__value">weight 2</div>
-        </div>
-      </div>
-      <div class="tt-dialog-notes">
-        <div><strong>Rolling up.</strong> A country adds the weight of all its cities plus the places on file outside them; a continent adds its countries; the world adds every continent. The same division applies at each level, so the figures stay comparable.</div>
-        <div><strong>Personal discoveries.</strong> Spots you found yourself aren't on any curated list, so they have no weight to earn. They raise your Local Knowledge Score instead and never touch the {{ metricLower }} figure.</div>
-        <div><strong>What counts as a visit.</strong> A geolocation fix inside the place, a confirmed photo match, or a manual entry. Each place counts once, however many times you return.</div>
-      </div>
-      <div class="dialog-actions">
-        <button type="button" class="btn btn-primary" (click)="closeHow()">Got it</button>
-      </div>
-    </div>
-  </div>
-}
-
-@if (photoDialogOpen()) {
-  <div class="dialog-backdrop" (click)="closePhotoDialog()">
-    <div class="dialog" (click)="$event.stopPropagation()">
-      <div class="dialog-kicker">Photo recognition</div>
-      <div class="dialog-title">Is this Basílica del Voto Nacional?</div>
-      <div class="dialog-body">
-        Matched from a photo taken in Quito on 14 Mar 2026, with a location fix 140 m away. Confirming logs it as a landmark — weight 2.
-      </div>
-      <div class="tt-dialog-meta">
-        <div>
-          <div class="tt-section-label">Confidence</div>
-          <div class="tt-dialog-meta__value">91%</div>
-        </div>
-        <div>
-          <div class="tt-section-label">Source</div>
-          <div class="tt-dialog-meta__value">Photo + GPS</div>
-        </div>
-      </div>
-      <div class="dialog-actions">
-        <button type="button" class="btn btn-secondary" (click)="closePhotoDialog()">Not this place</button>
-        <button type="button" class="btn btn-primary" (click)="closePhotoDialog()">Confirm visit</button>
-      </div>
-    </div>
-  </div>
-}
+<app-feedback-dialog />
+<app-how-it-works-dialog />
+<app-photo-confirm-dialog />
