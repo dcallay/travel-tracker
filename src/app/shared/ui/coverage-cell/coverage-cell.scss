@@ -1,0 +1,16 @@
+:host {
+  display: block;
+}
+
+.tt-bar-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tt-bar-cell__pct {
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  min-width: 44px;
+  text-align: right;
+}

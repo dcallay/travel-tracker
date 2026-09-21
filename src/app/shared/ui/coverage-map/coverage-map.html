@@ -1,0 +1,8 @@
+<world-coverage-map
+  [attr.data]="dataAttr()"
+  [attr.fit]="fit() ?? null"
+  [attr.height]="height()"
+  [attr.country]="country() ?? null"
+  [attr.cities]="citiesAttr()"
+  (country-select)="onCountrySelect($event)"
+></world-coverage-map>

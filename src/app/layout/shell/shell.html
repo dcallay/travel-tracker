@@ -1,0 +1,15 @@
+<div class="tt-layout">
+  <app-sidebar [items]="navItems()" [parentScore]="parentScore()" />
+
+  <main class="tt-main">
+    <app-header [crumbs]="crumbs()" />
+
+    <div class="tt-content">
+      <router-outlet />
+    </div>
+  </main>
+</div>
+
+<app-feedback-dialog />
+<app-how-it-works-dialog />
+<app-photo-confirm-dialog />

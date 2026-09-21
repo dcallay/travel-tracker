@@ -1,0 +1,31 @@
+<aside class="tt-sidebar">
+  <div class="tt-sidebar__brand">
+    <div class="tt-sidebar__brand-name">GEOSCORE</div>
+    <div class="tt-sidebar__brand-tag">Track how much of the world you've truly seen</div>
+  </div>
+
+  <nav class="tt-nav">
+    @for (item of items(); track item.link) {
+      <a class="tt-nav__item" [routerLink]="item.link" routerLinkActive="is-active">
+        <span>{{ item.label }}</span>
+        <span class="tt-nav__count">{{ item.count }}</span>
+      </a>
+    }
+  </nav>
+
+  <div class="tt-sidebar__footer">
+    @if (parentScore(); as parent) {
+      <div class="tt-parent-score">
+        <div class="tt-parent-score__label">{{ parent.label }}</div>
+        <div class="tt-parent-score__value">{{ parent.pct }}</div>
+        <app-progress-bar class="tt-parent-score__bar" [width]="parent.bar" />
+        <div class="tt-parent-score__note">{{ parent.note }}</div>
+      </div>
+    }
+    <div class="tt-sidebar__feedback">
+      <button type="button" class="btn btn-ghost" (click)="dialogs.openFeedback()">
+        Send feedback
+      </button>
+    </div>
+  </div>
+</aside>

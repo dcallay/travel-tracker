@@ -1,0 +1,73 @@
+@let country = view();
+
+<app-place-detail
+  [large]="true"
+  [flag]="country.flag"
+  [kicker]="country.kicker"
+  [title]="country.name"
+  [place]="country.placeLabel"
+>
+  <div detail-main>
+    <app-score-summary
+      [pct]="country.pct"
+      [label]="metricLabel"
+      [bar]="country.bar"
+      [formula]="country.formula"
+      (infoActivate)="dialogs.openHow()"
+    />
+    <app-score-breakdown
+      [cells]="[
+        { label: 'Cities', value: country.cRatio, note: 'logged / seeded' },
+        { label: 'Neighbour­hoods', value: country.nRatio, note: 'weight 1 each', lang: 'en' },
+        { label: 'Landmarks', value: country.lRatio, note: 'weight 2 each' },
+      ]"
+    />
+
+    <div class="tt-map-block">
+      <div class="tt-map-block__head">
+        <div class="tt-section-label">Cities on file</div>
+        <div class="tt-map-legend">
+          <span class="tt-map-legend__item"
+            ><span class="tt-dot tt-dot--visited"></span>Visited</span
+          >
+          <span class="tt-map-legend__item"
+            ><span class="tt-dot tt-dot--saved"></span>Saved only</span
+          >
+        </div>
+      </div>
+      <app-coverage-map
+        [country]="country.name"
+        [cities]="country.citiesGeo"
+        [height]="260"
+        (countrySelected)="onCountrySelect($event)"
+      />
+    </div>
+
+    @if (country.isEmpty) {
+      <app-empty-note [note]="country.emptyNote" />
+    }
+  </div>
+
+  <div detail-side>
+    <app-lks-panel
+      [count]="country.discCount"
+      [items]="country.discList"
+      [note]="`Personal discoveries across the whole country. Kept out of the ${metricLower} figure.`"
+    />
+
+    <div class="tt-cities">
+      <app-section-head label="Cities, closest to done first" [note]="country.cityCount" />
+      @for (row of country.cities; track row.name) {
+        <div class="tt-city-row" (click)="row.path && navigation.goTo(row.path)">
+          <div class="tt-city-row__main">
+            <div class="tt-city-row__name" [style.color]="row.fg">{{ row.name }}</div>
+            <div class="tt-city-row__meta">{{ row.meta }}</div>
+            <app-progress-bar [width]="row.bar" [color]="row.barColor" />
+          </div>
+          <div class="tt-city-row__pct">{{ row.pct }}</div>
+          <div class="tt-city-row__chev">→</div>
+        </div>
+      }
+    </div>
+  </div>
+</app-place-detail>

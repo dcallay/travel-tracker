@@ -1,0 +1,40 @@
+@if (dialogs.howOpen()) {
+  <app-dialog (dismissed)="dialogs.closeHow()">
+    <div class="dialog-kicker">Method</div>
+    <div class="dialog-title">How the score is calculated</div>
+    <div class="dialog-body">
+      Every curated place in a city is worth a fixed weight. Your {{ metricLower }} figure is the
+      weight you have checked off divided by the weight on file, so a landmark moves the number
+      twice as far as a neighbourhood.
+    </div>
+    <div class="tt-weights">
+      <div class="tt-weights__cell">
+        <div class="tt-section-label">Neighbourhood</div>
+        <div class="tt-weights__value">weight 1</div>
+      </div>
+      <div class="tt-weights__cell">
+        <div class="tt-section-label">Landmark</div>
+        <div class="tt-weights__value">weight 2</div>
+      </div>
+    </div>
+    <div class="tt-dialog-notes">
+      <div>
+        <strong>Rolling up.</strong> A country adds the weight of all its cities plus the places on
+        file outside them; a continent adds its countries; the world adds every continent. The same
+        division applies at each level, so the figures stay comparable.
+      </div>
+      <div>
+        <strong>Personal discoveries.</strong> Spots you found yourself aren't on any curated list,
+        so they have no weight to earn. They raise your Local Knowledge Score instead and never
+        touch the {{ metricLower }} figure.
+      </div>
+      <div>
+        <strong>What counts as a visit.</strong> A geolocation fix inside the place, a confirmed
+        photo match, or a manual entry. Each place counts once, however many times you return.
+      </div>
+    </div>
+    <div class="dialog-actions">
+      <button type="button" class="btn btn-primary" (click)="dialogs.closeHow()">Got it</button>
+    </div>
+  </app-dialog>
+}

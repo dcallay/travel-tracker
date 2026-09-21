@@ -1,0 +1,5 @@
+<div class="dialog-backdrop" (click)="dismissed.emit()">
+  <div class="dialog" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+    <ng-content />
+  </div>
+</div>

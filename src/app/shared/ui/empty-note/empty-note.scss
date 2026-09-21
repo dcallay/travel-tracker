@@ -1,0 +1,15 @@
+:host {
+  display: block;
+}
+
+.tt-empty-note {
+  border: 2px solid var(--color-divider);
+  padding: 16px;
+  margin-top: 20px;
+
+  p {
+    margin: 8px 0 0;
+    font-size: 13px;
+    max-width: 64ch;
+  }
+}

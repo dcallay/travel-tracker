@@ -1,0 +1,18 @@
+:host {
+  display: flex;
+}
+
+.tt-info-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--color-accent-700);
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    color: var(--color-accent);
+  }
+}

@@ -1,0 +1,10 @@
+<div class="tt-stat">
+  <div class="tt-stat__label-row">
+    <div class="tt-stat__label">{{ label() }}</div>
+    @if (hasInfo()) {
+      <app-info-button [size]="14" (activate)="infoActivate.emit()" />
+    }
+  </div>
+  <div class="tt-stat__value">{{ value() }}</div>
+  <div class="tt-stat__note">{{ note() }}</div>
+</div>

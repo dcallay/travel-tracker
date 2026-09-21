@@ -1,0 +1,92 @@
+:host {
+  display: block;
+}
+
+.tt-map-block {
+  border-top: 2px solid var(--color-divider);
+  margin-top: 24px;
+  padding-top: 12px;
+}
+
+.tt-map-block__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.tt-map-legend {
+  display: flex;
+  gap: 14px;
+  font-size: 11px;
+  color: var(--color-neutral-700);
+}
+
+.tt-map-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tt-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+
+  &--visited {
+    background: var(--color-accent);
+  }
+  &--saved {
+    background: var(--color-bg);
+    border: 1.5px solid var(--color-text);
+  }
+}
+
+.tt-cities {
+  margin-top: 20px;
+}
+
+.tt-city-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-divider);
+  cursor: pointer;
+}
+
+.tt-city-row__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.tt-city-row__name {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.tt-city-row__meta {
+  font-size: 11px;
+  color: var(--color-neutral-700);
+  margin-top: 2px;
+}
+
+.tt-city-row app-progress-bar {
+  margin-top: 8px;
+}
+
+.tt-city-row__pct {
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  min-width: 48px;
+  text-align: right;
+}
+
+.tt-city-row__chev {
+  color: var(--color-accent);
+  font-size: 12px;
+}

@@ -1,0 +1,28 @@
+:host {
+  display: block;
+}
+
+.tt-layout {
+  display: flex;
+  align-items: flex-start;
+  min-height: 100vh;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.tt-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tt-content {
+  flex: 1;
+}
+
+@media (max-width: 860px) {
+  .tt-layout {
+    flex-direction: column;
+  }
+}

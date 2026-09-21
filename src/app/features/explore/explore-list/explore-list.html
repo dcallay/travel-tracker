@@ -1,0 +1,64 @@
+<div class="tt-stats">
+  @for (stat of view().stats; track stat.label) {
+    <app-stat-tile
+      [label]="stat.label"
+      [value]="stat.value"
+      [note]="stat.note"
+      [hasInfo]="stat.hasInfo"
+      (infoActivate)="dialogs.openHow()"
+    />
+  }
+</div>
+
+<div class="tt-map-section">
+  <div class="tt-map-section__head">
+    <div class="tt-section-label">{{ view().mapCaption }}</div>
+    <div class="tt-map-scale">
+      <span>0%</span>
+      <span class="tt-map-scale__swatches">
+        <span class="tt-map-scale__step" style="background: var(--color-neutral-500)"></span>
+        <span class="tt-map-scale__step" style="background: var(--color-accent-400)"></span>
+        <span class="tt-map-scale__step" style="background: var(--color-accent-500)"></span>
+        <span class="tt-map-scale__step" style="background: var(--color-accent-600)"></span>
+        <span class="tt-map-scale__step" style="background: var(--color-accent-700)"></span>
+      </span>
+      <span>25%+</span>
+    </div>
+  </div>
+  <app-coverage-map
+    [data]="view().mapData"
+    [fit]="view().mapFit"
+    [height]="view().mapHeight"
+    (countrySelected)="onCountrySelect($event)"
+  />
+</div>
+
+<div class="tt-table-section">
+  <div class="tt-table-head">
+    <h4>{{ view().levelTitle }}</h4>
+    <div class="tt-table-sub">{{ view().levelSub }}</div>
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>{{ view().colHead }}</th>
+        <th>Logged</th>
+        <th class="tt-col-metric">{{ metricLabel }}</th>
+        <th class="tt-col-chev">&nbsp;</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of view().rows; track row.name) {
+        <tr (click)="row.path && navigation.goTo(row.path)" class="tt-clickable-row">
+          <td [style.color]="row.fg" class="tt-row-name">{{ row.name }}</td>
+          <td class="tt-row-meta">{{ row.meta }}</td>
+          <td><app-coverage-cell [bar]="row.bar" [pct]="row.pct" [color]="row.barColor" /></td>
+          <td class="tt-row-chev">→</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+  @if (view().emptyNote) {
+    <app-empty-note [note]="view().emptyNote" />
+  }
+</div>

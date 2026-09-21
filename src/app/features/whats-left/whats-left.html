@@ -1,0 +1,29 @@
+<div class="tt-left">
+  <h4>What's still open</h4>
+  <p class="tt-lead">
+    Ordered by how close each place is to done. No suggestions, no nudges — just the gaps.
+  </p>
+  <table class="table tt-left__table">
+    <thead>
+      <tr>
+        <th>Place</th>
+        <th class="tt-col-metric">{{ metricLabel }}</th>
+        <th>Open</th>
+        <th class="tt-col-disc">Discoveries</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of rows(); track row.path.join('-')) {
+        <tr (click)="navigation.goTo(row.path)" class="tt-clickable-row">
+          <td>
+            <div class="tt-row-name">{{ row.name }}</div>
+            <div class="tt-row-meta">{{ row.where }}</div>
+          </td>
+          <td><app-coverage-cell [bar]="row.bar" [pct]="row.pct" /></td>
+          <td class="tt-row-meta">{{ row.open }}</td>
+          <td class="tt-row-disc">{{ row.disc }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
