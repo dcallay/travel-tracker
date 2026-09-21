@@ -2,6 +2,7 @@ import { Injectable, computed, signal } from '@angular/core';
 
 import { barWidth, cityWeight, continentWeight, countryWeight, fmtPct, pct } from '../data/travel-calc';
 import { ContinentData, TIMELINE, TRAVEL_TREE } from '../data/travel-data';
+import { toSlug } from './slug';
 
 export interface WorldTotals {
   worldV: number;
@@ -93,6 +94,41 @@ export class TravelStore {
   });
   /** Every visited city, closest to done first. */
   readonly leftRows = computed(() => computeLeftRows(this.tree()));
+
+  /**
+   * Path `[continent, country?, city?]` for URL slugs such as `['south-america', 'ecuador']`,
+   * or null if any slug does not exist. No slugs gives the world (`[]`).
+   */
+  pathFromSlugs(slugs: string[]): number[] | null {
+    const path: number[] = [];
+    let level: { name: string }[] = this.tree();
+    for (const slug of slugs) {
+      const index = level.findIndex((place) => toSlug(place.name) === slug);
+      if (index < 0) return null;
+      path.push(index);
+      const node = this.placeAt(path);
+      level = 'countries' in node ? node.countries : 'cities' in node ? node.cities : [];
+    }
+    return path;
+  }
+
+  /** URL slugs for a path, the inverse of `pathFromSlugs`. */
+  slugsFromPath(path: number[]): string[] {
+    return path.map((_, i) => toSlug(this.placeAt(path.slice(0, i + 1)).name));
+  }
+
+  /** Display names for each level of a path, e.g. `['South America', 'Ecuador']`. */
+  namesFromPath(path: number[]): string[] {
+    return path.map((_, i) => this.placeAt(path.slice(0, i + 1)).name);
+  }
+
+  private placeAt(path: number[]) {
+    const continent = this.tree()[path[0]];
+    if (path.length === 1) return continent;
+    const country = continent.countries[path[1]];
+    if (path.length === 2) return country;
+    return country.cities[path[2]];
+  }
 
   /** Path `[continent, country]` for a country name as the map spells it, or null if unknown. */
   countryPathForMapName(mapName: string): number[] | null {

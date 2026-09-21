@@ -1,10 +1,8 @@
-export type NavId = 'explore' | 'left' | 'timeline' | 'add';
-
 export interface NavItem {
-  id: NavId;
   label: string;
   count: string;
-  active: boolean;
+  /** Router link for the section. */
+  link: string;
 }
 
 /** The score of the level above the one being viewed, shown at the foot of the sidebar. */
@@ -20,5 +18,6 @@ export interface Crumb {
   /** Separator shown after the crumb; empty for the last one. */
   sep: string;
   active: boolean;
-  path: number[];
+  /** Router commands that open this crumb's place. */
+  link: string[];
 }

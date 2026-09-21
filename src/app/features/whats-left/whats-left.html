@@ -14,7 +14,7 @@
     </thead>
     <tbody>
       @for (row of rows(); track row.path.join('-')) {
-        <tr (click)="navigate.emit(row.path)" class="tt-clickable-row">
+        <tr (click)="navigation.goTo(row.path)" class="tt-clickable-row">
           <td>
             <div class="tt-row-name">{{ row.name }}</div>
             <div class="tt-row-meta">{{ row.where }}</div>

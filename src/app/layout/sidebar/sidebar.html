@@ -5,16 +5,11 @@
   </div>
 
   <nav class="tt-nav">
-    @for (item of items(); track item.id) {
-      <button
-        type="button"
-        class="tt-nav__item"
-        [class.is-active]="item.active"
-        (click)="navSelected.emit(item.id)"
-      >
+    @for (item of items(); track item.link) {
+      <a class="tt-nav__item" [routerLink]="item.link" routerLinkActive="is-active">
         <span>{{ item.label }}</span>
         <span class="tt-nav__count">{{ item.count }}</span>
-      </button>
+      </a>
     }
   </nav>
 

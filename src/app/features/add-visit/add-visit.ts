@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+
+import { Navigation } from '../../core/navigation';
 
 @Component({
   selector: 'app-add-visit',
@@ -7,6 +9,5 @@ import { ChangeDetectionStrategy, Component, output } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddVisit {
-  /** Emitted when the form is saved or cancelled. */
-  readonly finished = output<void>();
+  protected readonly navigation = inject(Navigation);
 }

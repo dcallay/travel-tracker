@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router, provideRouter } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { App } from './app';
-import { routes } from './app.routes';
+import { provideAppRouter } from './app.routes';
 import { TIMELINE, TRAVEL_TREE } from './data/travel-data';
 import { cityWeight } from './data/travel-calc';
 
@@ -43,7 +43,7 @@ describe('App flows', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter(routes)],
+      providers: [provideAppRouter()],
     }).compileComponents();
     fixture = TestBed.createComponent(App);
     el = fixture.nativeElement;

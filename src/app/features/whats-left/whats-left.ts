@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
 import { METRIC_LABEL } from '../../core/metric';
+import { Navigation } from '../../core/navigation';
 import { TravelStore } from '../../core/travel-store';
 import { CoverageCell } from '../../shared/ui/coverage-cell/coverage-cell';
 
@@ -12,9 +13,7 @@ import { CoverageCell } from '../../shared/ui/coverage-cell/coverage-cell';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WhatsLeft {
+  protected readonly navigation = inject(Navigation);
   protected readonly rows = inject(TravelStore).leftRows;
   protected readonly metricLabel = METRIC_LABEL;
-
-  /** Emitted with the path of the city the user picked. */
-  readonly navigate = output<number[]>();
 }

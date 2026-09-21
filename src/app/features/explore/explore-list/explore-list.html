@@ -49,7 +49,7 @@
     </thead>
     <tbody>
       @for (row of view().rows; track row.name) {
-        <tr (click)="row.path && navigate.emit(row.path)" class="tt-clickable-row">
+        <tr (click)="row.path && navigation.goTo(row.path)" class="tt-clickable-row">
           <td [style.color]="row.fg" class="tt-row-name">{{ row.name }}</td>
           <td class="tt-row-meta">{{ row.meta }}</td>
           <td><app-coverage-cell [bar]="row.bar" [pct]="row.pct" [color]="row.barColor" /></td>

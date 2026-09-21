@@ -54,7 +54,7 @@
     <div class="tt-cities">
       <app-section-head label="Cities, closest to done first" [note]="country.cityCount" />
       @for (row of country.cities; track row.name) {
-        <div class="tt-city-row" (click)="row.path && navigate.emit(row.path)">
+        <div class="tt-city-row" (click)="row.path && navigation.goTo(row.path)">
           <div class="tt-city-row__main">
             <div class="tt-city-row__name" [style.color]="row.fg">{{ row.name }}</div>
             <div class="tt-city-row__meta">{{ row.meta }}</div>

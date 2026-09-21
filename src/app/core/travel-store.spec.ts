@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { cityWeight } from '../data/travel-calc';
 import { TRAVEL_TREE } from '../data/travel-data';
+import { toSlug } from './slug';
 import { TravelStore } from './travel-store';
 
 describe('TravelStore', () => {
@@ -63,6 +64,47 @@ describe('TravelStore', () => {
 
     it('returns null for a country that is not on file', () => {
       expect(store.countryPathForMapName('Atlantis')).toBeNull();
+    });
+  });
+
+  describe('URL slugs', () => {
+    it('resolves slugs at every level, and the world when there are none', () => {
+      expect(store.pathFromSlugs([])).toEqual([]);
+      expect(store.pathFromSlugs(['south-america'])).toEqual([0]);
+      expect(store.pathFromSlugs(['south-america', 'ecuador'])).toEqual([0, 0]);
+      expect(store.pathFromSlugs(['south-america', 'ecuador', 'banos'])).toEqual([0, 0, 3]);
+    });
+
+    it('rejects a slug that does not exist at its level', () => {
+      expect(store.pathFromSlugs(['atlantis'])).toBeNull();
+      expect(store.pathFromSlugs(['south-america', 'portugal'])).toBeNull();
+      expect(store.pathFromSlugs(['south-america', 'ecuador', 'lisbon'])).toBeNull();
+      expect(store.pathFromSlugs(['south-america', 'ecuador', 'quito', 'extra'])).toBeNull();
+    });
+
+    it('round-trips every place in the tree through its slugs', () => {
+      TRAVEL_TREE.forEach((cn, i) =>
+        cn.countries.forEach((co, j) =>
+          co.cities.forEach((_, k) => {
+            const path = [i, j, k];
+            expect(store.pathFromSlugs(store.slugsFromPath(path))).toEqual(path);
+          }),
+        ),
+      );
+    });
+
+    it('gives siblings unique slugs so URLs are unambiguous', () => {
+      const unique = (places: { name: string }[]) =>
+        new Set(places.map((p) => toSlug(p.name))).size === places.length;
+      expect(unique(TRAVEL_TREE)).toBe(true);
+      for (const cn of TRAVEL_TREE) {
+        expect(unique(cn.countries)).toBe(true);
+        for (const co of cn.countries) expect(unique(co.cities)).toBe(true);
+      }
+    });
+
+    it('names each level of a path', () => {
+      expect(store.namesFromPath([0, 0, 0])).toEqual(['South America', 'Ecuador', 'Quito']);
     });
   });
 });
