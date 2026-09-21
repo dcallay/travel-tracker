@@ -265,10 +265,7 @@
                       <td [style.color]="row.fg" class="tt-row-name">{{ row.name }}</td>
                       <td class="tt-row-meta">{{ row.meta }}</td>
                       <td>
-                        <div class="tt-bar-cell">
-                          <app-progress-bar [width]="row.bar" [color]="row.barColor" />
-                          <span class="tt-bar-cell__pct">{{ row.pct }}</span>
-                        </div>
+                        <app-coverage-cell [bar]="row.bar" [pct]="row.pct" [color]="row.barColor" />
                       </td>
                       <td class="tt-row-chev">→</td>
                     </tr>
@@ -284,38 +281,7 @@
       }
 
       @if (nav() === 'left') {
-        <div class="tt-left">
-          <h4>What's still open</h4>
-          <p class="tt-lead">Ordered by how close each place is to done. No suggestions, no nudges — just the gaps.</p>
-          <table class="table tt-left__table">
-            <thead>
-              <tr>
-                <th>Place</th>
-                <th class="tt-col-metric">{{ metricLabel }}</th>
-                <th>Open</th>
-                <th class="tt-col-disc">Discoveries</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (row of leftRows(); track row.path.join('-')) {
-                <tr (click)="go(row.path)" class="tt-clickable-row">
-                  <td>
-                    <div class="tt-row-name">{{ row.name }}</div>
-                    <div class="tt-row-meta">{{ row.where }}</div>
-                  </td>
-                  <td>
-                    <div class="tt-bar-cell">
-                      <app-progress-bar [width]="row.bar" />
-                      <span class="tt-bar-cell__pct">{{ row.pct }}</span>
-                    </div>
-                  </td>
-                  <td class="tt-row-meta">{{ row.open }}</td>
-                  <td class="tt-row-disc">{{ row.disc }}</td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
+        <app-whats-left (navigate)="go($event)" />
       }
 
       @if (nav() === 'timeline') {

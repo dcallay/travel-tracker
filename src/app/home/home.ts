@@ -10,8 +10,10 @@ import { FeedbackDialog } from '../dialogs/feedback-dialog/feedback-dialog';
 import { HowItWorksDialog } from '../dialogs/how-it-works-dialog/how-it-works-dialog';
 import { PhotoConfirmDialog } from '../dialogs/photo-confirm-dialog/photo-confirm-dialog';
 import { AddVisit } from '../features/add-visit/add-visit';
+import { WhatsLeft } from '../features/whats-left/whats-left';
 import { Timeline } from '../features/timeline/timeline';
 import { CityMarker, CoverageMap } from '../shared/ui/coverage-map/coverage-map';
+import { CoverageCell } from '../shared/ui/coverage-cell/coverage-cell';
 import { EmptyNote } from '../shared/ui/empty-note/empty-note';
 import { LksPanel } from '../shared/ui/lks-panel/lks-panel';
 import { ProgressBar } from '../shared/ui/progress-bar/progress-bar';
@@ -94,6 +96,7 @@ const LANGS: [string, string][] = [
   selector: 'app-home',
   imports: [
     AddVisit,
+    CoverageCell,
     CoverageMap,
     EmptyNote,
     FeedbackDialog,
@@ -105,6 +108,7 @@ const LANGS: [string, string][] = [
     ScoreSummary,
     StatTile,
     Timeline,
+    WhatsLeft,
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss',

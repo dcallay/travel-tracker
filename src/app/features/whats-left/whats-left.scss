@@ -1,0 +1,22 @@
+:host {
+  display: block;
+}
+
+.tt-left {
+  padding: 24px 20px 32px;
+}
+
+.tt-left__table {
+  margin-top: 12px;
+}
+
+.tt-col-disc {
+  width: 92px;
+  text-align: right;
+}
+
+.tt-row-disc {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+}
