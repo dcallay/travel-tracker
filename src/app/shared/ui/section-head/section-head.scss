@@ -1,0 +1,11 @@
+:host {
+  display: block;
+}
+
+.tt-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 2px solid var(--color-divider);
+  padding-bottom: 8px;
+}

@@ -1,0 +1,28 @@
+<div class="tt-detail">
+  @if (large()) {
+    <div class="tt-detail__head tt-detail__head--country">
+      <div class="tt-detail__flag tt-detail__flag--lg" [style.background-image]="flag()"></div>
+      <div>
+        <div class="tt-detail__kicker">{{ kicker() }}</div>
+        <h2 class="tt-detail__title">{{ title() }}</h2>
+      </div>
+    </div>
+  } @else {
+    <div class="tt-detail__head">
+      <div class="tt-detail__flag" [style.background-image]="flag()"></div>
+      <div class="tt-detail__kicker">{{ kicker() }}</div>
+    </div>
+    <h2 class="tt-detail__title">{{ title() }}</h2>
+  }
+
+  <div class="tt-detail__grid">
+    <ng-content select="[detail-main]" />
+    <ng-content select="[detail-side]" />
+  </div>
+
+  <div class="tt-report-row">
+    <button type="button" class="btn btn-ghost" (click)="dialogs.openReport(place())">
+      Something wrong here?
+    </button>
+  </div>
+</div>

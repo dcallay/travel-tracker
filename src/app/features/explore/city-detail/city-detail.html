@@ -1,0 +1,42 @@
+@let city = view();
+
+<app-place-detail
+  [flag]="city.flag"
+  [kicker]="city.kicker"
+  [title]="city.name"
+  [place]="city.placeLabel"
+>
+  <div detail-main>
+    <app-score-summary
+      [pct]="city.pct"
+      [label]="metricLabel"
+      [bar]="city.bar"
+      [formula]="city.formula"
+      (infoActivate)="dialogs.openHow()"
+    />
+    <app-score-breakdown
+      [cells]="[
+        { label: 'Neighbour­hoods', value: city.nRatio, note: 'weight 1 each', lang: 'en' },
+        { label: 'Landmarks', value: city.lRatio, note: 'weight 2 each' },
+      ]"
+    />
+  </div>
+
+  <div detail-side>
+    <app-lks-panel
+      [count]="city.discCount"
+      [items]="city.discList"
+      [note]="`Personal discoveries — spots you found that aren't on any curated list. Kept out of the ${metricLower} figure.`"
+    />
+
+    <div class="tt-open-list">
+      <app-section-head label="Still open" [note]="city.openCount" />
+      @for (place of city.openList; track place.name) {
+        <div class="tt-open-row">
+          <span>{{ place.name }}</span>
+          <span class="tag tag-neutral">{{ place.kind }}</span>
+        </div>
+      }
+    </div>
+  </div>
+</app-place-detail>

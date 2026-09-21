@@ -1,24 +1,19 @@
 import { Component, HostListener, computed, inject, signal } from '@angular/core';
 
-import { CITY_GEO, CityData, CountryData, flagImageUrl } from '../data/travel-data';
 import { barWidth, cityWeight, continentWeight, countryWeight, fmtPct, pct } from '../data/travel-calc';
 import { DialogState } from '../core/dialog-state';
-import { METRIC_LABEL, METRIC_LOWER } from '../core/metric';
-import { Row, toRow } from '../core/place-row';
+import { METRIC_LOWER } from '../core/metric';
 import { TravelStore } from '../core/travel-store';
 import { FeedbackDialog } from '../dialogs/feedback-dialog/feedback-dialog';
 import { HowItWorksDialog } from '../dialogs/how-it-works-dialog/how-it-works-dialog';
 import { PhotoConfirmDialog } from '../dialogs/photo-confirm-dialog/photo-confirm-dialog';
-import { ExploreList } from '../features/explore/explore-list/explore-list';
 import { AddVisit } from '../features/add-visit/add-visit';
-import { WhatsLeft } from '../features/whats-left/whats-left';
+import { CityDetail } from '../features/explore/city-detail/city-detail';
+import { CountryDetail } from '../features/explore/country-detail/country-detail';
+import { ExploreList } from '../features/explore/explore-list/explore-list';
 import { Timeline } from '../features/timeline/timeline';
-import { CityMarker, CoverageMap } from '../shared/ui/coverage-map/coverage-map';
-import { EmptyNote } from '../shared/ui/empty-note/empty-note';
-import { LksPanel } from '../shared/ui/lks-panel/lks-panel';
+import { WhatsLeft } from '../features/whats-left/whats-left';
 import { ProgressBar } from '../shared/ui/progress-bar/progress-bar';
-import { ScoreBreakdown } from '../shared/ui/score-breakdown/score-breakdown';
-import { ScoreSummary } from '../shared/ui/score-summary/score-summary';
 
 type NavId = 'explore' | 'left' | 'timeline' | 'add';
 
@@ -27,40 +22,6 @@ interface Crumb {
   sep: string;
   active: boolean;
   path: number[];
-}
-
-interface CountryViewModel {
-  name: string;
-  kicker: string;
-  flag: string;
-  pct: string;
-  bar: string;
-  formula: string;
-  cRatio: string;
-  nRatio: string;
-  lRatio: string;
-  discCount: string;
-  discList: string[];
-  cityCount: string;
-  cities: Row[];
-  isEmpty: boolean;
-  emptyNote: string;
-  citiesGeo: CityMarker[];
-}
-
-interface CityViewModel {
-  name: string;
-  kicker: string;
-  flag: string;
-  pct: string;
-  bar: string;
-  formula: string;
-  nRatio: string;
-  lRatio: string;
-  discCount: string;
-  discList: string[];
-  openCount: string;
-  openList: { name: string; kind: string }[];
 }
 
 const LANGS: [string, string][] = [
@@ -75,16 +36,13 @@ const LANGS: [string, string][] = [
   selector: 'app-home',
   imports: [
     AddVisit,
-    CoverageMap,
-    EmptyNote,
+    CityDetail,
+    CountryDetail,
     ExploreList,
     FeedbackDialog,
     HowItWorksDialog,
-    LksPanel,
     PhotoConfirmDialog,
     ProgressBar,
-    ScoreBreakdown,
-    ScoreSummary,
     Timeline,
     WhatsLeft,
   ],
@@ -94,7 +52,6 @@ const LANGS: [string, string][] = [
 export class Home {
   private readonly store = inject(TravelStore);
   protected readonly dialogs = inject(DialogState);
-  protected readonly metricLabel = METRIC_LABEL;
   protected readonly metricLower = METRIC_LOWER;
   protected readonly leftRows = this.store.leftRows;
 
@@ -103,11 +60,6 @@ export class Home {
 
   protected readonly lang = signal('EN');
   protected readonly langOpen = signal(false);
-
-  protected onCountrySelect(mapName: string): void {
-    const path = this.store.countryPathForMapName(mapName);
-    if (path) this.go(path);
-  }
 
   @HostListener('document:keydown.escape')
   protected onEscape(): void {
@@ -146,85 +98,6 @@ export class Home {
     LANGS.map(([code, name]) => ({ code, name, active: code === this.lang() })),
   );
 
-  protected readonly countryView = computed<CountryViewModel | null>(() => {
-    const path = this.path();
-    if (path.length !== 2) return null;
-    const cn = this.store.tree()[path[0]];
-    const co: CountryData = cn.countries[path[1]];
-    const w = countryWeight(co);
-    const p = pct(w);
-    const nv = co.cities.reduce((a, ct) => a + ct.nv, 0);
-    const nt = co.cities.reduce((a, ct) => a + ct.nt, 0);
-    const lv = co.cities.reduce((a, ct) => a + ct.lv, 0);
-    const lt = co.cities.reduce((a, ct) => a + ct.lt, 0);
-    const logged = co.cities.filter((ct) => cityWeight(ct).v > 0).length;
-    const disc: string[] = [];
-    co.cities.forEach((ct) => ct.disc.forEach((d) => disc.push(`${ct.name} — ${d}`)));
-    const cities = co.cities
-      .map((ct, i) => {
-        const cwt = cityWeight(ct);
-        const cp = pct(cwt);
-        const row = toRow(
-          ct.name,
-          cwt.v ? `${ct.nv} neighbourhoods · ${ct.lv} landmarks · ${ct.last}` : 'Not yet visited',
-          cp,
-          [path[0], path[1], i],
-        );
-        return { row, cp };
-      })
-      .sort((a, b) => b.cp - a.cp)
-      .map(({ row }) => row);
-    const citiesGeo: CityMarker[] = co.cities.map((ct: CityData) => {
-      const g = CITY_GEO[ct.name] ?? [0, 0];
-      return { name: ct.name, lon: g[0], lat: g[1], visited: cityWeight(ct).v > 0, pct: pct(cityWeight(ct)) };
-    });
-
-    return {
-      name: co.name,
-      kicker: cn.name,
-      flag: flagImageUrl(co.name),
-      pct: fmtPct(p),
-      bar: barWidth(p),
-      formula: `${w.v} of ${w.t} weighted places. ${nv} neighbourhoods at weight 1, ${lv} landmarks at weight 2, plus ${co.rest} weighted places elsewhere in the country still on file.`,
-      cRatio: `${logged} / ${co.cities.length}`,
-      nRatio: `${nv} / ${nt}`,
-      lRatio: `${lv} / ${lt}`,
-      discCount: String(disc.length),
-      discList: disc.length ? disc.slice(0, 6) : ['Nothing logged here yet'],
-      cityCount: `${co.cities.length} seeded`,
-      cities,
-      isEmpty: w.v === 0,
-      emptyNote: `No visits in ${co.name} yet. Its ${w.t} weighted places still count against the world figure — that is the point of the denominator.`,
-      citiesGeo,
-    };
-  });
-
-  protected readonly cityView = computed<CityViewModel | null>(() => {
-    const path = this.path();
-    if (path.length !== 3) return null;
-    const cn = this.store.tree()[path[0]];
-    const co = cn.countries[path[1]];
-    const ct = co.cities[path[2]];
-    const w = cityWeight(ct);
-    const p = pct(w);
-    const openN = ct.nt - ct.nv;
-    const openL = ct.lt - ct.lv;
-    return {
-      name: ct.name,
-      kicker: `${co.name} · ${cn.name}`,
-      flag: flagImageUrl(co.name),
-      pct: fmtPct(p),
-      bar: barWidth(p),
-      formula: `${w.v} of ${w.t} weighted places. ${ct.nv} neighbourhoods at weight 1, ${ct.lv} landmarks at weight 2.`,
-      nRatio: `${ct.nv} / ${ct.nt}`,
-      lRatio: `${ct.lv} / ${ct.lt}`,
-      discCount: String(ct.disc.length),
-      discList: ct.disc.length ? ct.disc : ['Nothing logged here yet'],
-      openCount: `${openN} neighbourhoods · ${openL} landmarks`,
-      openList: ct.open.length ? ct.open : [{ name: `${openN} neighbourhoods and ${openL} landmarks not itemised yet`, kind: 'Seed data' }],
-    };
-  });
-
   protected readonly parentScore = computed(() => {
     const path = this.path();
     const metricLower = this.metricLower;
@@ -259,14 +132,6 @@ export class Home {
       bar: barWidth(p),
       note: `${w.v} of ${w.t} weighted places · ${co.cities.length} cities on file`,
     };
-  });
-
-  protected readonly placeLabel = computed(() => {
-    const city = this.cityView();
-    if (city) return `${city.kicker.split(' · ')[0]} · ${city.name}`;
-    const country = this.countryView();
-    if (country) return `${country.kicker} · ${country.name}`;
-    return '';
   });
 
   protected go(path: number[]): void {
