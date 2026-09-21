@@ -111,40 +111,13 @@
   line-height: 1.5;
 }
 
+.tt-parent-score__bar {
+  margin-top: 10px;
+}
+
 .tt-sidebar__feedback {
   padding: 10px 16px;
   border-top: 2px solid var(--color-divider);
-}
-
-/* — shared bars — */
-.tt-bar,
-.tt-bar-lg,
-.tt-bar-sm {
-  background: var(--color-neutral-300);
-}
-.tt-bar {
-  height: 6px;
-  margin-top: 10px;
-}
-.tt-bar__fill {
-  height: 6px;
-  background: var(--color-accent);
-}
-.tt-bar-lg {
-  height: 8px;
-  margin-top: 16px;
-}
-.tt-bar-lg__fill {
-  height: 8px;
-  background: var(--color-accent);
-}
-.tt-bar-sm {
-  height: 6px;
-  flex: 1;
-}
-.tt-bar-sm__fill {
-  height: 6px;
-  background: var(--color-accent);
 }
 
 /* — main / header — */
@@ -252,34 +225,6 @@
   flex: 1;
 }
 
-/* — info button — */
-.tt-info-btn {
-  appearance: none;
-  border: 0;
-  background: transparent;
-  color: var(--color-accent-700);
-  padding: 0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-
-  &:hover {
-    color: var(--color-accent);
-  }
-}
-
-.tt-section-label {
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-neutral-700);
-}
-
-.tt-section-note {
-  font-size: 11px;
-  color: var(--color-neutral-700);
-}
-
 /* — stats row — */
 .tt-stats {
   display: grid;
@@ -287,38 +232,6 @@
   gap: 1px;
   background: var(--color-divider);
   border-bottom: 2px solid var(--color-divider);
-}
-
-.tt-stat {
-  background: var(--color-bg);
-  padding: 18px 20px;
-}
-
-.tt-stat__label-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.tt-stat__label {
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-neutral-700);
-}
-
-.tt-stat__value {
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 32px;
-  line-height: 1.1;
-  margin-top: 6px;
-}
-
-.tt-stat__note {
-  font-size: 11px;
-  color: var(--color-neutral-700);
-  margin-top: 2px;
 }
 
 /* — map section — */
@@ -429,18 +342,6 @@ world-coverage-map {
   font-size: 12px;
 }
 
-.tt-empty-note {
-  border: 2px solid var(--color-divider);
-  padding: 16px;
-  margin-top: 20px;
-
-  p {
-    margin: 8px 0 0;
-    font-size: 13px;
-    max-width: 64ch;
-  }
-}
-
 /* — detail (country / city) — */
 .tt-detail {
   padding: 24px 20px 32px;
@@ -493,34 +394,6 @@ world-coverage-map {
   align-items: start;
 }
 
-.tt-metric {
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 96px;
-  line-height: 0.86;
-  letter-spacing: -0.03em;
-}
-
-.tt-metric-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.tt-metric-label {
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.tt-formula {
-  font-size: 13px;
-  color: var(--color-neutral-700);
-  margin-top: 12px;
-  max-width: 44ch;
-}
-
 .tt-breakdown {
   display: grid;
   gap: 1px;
@@ -563,82 +436,6 @@ world-coverage-map {
 .tt-breakdown__note {
   font-size: 11px;
   color: var(--color-neutral-700);
-}
-
-.tt-lks {
-  border: 2px solid var(--color-divider);
-}
-
-.tt-lks__toggle {
-  appearance: none;
-  border: 0;
-  background: transparent;
-  color: var(--color-text);
-  font-family: var(--font-body);
-  cursor: pointer;
-  width: 100%;
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  padding: 16px;
-  text-align: left;
-
-  &:hover {
-    background: var(--color-neutral-200);
-  }
-}
-
-.tt-lks__value {
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 44px;
-  line-height: 1;
-  color: var(--color-accent-700);
-}
-
-.tt-lks__label {
-  flex: 1;
-  min-width: 0;
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  line-height: 1.4;
-}
-
-.tt-lks__hint {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 11px;
-  color: var(--color-accent-700);
-}
-
-.tt-lks__chev {
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 16px;
-}
-
-.tt-lks__body {
-  padding: 0 16px 16px;
-
-  p {
-    font-size: 12px;
-    color: var(--color-neutral-700);
-    margin: 0;
-  }
-}
-
-.tt-lks__list {
-  display: flex;
-  flex-direction: column;
-  margin-top: 12px;
-}
-
-.tt-lks__list-item {
-  font-size: 13px;
-  padding: 8px 0;
-  border-top: 1px solid var(--color-divider);
 }
 
 .tt-open-list {
@@ -732,7 +529,7 @@ world-coverage-map {
   margin-top: 2px;
 }
 
-.tt-city-row .tt-bar-sm {
+.tt-city-row app-progress-bar {
   margin-top: 8px;
 }
 
@@ -947,8 +744,5 @@ world-coverage-map {
   }
   .tt-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .tt-metric {
-    font-size: 64px;
   }
 }

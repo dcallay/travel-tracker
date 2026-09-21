@@ -1,0 +1,35 @@
+:host {
+  display: block;
+}
+
+.tt-stat {
+  background: var(--color-bg);
+  padding: 18px 20px;
+}
+
+.tt-stat__label-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tt-stat__label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-neutral-700);
+}
+
+.tt-stat__value {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 32px;
+  line-height: 1.1;
+  margin-top: 6px;
+}
+
+.tt-stat__note {
+  font-size: 11px;
+  color: var(--color-neutral-700);
+  margin-top: 2px;
+}

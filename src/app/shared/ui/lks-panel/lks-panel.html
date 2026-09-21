@@ -1,0 +1,20 @@
+<div class="tt-lks">
+  <button type="button" class="tt-lks__toggle" [attr.aria-expanded]="open()" (click)="toggle()">
+    <div class="tt-lks__value">{{ count() }}</div>
+    <div class="tt-lks__label">Local knowledge<br />score</div>
+    <div class="tt-lks__hint">
+      {{ open() ? 'Hide the list' : 'See the list' }}
+      <span class="tt-lks__chev">{{ open() ? '−' : '+' }}</span>
+    </div>
+  </button>
+  @if (open()) {
+    <div class="tt-lks__body">
+      <p>{{ note() }}</p>
+      <div class="tt-lks__list">
+        @for (item of items(); track item) {
+          <div class="tt-lks__list-item">{{ item }}</div>
+        }
+      </div>
+    </div>
+  }
+</div>

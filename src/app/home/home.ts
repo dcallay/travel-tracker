@@ -9,6 +9,12 @@ import {
   flagImageUrl,
 } from '../data/travel-data';
 import { barWidth, cityWeight, continentWeight, countryWeight, fmtPct, pct } from '../data/travel-calc';
+import { EmptyNote } from '../shared/ui/empty-note/empty-note';
+import { LksPanel } from '../shared/ui/lks-panel/lks-panel';
+import { ProgressBar } from '../shared/ui/progress-bar/progress-bar';
+import { ScoreBreakdown } from '../shared/ui/score-breakdown/score-breakdown';
+import { ScoreSummary } from '../shared/ui/score-summary/score-summary';
+import { StatTile } from '../shared/ui/stat-tile/stat-tile';
 
 type NavId = 'explore' | 'left' | 'timeline' | 'add';
 type FeedbackKind = 'general' | 'report' | null;
@@ -23,7 +29,7 @@ interface Row {
   path: number[] | null;
 }
 
-interface StatTile {
+interface StatItem {
   label: string;
   value: string;
   note: string;
@@ -42,7 +48,7 @@ interface ListViewModel {
   colHead: string;
   levelTitle: string;
   levelSub: string;
-  stats: StatTile[];
+  stats: StatItem[];
   emptyNote: string;
   mapFit: string;
   mapHeight: number;
@@ -107,6 +113,7 @@ const COUNTRY_ALIAS: Record<string, string> = { 'United States': 'United States 
 
 @Component({
   selector: 'app-home',
+  imports: [EmptyNote, LksPanel, ProgressBar, ScoreBreakdown, ScoreSummary, StatTile],
   templateUrl: './home.html',
   styleUrl: './home.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -121,7 +128,6 @@ export class Home implements OnInit, OnDestroy {
 
   protected readonly lang = signal('EN');
   protected readonly langOpen = signal(false);
-  protected readonly lksOpen = signal(false);
   protected readonly howOpen = signal(false);
   protected readonly photoDialogOpen = signal(false);
   protected readonly fb = signal<FeedbackKind>(null);
@@ -493,10 +499,6 @@ export class Home implements OnInit, OnDestroy {
   protected selectLang(code: string): void {
     this.lang.set(code);
     this.langOpen.set(false);
-  }
-
-  protected toggleLks(): void {
-    this.lksOpen.update((v) => !v);
   }
 
   protected openHow(): void {

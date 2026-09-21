@@ -1,0 +1,7 @@
+<div class="tt-metric">{{ pct() }}</div>
+<div class="tt-metric-row">
+  <div class="tt-metric-label">{{ label() }}</div>
+  <app-info-button (activate)="infoActivate.emit()" />
+</div>
+<app-progress-bar size="lg" [width]="bar()" />
+<p class="tt-formula">{{ formula() }}</p>

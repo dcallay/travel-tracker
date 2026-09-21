@@ -180,3 +180,9 @@ textarea.input { min-height: 90px; resize: vertical; }
 .dialog-body { font-size: 14px; opacity: 0.85; }
 .dialog-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-2); }
 .dialog-kicker { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent-700); }
+
+/* — small text utilities shared across components — */
+.tt-section-label {
+  font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-neutral-700);
+}
+.tt-section-note { font-size: 11px; color: var(--color-neutral-700); }

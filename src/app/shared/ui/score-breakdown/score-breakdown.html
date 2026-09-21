@@ -1,0 +1,9 @@
+<div class="tt-breakdown" [style.grid-template-columns]="columns()">
+  @for (cell of cells(); track cell.label) {
+    <div class="tt-breakdown__cell">
+      <div class="tt-breakdown__label" [attr.lang]="cell.lang ?? null">{{ cell.label }}</div>
+      <div class="tt-breakdown__value">{{ cell.value }}</div>
+      <div class="tt-breakdown__note">{{ cell.note }}</div>
+    </div>
+  }
+</div>

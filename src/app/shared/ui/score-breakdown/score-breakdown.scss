@@ -1,0 +1,36 @@
+:host {
+  display: block;
+  margin-top: 20px;
+}
+
+.tt-breakdown {
+  display: grid;
+  gap: 1px;
+  background: var(--color-divider);
+}
+
+.tt-breakdown__cell {
+  background: var(--color-bg);
+  padding: 14px;
+}
+
+.tt-breakdown__label {
+  color: var(--color-neutral-700);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  hyphens: auto;
+}
+
+.tt-breakdown__value {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 26px;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+.tt-breakdown__note {
+  font-size: 11px;
+  color: var(--color-neutral-700);
+}

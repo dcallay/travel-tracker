@@ -24,9 +24,7 @@
         <div class="tt-parent-score">
           <div class="tt-parent-score__label">{{ parent.label }}</div>
           <div class="tt-parent-score__value">{{ parent.pct }}</div>
-          <div class="tt-bar">
-            <div class="tt-bar__fill" [style.width]="parent.bar"></div>
-          </div>
+          <app-progress-bar class="tt-parent-score__bar" [width]="parent.bar" />
           <div class="tt-parent-score__note">{{ parent.note }}</div>
         </div>
       }
@@ -82,50 +80,27 @@
 
             <div class="tt-detail__grid">
               <div>
-                <div class="tt-metric">{{ city.pct }}</div>
-                <div class="tt-metric-row">
-                  <div class="tt-metric-label">{{ metricLabel }}</div>
-                  <button type="button" class="tt-info-btn" (click)="openHow()" aria-label="How the score is calculated" title="How the score is calculated">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
-                  </button>
-                </div>
-                <div class="tt-bar-lg"><div class="tt-bar-lg__fill" [style.width]="city.bar"></div></div>
-                <p class="tt-formula">{{ city.formula }}</p>
-                <div class="tt-breakdown tt-breakdown--2col">
-                  <div class="tt-breakdown__cell">
-                    <div class="tt-breakdown__label" lang="en">Neighbour&shy;hoods</div>
-                    <div class="tt-breakdown__value">{{ city.nRatio }}</div>
-                    <div class="tt-breakdown__note">weight 1 each</div>
-                  </div>
-                  <div class="tt-breakdown__cell">
-                    <div class="tt-breakdown__label">Landmarks</div>
-                    <div class="tt-breakdown__value">{{ city.lRatio }}</div>
-                    <div class="tt-breakdown__note">weight 2 each</div>
-                  </div>
-                </div>
+                <app-score-summary
+                  [pct]="city.pct"
+                  [label]="metricLabel"
+                  [bar]="city.bar"
+                  [formula]="city.formula"
+                  (infoActivate)="openHow()"
+                />
+                <app-score-breakdown
+                  [cells]="[
+                    { label: 'Neighbour\u00adhoods', value: city.nRatio, note: 'weight 1 each', lang: 'en' },
+                    { label: 'Landmarks', value: city.lRatio, note: 'weight 2 each' },
+                  ]"
+                />
               </div>
 
               <div>
-                <div class="tt-lks">
-                  <button type="button" class="tt-lks__toggle" (click)="toggleLks()">
-                    <div class="tt-lks__value">{{ city.discCount }}</div>
-                    <div class="tt-lks__label">Local knowledge<br />score</div>
-                    <div class="tt-lks__hint">
-                      {{ lksOpen() ? 'Hide the list' : 'See the list' }}
-                      <span class="tt-lks__chev">{{ lksOpen() ? '−' : '+' }}</span>
-                    </div>
-                  </button>
-                  @if (lksOpen()) {
-                    <div class="tt-lks__body">
-                      <p>Personal discoveries — spots you found that aren't on any curated list. Kept out of the {{ metricLower }} figure.</p>
-                      <div class="tt-lks__list">
-                        @for (d of city.discList; track d) {
-                          <div class="tt-lks__list-item">{{ d }}</div>
-                        }
-                      </div>
-                    </div>
-                  }
-                </div>
+                <app-lks-panel
+                  [count]="city.discCount"
+                  [items]="city.discList"
+                  [note]="`Personal discoveries — spots you found that aren't on any curated list. Kept out of the ${metricLower} figure.`"
+                />
 
                 <div class="tt-open-list">
                   <div class="tt-open-list__head">
@@ -162,32 +137,20 @@
 
             <div class="tt-detail__grid">
               <div>
-                <div class="tt-metric">{{ country.pct }}</div>
-                <div class="tt-metric-row">
-                  <div class="tt-metric-label">{{ metricLabel }}</div>
-                  <button type="button" class="tt-info-btn" (click)="openHow()" aria-label="How the score is calculated" title="How the score is calculated">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
-                  </button>
-                </div>
-                <div class="tt-bar-lg"><div class="tt-bar-lg__fill" [style.width]="country.bar"></div></div>
-                <p class="tt-formula">{{ country.formula }}</p>
-                <div class="tt-breakdown tt-breakdown--3col">
-                  <div class="tt-breakdown__cell">
-                    <div class="tt-breakdown__label">Cities</div>
-                    <div class="tt-breakdown__value">{{ country.cRatio }}</div>
-                    <div class="tt-breakdown__note">logged / seeded</div>
-                  </div>
-                  <div class="tt-breakdown__cell">
-                    <div class="tt-breakdown__label" lang="en">Neighbour&shy;hoods</div>
-                    <div class="tt-breakdown__value">{{ country.nRatio }}</div>
-                    <div class="tt-breakdown__note">weight 1 each</div>
-                  </div>
-                  <div class="tt-breakdown__cell">
-                    <div class="tt-breakdown__label">Landmarks</div>
-                    <div class="tt-breakdown__value">{{ country.lRatio }}</div>
-                    <div class="tt-breakdown__note">weight 2 each</div>
-                  </div>
-                </div>
+                <app-score-summary
+                  [pct]="country.pct"
+                  [label]="metricLabel"
+                  [bar]="country.bar"
+                  [formula]="country.formula"
+                  (infoActivate)="openHow()"
+                />
+                <app-score-breakdown
+                  [cells]="[
+                    { label: 'Cities', value: country.cRatio, note: 'logged / seeded' },
+                    { label: 'Neighbour\u00adhoods', value: country.nRatio, note: 'weight 1 each', lang: 'en' },
+                    { label: 'Landmarks', value: country.lRatio, note: 'weight 2 each' },
+                  ]"
+                />
 
                 <div class="tt-map-block">
                   <div class="tt-map-block__head">
@@ -205,34 +168,16 @@
                 </div>
 
                 @if (country.isEmpty) {
-                  <div class="tt-empty-note">
-                    <div class="tt-section-label">Nothing logged here yet</div>
-                    <p>{{ country.emptyNote }}</p>
-                  </div>
+                  <app-empty-note [note]="country.emptyNote" />
                 }
               </div>
 
               <div>
-                <div class="tt-lks">
-                  <button type="button" class="tt-lks__toggle" (click)="toggleLks()">
-                    <div class="tt-lks__value">{{ country.discCount }}</div>
-                    <div class="tt-lks__label">Local knowledge<br />score</div>
-                    <div class="tt-lks__hint">
-                      {{ lksOpen() ? 'Hide the list' : 'See the list' }}
-                      <span class="tt-lks__chev">{{ lksOpen() ? '−' : '+' }}</span>
-                    </div>
-                  </button>
-                  @if (lksOpen()) {
-                    <div class="tt-lks__body">
-                      <p>Personal discoveries across the whole country. Kept out of the {{ metricLower }} figure.</p>
-                      <div class="tt-lks__list">
-                        @for (d of country.discList; track d) {
-                          <div class="tt-lks__list-item">{{ d }}</div>
-                        }
-                      </div>
-                    </div>
-                  }
-                </div>
+                <app-lks-panel
+                  [count]="country.discCount"
+                  [items]="country.discList"
+                  [note]="`Personal discoveries across the whole country. Kept out of the ${metricLower} figure.`"
+                />
 
                 <div class="tt-open-list">
                   <div class="tt-open-list__head">
@@ -244,7 +189,7 @@
                       <div class="tt-city-row__main">
                         <div class="tt-city-row__name" [style.color]="row.fg">{{ row.name }}</div>
                         <div class="tt-city-row__meta">{{ row.meta }}</div>
-                        <div class="tt-bar-sm"><div class="tt-bar-sm__fill" [style.background]="row.barColor" [style.width]="row.bar"></div></div>
+                        <app-progress-bar [width]="row.bar" [color]="row.barColor" />
                       </div>
                       <div class="tt-city-row__pct">{{ row.pct }}</div>
                       <div class="tt-city-row__chev">→</div>
@@ -266,18 +211,13 @@
           <div>
             <div class="tt-stats">
               @for (s of view.stats; track s.label) {
-                <div class="tt-stat">
-                  <div class="tt-stat__label-row">
-                    <div class="tt-stat__label">{{ s.label }}</div>
-                    @if (s.hasInfo) {
-                      <button type="button" class="tt-info-btn" (click)="openHow()" aria-label="How the score is calculated" title="How the score is calculated">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
-                      </button>
-                    }
-                  </div>
-                  <div class="tt-stat__value">{{ s.value }}</div>
-                  <div class="tt-stat__note">{{ s.note }}</div>
-                </div>
+                <app-stat-tile
+                  [label]="s.label"
+                  [value]="s.value"
+                  [note]="s.note"
+                  [hasInfo]="s.hasInfo"
+                  (infoActivate)="openHow()"
+                />
               }
             </div>
 
@@ -324,7 +264,7 @@
                       <td class="tt-row-meta">{{ row.meta }}</td>
                       <td>
                         <div class="tt-bar-cell">
-                          <div class="tt-bar-sm"><div class="tt-bar-sm__fill" [style.background]="row.barColor" [style.width]="row.bar"></div></div>
+                          <app-progress-bar [width]="row.bar" [color]="row.barColor" />
                           <span class="tt-bar-cell__pct">{{ row.pct }}</span>
                         </div>
                       </td>
@@ -334,10 +274,7 @@
                 </tbody>
               </table>
               @if (view.emptyNote) {
-                <div class="tt-empty-note">
-                  <div class="tt-section-label">Nothing logged here yet</div>
-                  <p>{{ view.emptyNote }}</p>
-                </div>
+                <app-empty-note [note]="view.emptyNote" />
               }
             </div>
           </div>
@@ -366,7 +303,7 @@
                   </td>
                   <td>
                     <div class="tt-bar-cell">
-                      <div class="tt-bar-sm"><div class="tt-bar-sm__fill" [style.width]="row.bar"></div></div>
+                      <app-progress-bar [width]="row.bar" />
                       <span class="tt-bar-cell__pct">{{ row.pct }}</span>
                     </div>
                   </td>
