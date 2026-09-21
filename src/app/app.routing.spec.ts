@@ -107,7 +107,11 @@ describe('App routing', () => {
 
     it('follows a map click to the country', async () => {
       el.querySelector('world-coverage-map')!.dispatchEvent(
-        new CustomEvent('country-select', { detail: { name: 'Portugal' }, bubbles: true, composed: true }),
+        new CustomEvent('country-select', {
+          detail: { name: 'Portugal' },
+          bubbles: true,
+          composed: true,
+        }),
       );
       await settle();
       expect(router.url).toBe('/explore/europe/portugal');

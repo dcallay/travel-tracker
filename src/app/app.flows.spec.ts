@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 
 import { App } from './app';
 import { provideAppRouter } from './app.routes';
-import { TIMELINE, TRAVEL_TREE } from './data/travel-data';
-import { cityWeight } from './data/travel-calc';
+import { TIMELINE, TRAVEL_TREE } from './core/data/travel-data';
+import { cityWeight } from './core/data/travel-calc';
 
 /**
  * User-flow tests that drive the rendered UI through clicks and read it back through the DOM.
@@ -68,7 +68,10 @@ describe('App flows', () => {
       expect(text('.table thead th')).toBe('Country');
       expect(all('.table tbody tr')).toHaveLength(5);
       expect(text('.tt-parent-score__label')).toBe('World explored');
-      expect(all('.tt-crumb').map((c) => c.textContent?.trim())).toEqual(['World', 'South America']);
+      expect(all('.tt-crumb').map((c) => c.textContent?.trim())).toEqual([
+        'World',
+        'South America',
+      ]);
 
       await clickByText('.table tbody tr', 'Ecuador');
       expect(text('.tt-detail__title')).toBe('Ecuador');

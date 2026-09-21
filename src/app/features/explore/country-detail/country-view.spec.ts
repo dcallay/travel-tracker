@@ -1,4 +1,4 @@
-import { TRAVEL_TREE } from '../../../data/travel-data';
+import { TRAVEL_TREE } from '../../../core/data/travel-data';
 import { buildCountryView } from './country-view';
 
 const index = (continent: string, country: string): number[] => {

@@ -22,14 +22,18 @@ export class Navigation {
         takeUntilDestroyed(),
       )
       .subscribe((event) =>
-        this.urls.update(({ current }) => ({ current: event.urlAfterRedirects, previous: current })),
+        this.urls.update(({ current }) => ({
+          current: event.urlAfterRedirects,
+          previous: current,
+        })),
       );
   }
 
   private readonly segments = computed(
     () =>
-      this.router.parseUrl(this.urls().current).root.children['primary']?.segments.map((s) => s.path) ??
-      [],
+      this.router
+        .parseUrl(this.urls().current)
+        .root.children['primary']?.segments.map((s) => s.path) ?? [],
   );
 
   readonly section = computed<Section>(() => {

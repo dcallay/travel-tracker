@@ -1,7 +1,14 @@
 import { Injectable, computed, signal } from '@angular/core';
 
-import { barWidth, cityWeight, continentWeight, countryWeight, fmtPct, pct } from '../data/travel-calc';
-import { ContinentData, TIMELINE, TRAVEL_TREE } from '../data/travel-data';
+import {
+  barWidth,
+  cityWeight,
+  continentWeight,
+  countryWeight,
+  fmtPct,
+  pct,
+} from './data/travel-calc';
+import { ContinentData, TIMELINE, TRAVEL_TREE } from './data/travel-data';
 import { toSlug } from './slug';
 
 export interface WorldTotals {

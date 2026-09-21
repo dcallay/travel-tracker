@@ -1,4 +1,4 @@
-import { barWidth, fmtPct } from '../data/travel-calc';
+import { barWidth, fmtPct } from './data/travel-calc';
 
 /** A place as shown in a list: name, a sub-line, its coverage and where clicking it leads. */
 export interface Row {

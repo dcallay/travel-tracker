@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
-import { cityWeight } from '../data/travel-calc';
-import { TRAVEL_TREE } from '../data/travel-data';
+import { cityWeight } from './data/travel-calc';
+import { TRAVEL_TREE } from './data/travel-data';
 import { toSlug } from './slug';
 import { TravelStore } from './travel-store';
 

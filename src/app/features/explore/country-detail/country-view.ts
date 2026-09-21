@@ -1,6 +1,6 @@
 import { Row, toRow } from '../../../core/place-row';
-import { barWidth, cityWeight, countryWeight, fmtPct, pct } from '../../../data/travel-calc';
-import { CITY_GEO, ContinentData, flagImageUrl } from '../../../data/travel-data';
+import { barWidth, cityWeight, countryWeight, fmtPct, pct } from '../../../core/data/travel-calc';
+import { CITY_GEO, ContinentData, flagImageUrl } from '../../../core/data/travel-data';
 import { CityMarker } from '../../../shared/ui/coverage-map/coverage-map';
 
 export interface CountryView {

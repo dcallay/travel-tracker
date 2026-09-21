@@ -1,8 +1,14 @@
 import { WorldTotals } from '../../../core/travel-store';
 import { METRIC_LOWER } from '../../../core/metric';
 import { Row, toRow } from '../../../core/place-row';
-import { cityWeight, continentWeight, countryWeight, fmtPct, pct } from '../../../data/travel-calc';
-import { ContinentData } from '../../../data/travel-data';
+import {
+  cityWeight,
+  continentWeight,
+  countryWeight,
+  fmtPct,
+  pct,
+} from '../../../core/data/travel-calc';
+import { ContinentData } from '../../../core/data/travel-data';
 
 export interface StatItem {
   label: string;
@@ -25,7 +31,11 @@ export interface ListView {
 }
 
 /** The world (path `[]`) or one continent (path `[continent]`) as a table with stats and a map. */
-export function buildListView(tree: ContinentData[], totals: WorldTotals, path: number[]): ListView {
+export function buildListView(
+  tree: ContinentData[],
+  totals: WorldTotals,
+  path: number[],
+): ListView {
   if (path.length === 0) return buildWorldView(tree, totals);
   return buildContinentView(tree, totals, path[0]);
 }
@@ -53,14 +63,24 @@ function buildWorldView(tree: ContinentData[], totals: WorldTotals): ListView {
         note: `${totals.worldV} of ${totals.worldT} weighted places`,
         hasInfo: true,
       },
-      { label: 'Countries touched', value: String(totals.countriesTouched), note: 'across the world', hasInfo: false },
+      {
+        label: 'Countries touched',
+        value: String(totals.countriesTouched),
+        note: 'across the world',
+        hasInfo: false,
+      },
       {
         label: 'Cities logged',
         value: String(totals.citiesLogged),
         note: `${totals.landmarks} landmarks checked off`,
         hasInfo: false,
       },
-      { label: 'Your discoveries', value: String(totals.discoveries), note: 'local knowledge score', hasInfo: false },
+      {
+        label: 'Your discoveries',
+        value: String(totals.discoveries),
+        note: 'local knowledge score',
+        hasInfo: false,
+      },
     ],
     emptyNote: '',
     mapFit: '',
@@ -108,8 +128,18 @@ function buildContinentView(tree: ContinentData[], totals: WorldTotals, index: n
         note: `${cn.countries.filter((co) => countryWeight(co).v > 0).length} with visits`,
         hasInfo: false,
       },
-      { label: 'Cities logged', value: String(citiesLogged), note: 'in this continent', hasInfo: false },
-      { label: 'Your discoveries', value: String(discoveries), note: 'local knowledge score', hasInfo: false },
+      {
+        label: 'Cities logged',
+        value: String(citiesLogged),
+        note: 'in this continent',
+        hasInfo: false,
+      },
+      {
+        label: 'Your discoveries',
+        value: String(discoveries),
+        note: 'local knowledge score',
+        hasInfo: false,
+      },
     ],
     emptyNote:
       w.v === 0

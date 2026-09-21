@@ -1,5 +1,5 @@
 import { computeWorldTotals } from '../../../core/travel-store';
-import { TRAVEL_TREE } from '../../../data/travel-data';
+import { TRAVEL_TREE } from '../../../core/data/travel-data';
 import { buildListView } from './list-view';
 
 const totals = computeWorldTotals(TRAVEL_TREE);
@@ -38,7 +38,13 @@ describe('buildListView', () => {
       const view = buildListView(TRAVEL_TREE, totals, [0]);
       expect(view.levelTitle).toBe('South America');
       expect(view.colHead).toBe('Country');
-      expect(view.rows.map((r) => r.path)).toEqual([[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]]);
+      expect(view.rows.map((r) => r.path)).toEqual([
+        [0, 0],
+        [0, 1],
+        [0, 2],
+        [0, 3],
+        [0, 4],
+      ]);
       expect(view.rows[0].meta).toBe('3 of 4 cities logged'); // Ecuador: Baños is unvisited
       expect(view.mapFit).toBe('South America');
     });

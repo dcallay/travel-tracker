@@ -1,5 +1,5 @@
-import { OpenPlace, ContinentData, flagImageUrl } from '../../../data/travel-data';
-import { barWidth, cityWeight, fmtPct, pct } from '../../../data/travel-calc';
+import { OpenPlace, ContinentData, flagImageUrl } from '../../../core/data/travel-data';
+import { barWidth, cityWeight, fmtPct, pct } from '../../../core/data/travel-calc';
 
 export interface CityView {
   name: string;
@@ -43,6 +43,11 @@ export function buildCityView(tree: ContinentData[], path: number[]): CityView {
     openCount: `${openN} neighbourhoods · ${openL} landmarks`,
     openList: ct.open.length
       ? ct.open
-      : [{ name: `${openN} neighbourhoods and ${openL} landmarks not itemised yet`, kind: 'Seed data' }],
+      : [
+          {
+            name: `${openN} neighbourhoods and ${openL} landmarks not itemised yet`,
+            kind: 'Seed data',
+          },
+        ],
   };
 }

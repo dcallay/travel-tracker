@@ -4,7 +4,7 @@ import { RouterOutlet } from '@angular/router';
 import { METRIC_LOWER } from '../../core/metric';
 import { Navigation } from '../../core/navigation';
 import { TravelStore } from '../../core/travel-store';
-import { barWidth, continentWeight, countryWeight, fmtPct, pct } from '../../data/travel-calc';
+import { barWidth, continentWeight, countryWeight, fmtPct, pct } from '../../core/data/travel-calc';
 import { FeedbackDialog } from '../../dialogs/feedback-dialog/feedback-dialog';
 import { HowItWorksDialog } from '../../dialogs/how-it-works-dialog/how-it-works-dialog';
 import { PhotoConfirmDialog } from '../../dialogs/photo-confirm-dialog/photo-confirm-dialog';
