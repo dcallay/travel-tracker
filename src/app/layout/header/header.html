@@ -1,0 +1,24 @@
+<header class="tt-header">
+  <div class="tt-crumbs">
+    @for (crumb of crumbs(); track crumb.label) {
+      <button
+        type="button"
+        class="tt-crumb"
+        [class.is-active]="crumb.active"
+        (click)="crumbSelected.emit(crumb.path)"
+      >
+        {{ crumb.label }}
+      </button>
+      @if (crumb.sep) {
+        <span class="tt-crumb__sep">{{ crumb.sep }}</span>
+      }
+    }
+  </div>
+
+  <app-lang-menu />
+
+  <button type="button" class="btn btn-secondary" (click)="dialogs.openPhoto()">
+    Confirm 2 detections
+  </button>
+  <button type="button" class="btn btn-primary" (click)="addVisit.emit()">Add a visit</button>
+</header>

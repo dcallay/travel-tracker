@@ -1,25 +1,18 @@
+/* The host, not the inner <aside>, is the sticky flex item of the shell. */
 :host {
-  display: block;
-}
-
-.tt-layout {
   display: flex;
-  align-items: flex-start;
-  min-height: 100vh;
-  background: var(--color-bg);
-  color: var(--color-text);
+  flex: none;
+  align-self: flex-start;
+  position: sticky;
+  top: 0;
 }
 
-/* — sidebar — */
 .tt-sidebar {
   width: 216px;
-  flex: none;
   border-right: 2px solid var(--color-divider);
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  position: sticky;
-  top: 0;
 }
 
 .tt-sidebar__brand {
@@ -104,6 +97,10 @@
   line-height: 1;
 }
 
+.tt-parent-score__bar {
+  margin-top: 10px;
+}
+
 .tt-parent-score__note {
   font-size: 11px;
   color: var(--color-neutral-700);
@@ -111,129 +108,19 @@
   line-height: 1.5;
 }
 
-.tt-parent-score__bar {
-  margin-top: 10px;
-}
-
 .tt-sidebar__feedback {
   padding: 10px 16px;
   border-top: 2px solid var(--color-divider);
 }
 
-/* — main / header — */
-.tt-main {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.tt-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 20px;
-  border-bottom: 2px solid var(--color-divider);
-  flex-wrap: wrap;
-}
-
-.tt-crumbs {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 1;
-  min-width: 0;
-  flex-wrap: wrap;
-}
-
-.tt-crumb {
-  appearance: none;
-  background: transparent;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 13px;
-  letter-spacing: 0.02em;
-  color: var(--color-accent);
-
-  &.is-active {
-    color: var(--color-text);
-  }
-}
-
-.tt-crumb__sep {
-  color: var(--color-neutral-500);
-  font-size: 12px;
-  margin-left: 8px;
-}
-
-.tt-lang {
-  position: relative;
-  flex: none;
-}
-
-.tt-lang__menu {
-  position: absolute;
-  top: calc(100% + 6px);
-  right: 0;
-  z-index: 40;
-  min-width: 180px;
-  background: var(--color-bg);
-  border: 2px solid var(--color-text);
-  box-shadow: var(--shadow-md);
-  display: flex;
-  flex-direction: column;
-}
-
-.tt-lang__item {
-  appearance: none;
-  border: 0;
-  border-bottom: 1px solid var(--color-divider);
-  background: transparent;
-  color: var(--color-text);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 12px;
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 400;
-  text-align: left;
-
-  &:hover {
-    background: var(--color-neutral-200);
-  }
-
-  &.is-active {
-    background: var(--color-accent-100);
-    color: var(--color-accent-700);
-    font-weight: 700;
-  }
-}
-
-.tt-lang__code {
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  color: var(--color-neutral-700);
-}
-
-.tt-content {
-  flex: 1;
-}
-
-/* — responsive — */
 @media (max-width: 860px) {
-  .tt-layout {
-    flex-direction: column;
+  :host {
+    position: static;
+    align-self: stretch;
   }
   .tt-sidebar {
     width: 100%;
     min-height: 0;
-    position: static;
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;

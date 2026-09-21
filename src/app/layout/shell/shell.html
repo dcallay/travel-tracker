@@ -1,0 +1,41 @@
+<div class="tt-layout">
+  <app-sidebar
+    [items]="navItems()"
+    [parentScore]="parentScore()"
+    (navSelected)="selectNav($event)"
+  />
+
+  <main class="tt-main">
+    <app-header [crumbs]="crumbs()" (crumbSelected)="go($event)" (addVisit)="goAdd()" />
+
+    <div class="tt-content">
+      @if (isCityView()) {
+        <app-city-detail [path]="path()" />
+      }
+
+      @if (isCountryView()) {
+        <app-country-detail [path]="path()" (navigate)="go($event)" />
+      }
+
+      @if (isListView()) {
+        <app-explore-list [path]="path()" (navigate)="go($event)" />
+      }
+
+      @if (nav() === 'left') {
+        <app-whats-left (navigate)="go($event)" />
+      }
+
+      @if (nav() === 'timeline') {
+        <app-timeline />
+      }
+
+      @if (nav() === 'add') {
+        <app-add-visit (finished)="goExplore()" />
+      }
+    </div>
+  </main>
+</div>
+
+<app-feedback-dialog />
+<app-how-it-works-dialog />
+<app-photo-confirm-dialog />
