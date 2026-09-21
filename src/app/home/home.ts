@@ -9,45 +9,24 @@ import { TravelStore } from '../core/travel-store';
 import { FeedbackDialog } from '../dialogs/feedback-dialog/feedback-dialog';
 import { HowItWorksDialog } from '../dialogs/how-it-works-dialog/how-it-works-dialog';
 import { PhotoConfirmDialog } from '../dialogs/photo-confirm-dialog/photo-confirm-dialog';
+import { ExploreList } from '../features/explore/explore-list/explore-list';
 import { AddVisit } from '../features/add-visit/add-visit';
 import { WhatsLeft } from '../features/whats-left/whats-left';
 import { Timeline } from '../features/timeline/timeline';
 import { CityMarker, CoverageMap } from '../shared/ui/coverage-map/coverage-map';
-import { CoverageCell } from '../shared/ui/coverage-cell/coverage-cell';
 import { EmptyNote } from '../shared/ui/empty-note/empty-note';
 import { LksPanel } from '../shared/ui/lks-panel/lks-panel';
 import { ProgressBar } from '../shared/ui/progress-bar/progress-bar';
 import { ScoreBreakdown } from '../shared/ui/score-breakdown/score-breakdown';
 import { ScoreSummary } from '../shared/ui/score-summary/score-summary';
-import { StatTile } from '../shared/ui/stat-tile/stat-tile';
 
 type NavId = 'explore' | 'left' | 'timeline' | 'add';
-
-interface StatItem {
-  label: string;
-  value: string;
-  note: string;
-  hasInfo: boolean;
-}
 
 interface Crumb {
   label: string;
   sep: string;
   active: boolean;
   path: number[];
-}
-
-interface ListViewModel {
-  rows: Row[];
-  colHead: string;
-  levelTitle: string;
-  levelSub: string;
-  stats: StatItem[];
-  emptyNote: string;
-  mapFit: string;
-  mapHeight: number;
-  mapCaption: string;
-  mapData: Record<string, number>;
 }
 
 interface CountryViewModel {
@@ -96,9 +75,9 @@ const LANGS: [string, string][] = [
   selector: 'app-home',
   imports: [
     AddVisit,
-    CoverageCell,
     CoverageMap,
     EmptyNote,
+    ExploreList,
     FeedbackDialog,
     HowItWorksDialog,
     LksPanel,
@@ -106,7 +85,6 @@ const LANGS: [string, string][] = [
     ProgressBar,
     ScoreBreakdown,
     ScoreSummary,
-    StatTile,
     Timeline,
     WhatsLeft,
   ],
@@ -167,77 +145,6 @@ export class Home {
   protected readonly langs = computed(() =>
     LANGS.map(([code, name]) => ({ code, name, active: code === this.lang() })),
   );
-
-  protected readonly listView = computed<ListViewModel>(() => {
-    const path = this.path();
-    const metricLower = this.metricLower;
-    const totals = this.store.worldTotals();
-
-    if (path.length === 0) {
-      const rows = this.store.tree().map((cn, i) => {
-        const w = continentWeight(cn);
-        const touched = cn.countries.filter((co) => countryWeight(co).v > 0).length;
-        return toRow(
-          cn.name,
-          touched ? `${touched} of ${cn.countries.length} countries` : 'No visits yet',
-          pct(w),
-          [i],
-        );
-      });
-      return {
-        rows,
-        colHead: 'Continent',
-        levelTitle: 'By continent',
-        levelSub: 'Landmarks count double neighbourhoods',
-        stats: [
-          { label: `World ${metricLower}`, value: fmtPct(this.store.worldPct()), note: `${totals.worldV} of ${totals.worldT} weighted places`, hasInfo: true },
-          { label: 'Countries touched', value: String(totals.countriesTouched), note: 'across the world', hasInfo: false },
-          { label: 'Cities logged', value: String(totals.citiesLogged), note: `${totals.landmarks} landmarks checked off`, hasInfo: false },
-          { label: 'Your discoveries', value: String(totals.discoveries), note: 'local knowledge score', hasInfo: false },
-        ],
-        emptyNote: '',
-        mapFit: '',
-        mapHeight: 250,
-        mapCaption: `Countries shaded by ${metricLower} — click one for its detail`,
-        mapData: totals.mapData,
-      };
-    }
-
-    const cn = this.store.tree()[path[0]];
-    const w = continentWeight(cn);
-    const rows = cn.countries.map((co, i) => {
-      const cwt = countryWeight(co);
-      const logged = co.cities.filter((ct) => cityWeight(ct).v > 0).length;
-      return toRow(
-        co.name,
-        logged ? `${logged} of ${co.cities.length} cities logged` : 'No visits yet',
-        pct(cwt),
-        [path[0], i],
-      );
-    });
-    const discoveries = cn.countries.reduce((a, co) => a + co.cities.reduce((b, ct) => b + ct.disc.length, 0), 0);
-    const citiesLogged = cn.countries.reduce((a, co) => a + co.cities.filter((ct) => cityWeight(ct).v > 0).length, 0);
-    return {
-      rows,
-      colHead: 'Country',
-      levelTitle: cn.name,
-      levelSub: `${cn.countries.length} countries on file`,
-      stats: [
-        { label: `${cn.name} ${metricLower}`, value: fmtPct(pct(w)), note: `${w.v} of ${w.t} weighted places`, hasInfo: true },
-        { label: 'Countries', value: String(cn.countries.length), note: `${cn.countries.filter((co) => countryWeight(co).v > 0).length} with visits`, hasInfo: false },
-        { label: 'Cities logged', value: String(citiesLogged), note: 'in this continent', hasInfo: false },
-        { label: 'Your discoveries', value: String(discoveries), note: 'local knowledge score', hasInfo: false },
-      ],
-      emptyNote:
-        w.v === 0
-          ? `Nothing logged in ${cn.name} yet. ${cn.countries.length} countries and ${w.t} weighted places are already on file, so the moment you land somewhere the percentage starts moving.`
-          : '',
-      mapFit: cn.name,
-      mapHeight: 360,
-      mapCaption: `${cn.name} — shaded by ${metricLower}, click a country for its detail`,
-      mapData: totals.mapData,
-    };
-  });
 
   protected readonly countryView = computed<CountryViewModel | null>(() => {
     const path = this.path();
