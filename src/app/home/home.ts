@@ -1,16 +1,11 @@
 import { Component, HostListener, computed, inject, signal } from '@angular/core';
 
-import {
-  CITY_GEO,
-  CityData,
-  CountryData,
-  TIMELINE,
-  TRAVEL_TREE,
-  flagImageUrl,
-} from '../data/travel-data';
+import { CITY_GEO, CityData, CountryData, flagImageUrl } from '../data/travel-data';
 import { barWidth, cityWeight, continentWeight, countryWeight, fmtPct, pct } from '../data/travel-calc';
 import { DialogState } from '../core/dialog-state';
 import { METRIC_LABEL, METRIC_LOWER } from '../core/metric';
+import { Row, toRow } from '../core/place-row';
+import { TravelStore } from '../core/travel-store';
 import { FeedbackDialog } from '../dialogs/feedback-dialog/feedback-dialog';
 import { HowItWorksDialog } from '../dialogs/how-it-works-dialog/how-it-works-dialog';
 import { PhotoConfirmDialog } from '../dialogs/photo-confirm-dialog/photo-confirm-dialog';
@@ -23,16 +18,6 @@ import { ScoreSummary } from '../shared/ui/score-summary/score-summary';
 import { StatTile } from '../shared/ui/stat-tile/stat-tile';
 
 type NavId = 'explore' | 'left' | 'timeline' | 'add';
-
-interface Row {
-  name: string;
-  meta: string;
-  pct: string;
-  bar: string;
-  barColor: string;
-  fg: string;
-  path: number[] | null;
-}
 
 interface StatItem {
   label: string;
@@ -95,17 +80,6 @@ interface CityViewModel {
   openList: { name: string; kind: string }[];
 }
 
-interface LeftRow {
-  name: string;
-  where: string;
-  pct: string;
-  bar: string;
-  open: string;
-  disc: string;
-  path: number[];
-  sort: number;
-}
-
 const LANGS: [string, string][] = [
   ['EN', 'English'],
   ['ES', 'Español'],
@@ -113,8 +87,6 @@ const LANGS: [string, string][] = [
   ['FR', 'Français'],
   ['DE', 'Deutsch'],
 ];
-
-const COUNTRY_ALIAS: Record<string, string> = { 'United States': 'United States of America' };
 
 @Component({
   selector: 'app-home',
@@ -134,10 +106,12 @@ const COUNTRY_ALIAS: Record<string, string> = { 'United States': 'United States 
   styleUrl: './home.scss',
 })
 export class Home {
+  private readonly store = inject(TravelStore);
   protected readonly dialogs = inject(DialogState);
   protected readonly metricLabel = METRIC_LABEL;
   protected readonly metricLower = METRIC_LOWER;
-  protected readonly timeline = TIMELINE;
+  protected readonly timeline = this.store.timeline;
+  protected readonly leftRows = this.store.leftRows;
 
   protected readonly nav = signal<NavId>('explore');
   protected readonly path = signal<number[]>([]);
@@ -145,12 +119,9 @@ export class Home {
   protected readonly lang = signal('EN');
   protected readonly langOpen = signal(false);
 
-  protected onCountrySelect(hit: string): void {
-    TRAVEL_TREE.forEach((cn, i) =>
-      cn.countries.forEach((co, j) => {
-        if (co.name === hit || COUNTRY_ALIAS[co.name] === hit) this.go([i, j]);
-      }),
-    );
+  protected onCountrySelect(mapName: string): void {
+    const path = this.store.countryPathForMapName(mapName);
+    if (path) this.go(path);
   }
 
   @HostListener('document:keydown.escape')
@@ -165,9 +136,9 @@ export class Home {
   protected readonly navItems = computed(() => {
     const nav = this.nav();
     const defs: { id: NavId; label: string; count: string }[] = [
-      { id: 'explore', label: 'Explore', count: `${TRAVEL_TREE.length} continents` },
+      { id: 'explore', label: 'Explore', count: `${this.store.tree().length} continents` },
       { id: 'left', label: "What's left", count: `${this.leftRows().length} places` },
-      { id: 'timeline', label: 'Timeline', count: `${TIMELINE.length} recent` },
+      { id: 'timeline', label: 'Timeline', count: `${this.timeline.length} recent` },
     ];
     return defs.map((d) => ({ ...d, active: nav === d.id }));
   });
@@ -175,9 +146,9 @@ export class Home {
   protected readonly crumbs = computed<Crumb[]>(() => {
     const path = this.path();
     const labels: string[] = ['World'];
-    if (path[0] != null) labels.push(TRAVEL_TREE[path[0]].name);
-    if (path[1] != null) labels.push(TRAVEL_TREE[path[0]].countries[path[1]].name);
-    if (path[2] != null) labels.push(TRAVEL_TREE[path[0]].countries[path[1]].cities[path[2]].name);
+    if (path[0] != null) labels.push(this.store.tree()[path[0]].name);
+    if (path[1] != null) labels.push(this.store.tree()[path[0]].countries[path[1]].name);
+    if (path[2] != null) labels.push(this.store.tree()[path[0]].countries[path[1]].cities[path[2]].name);
     return labels.map((label, i) => ({
       label,
       sep: i < labels.length - 1 ? '/' : '',
@@ -190,64 +161,16 @@ export class Home {
     LANGS.map(([code, name]) => ({ code, name, active: code === this.lang() })),
   );
 
-  private readonly worldTotals = computed(() => {
-    let worldV = 0;
-    let worldT = 0;
-    let countriesTouched = 0;
-    let citiesLogged = 0;
-    let discoveries = 0;
-    let landmarks = 0;
-    const mapData: Record<string, number> = {};
-    TRAVEL_TREE.forEach((cn) => {
-      const w = continentWeight(cn);
-      worldV += w.v;
-      worldT += w.t;
-      cn.countries.forEach((co) => {
-        const cwt = countryWeight(co);
-        mapData[co.name] = cwt.v > 0 ? Math.round(pct(cwt) * 10) / 10 : 0;
-        if (cwt.v > 0) countriesTouched++;
-        co.cities.forEach((ct) => {
-          if (cityWeight(ct).v > 0) citiesLogged++;
-          discoveries += ct.disc.length;
-          landmarks += ct.lv;
-        });
-      });
-    });
-    return { worldV, worldT, countriesTouched, citiesLogged, discoveries, landmarks, mapData };
-  });
-
-  protected readonly worldPct = computed(() => {
-    const t = this.worldTotals();
-    return pct({ v: t.worldV, t: t.worldT });
-  });
-
-  protected readonly worldFootnote = computed(() => {
-    const t = this.worldTotals();
-    return `${t.countriesTouched} countries · ${t.citiesLogged} cities · ${t.discoveries} discoveries`;
-  });
-
-  private mkRow(name: string, meta: string, p: number, next: number[] | null): Row {
-    return {
-      name,
-      meta,
-      pct: fmtPct(p),
-      bar: barWidth(p),
-      barColor: p === 0 ? 'var(--color-neutral-400)' : 'var(--color-accent)',
-      fg: p === 0 ? 'var(--color-neutral-600)' : 'var(--color-text)',
-      path: next,
-    };
-  }
-
   protected readonly listView = computed<ListViewModel>(() => {
     const path = this.path();
     const metricLower = this.metricLower;
-    const totals = this.worldTotals();
+    const totals = this.store.worldTotals();
 
     if (path.length === 0) {
-      const rows = TRAVEL_TREE.map((cn, i) => {
+      const rows = this.store.tree().map((cn, i) => {
         const w = continentWeight(cn);
         const touched = cn.countries.filter((co) => countryWeight(co).v > 0).length;
-        return this.mkRow(
+        return toRow(
           cn.name,
           touched ? `${touched} of ${cn.countries.length} countries` : 'No visits yet',
           pct(w),
@@ -260,7 +183,7 @@ export class Home {
         levelTitle: 'By continent',
         levelSub: 'Landmarks count double neighbourhoods',
         stats: [
-          { label: `World ${metricLower}`, value: fmtPct(this.worldPct()), note: `${totals.worldV} of ${totals.worldT} weighted places`, hasInfo: true },
+          { label: `World ${metricLower}`, value: fmtPct(this.store.worldPct()), note: `${totals.worldV} of ${totals.worldT} weighted places`, hasInfo: true },
           { label: 'Countries touched', value: String(totals.countriesTouched), note: 'across the world', hasInfo: false },
           { label: 'Cities logged', value: String(totals.citiesLogged), note: `${totals.landmarks} landmarks checked off`, hasInfo: false },
           { label: 'Your discoveries', value: String(totals.discoveries), note: 'local knowledge score', hasInfo: false },
@@ -273,12 +196,12 @@ export class Home {
       };
     }
 
-    const cn = TRAVEL_TREE[path[0]];
+    const cn = this.store.tree()[path[0]];
     const w = continentWeight(cn);
     const rows = cn.countries.map((co, i) => {
       const cwt = countryWeight(co);
       const logged = co.cities.filter((ct) => cityWeight(ct).v > 0).length;
-      return this.mkRow(
+      return toRow(
         co.name,
         logged ? `${logged} of ${co.cities.length} cities logged` : 'No visits yet',
         pct(cwt),
@@ -312,7 +235,7 @@ export class Home {
   protected readonly countryView = computed<CountryViewModel | null>(() => {
     const path = this.path();
     if (path.length !== 2) return null;
-    const cn = TRAVEL_TREE[path[0]];
+    const cn = this.store.tree()[path[0]];
     const co: CountryData = cn.countries[path[1]];
     const w = countryWeight(co);
     const p = pct(w);
@@ -327,7 +250,7 @@ export class Home {
       .map((ct, i) => {
         const cwt = cityWeight(ct);
         const cp = pct(cwt);
-        const row = this.mkRow(
+        const row = toRow(
           ct.name,
           cwt.v ? `${ct.nv} neighbourhoods · ${ct.lv} landmarks · ${ct.last}` : 'Not yet visited',
           cp,
@@ -365,7 +288,7 @@ export class Home {
   protected readonly cityView = computed<CityViewModel | null>(() => {
     const path = this.path();
     if (path.length !== 3) return null;
-    const cn = TRAVEL_TREE[path[0]];
+    const cn = this.store.tree()[path[0]];
     const co = cn.countries[path[1]];
     const ct = co.cities[path[2]];
     const w = cityWeight(ct);
@@ -388,45 +311,21 @@ export class Home {
     };
   });
 
-  protected readonly leftRows = computed<LeftRow[]>(() => {
-    const rows: LeftRow[] = [];
-    TRAVEL_TREE.forEach((cn, i) =>
-      cn.countries.forEach((co, j) =>
-        co.cities.forEach((ct, k) => {
-          const w = cityWeight(ct);
-          if (!w.v) return;
-          const p = pct(w);
-          rows.push({
-            name: ct.name,
-            where: `${co.name} · ${cn.name}`,
-            pct: fmtPct(p),
-            bar: barWidth(p),
-            open: `${ct.nt - ct.nv} neighbourhoods · ${ct.lt - ct.lv} landmarks`,
-            disc: String(ct.disc.length),
-            path: [i, j, k],
-            sort: p,
-          });
-        }),
-      ),
-    );
-    return rows.sort((a, b) => b.sort - a.sort);
-  });
-
   protected readonly parentScore = computed(() => {
     const path = this.path();
     const metricLower = this.metricLower;
     if (this.nav() !== 'explore' || path.length === 0) return null;
     if (path.length === 1) {
-      const t = this.worldTotals();
+      const t = this.store.worldTotals();
       return {
         label: `World ${metricLower}`,
-        pct: fmtPct(this.worldPct()),
-        bar: barWidth(this.worldPct()),
+        pct: fmtPct(this.store.worldPct()),
+        bar: barWidth(this.store.worldPct()),
         note: `${t.worldV} of ${t.worldT} weighted places`,
       };
     }
     if (path.length === 2) {
-      const cn = TRAVEL_TREE[path[0]];
+      const cn = this.store.tree()[path[0]];
       const w = continentWeight(cn);
       const p = pct(w);
       return {
@@ -436,7 +335,7 @@ export class Home {
         note: `${w.v} of ${w.t} weighted places · ${cn.countries.length} countries`,
       };
     }
-    const cn = TRAVEL_TREE[path[0]];
+    const cn = this.store.tree()[path[0]];
     const co = cn.countries[path[1]];
     const w = countryWeight(co);
     const p = pct(w);
