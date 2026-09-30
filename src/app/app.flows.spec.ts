@@ -134,6 +134,22 @@ describe('App flows', () => {
       expect(text('.tt-detail__title')).toBe('Lisbon');
     });
 
+    it("shows What's left in the chosen language", async () => {
+      await click(el.querySelector('.tt-lang .btn'));
+      await clickByText('.tt-lang__item', 'Español');
+      await clickByText('.tt-nav__item', 'Lo que falta');
+      expect(text('.tt-left h4')).toBe('Lo que queda pendiente');
+      expect(all('.tt-left__table th').map((n) => n.textContent?.trim())).toEqual([
+        'Lugar',
+        'Explorado',
+        'Pendiente',
+        'Descubrimientos',
+      ]);
+      expect(all('.tt-left__table tbody .tt-row-meta')[1].textContent?.trim()).toMatch(
+        /^\d+ barrios · \d+ monumentos$/,
+      );
+    });
+
     it('renders the timeline', async () => {
       await clickByText('.tt-nav__item', 'Timeline');
       expect(all('.tt-timeline__item')).toHaveLength(TIMELINE.length);

@@ -1,15 +1,15 @@
+@let l = t().left;
+
 <div class="tt-left">
-  <h4>What's still open</h4>
-  <p class="tt-lead">
-    Ordered by how close each place is to done. No suggestions, no nudges — just the gaps.
-  </p>
+  <h4>{{ l.title }}</h4>
+  <p class="tt-lead">{{ l.lead }}</p>
   <table class="table tt-left__table">
     <thead>
       <tr>
-        <th>Place</th>
+        <th>{{ l.place }}</th>
         <th class="tt-col-metric">{{ t().metric }}</th>
-        <th>Open</th>
-        <th class="tt-col-disc">Discoveries</th>
+        <th>{{ l.open }}</th>
+        <th class="tt-col-disc">{{ l.discoveries }}</th>
       </tr>
     </thead>
     <tbody>
@@ -20,7 +20,7 @@
             <div class="tt-row-meta">{{ row.where }}</div>
           </td>
           <td><app-coverage-cell [bar]="row.bar" [pct]="row.pct" /></td>
-          <td class="tt-row-meta">{{ row.open }}</td>
+          <td class="tt-row-meta">{{ t().city.openCount(row.openN, row.openL) }}</td>
           <td class="tt-row-disc">{{ row.disc }}</td>
         </tr>
       }

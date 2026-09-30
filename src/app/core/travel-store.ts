@@ -27,7 +27,9 @@ export interface LeftRow {
   where: string;
   pct: string;
   bar: string;
-  open: string;
+  /** Neighbourhoods and landmarks still to visit. */
+  openN: number;
+  openL: number;
   disc: string;
   path: number[];
   sort: number;
@@ -75,7 +77,8 @@ export function computeLeftRows(tree: ContinentData[]): LeftRow[] {
           where: `${co.name} · ${cn.name}`,
           pct: fmtPct(p),
           bar: barWidth(p),
-          open: `${ct.nt - ct.nv} neighbourhoods · ${ct.lt - ct.lv} landmarks`,
+          openN: ct.nt - ct.nv,
+          openL: ct.lt - ct.lv,
           disc: String(ct.disc.length),
           path: [i, j, k],
           sort: p,

@@ -72,6 +72,15 @@ export interface Strings {
     confirm: string;
   };
 
+  /** The What's left page. */
+  left: {
+    title: string;
+    lead: string;
+    place: string;
+    open: string;
+    discoveries: string;
+  };
+
   header: {
     world: string;
     confirmDetections: (n: number) => string;
@@ -263,6 +272,14 @@ export const EN: Strings = {
     confirm: 'Confirm visit',
   },
 
+  left: {
+    title: "What's still open",
+    lead: 'Ordered by how close each place is to done. No suggestions, no nudges — just the gaps.',
+    place: 'Place',
+    open: 'Open',
+    discoveries: 'Discoveries',
+  },
+
   header: {
     world: 'World',
     confirmDetections: (n) => `Confirm ${n} detections`,
@@ -436,6 +453,14 @@ export const ES: Strings = {
     sourceValue: 'Foto + GPS',
     reject: 'No es este lugar',
     confirm: 'Confirmar visita',
+  },
+
+  left: {
+    title: 'Lo que queda pendiente',
+    lead: 'Ordenado según lo cerca que está cada lugar de completarse. Sin sugerencias ni empujones: solo lo que falta.',
+    place: 'Lugar',
+    open: 'Pendiente',
+    discoveries: 'Descubrimientos',
   },
 
   header: {

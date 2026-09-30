@@ -47,7 +47,10 @@ describe('TravelStore', () => {
     expect(rows.map((r) => r.sort)).toEqual([...rows.map((r) => r.sort)].sort((a, b) => b - a));
     for (const row of rows) {
       const [i, j, k] = row.path;
-      expect(TRAVEL_TREE[i].countries[j].cities[k].name).toBe(row.name);
+      const city = TRAVEL_TREE[i].countries[j].cities[k];
+      expect(city.name).toBe(row.name);
+      expect(row.openN).toBe(city.nt - city.nv);
+      expect(row.openL).toBe(city.lt - city.lv);
     }
   });
 
