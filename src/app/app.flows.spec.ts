@@ -186,6 +186,23 @@ describe('App flows', () => {
       expect(text('.tt-crumb.is-active')).toBe('Mundo');
     });
 
+    it('translates the add-visit page into the chosen language', async () => {
+      await click(el.querySelector('.tt-lang .btn'));
+      await clickByText('.tt-lang__item', 'Español');
+      await clickByText('.tt-header .btn-primary', 'Añadir una visita');
+      expect(text('.tt-add h4')).toBe('Añadir una visita');
+      expect(all('.tt-add .seg-opt').map((n) => n.textContent?.trim())).toEqual([
+        'Barrio',
+        'Monumento',
+        'Descubrimiento personal',
+      ]);
+      expect(el.querySelector<HTMLInputElement>('#tt-date')!.value).toBe('16 sept 2026');
+      expect(el.querySelector('#tt-notes')?.getAttribute('placeholder')).toBe('Opcional');
+      expect(text('.tt-add__source')).toBe('Origen: manual');
+      await clickByText('.tt-add__actions .btn', 'Cancelar');
+      expect(el.querySelector('.tt-add')).toBeNull();
+    });
+
     it('translates the sidebar into the chosen language', async () => {
       await clickByText('.table tbody tr', 'South America');
       await click(el.querySelector('.tt-lang .btn'));

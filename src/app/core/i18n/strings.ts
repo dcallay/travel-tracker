@@ -41,6 +41,26 @@ export interface Strings {
     emptyContinent: (continent: string, countries: number, t: number) => string;
   };
 
+  addVisit: {
+    lead: string;
+    place: string;
+    coverageType: string;
+    neighbourhood: string;
+    landmark: string;
+    discovery: string;
+    hint: string;
+    name: string;
+    namePlaceholder: string;
+    date: string;
+    /** The form's prefilled example date. */
+    sampleDate: string;
+    notes: string;
+    notesPlaceholder: string;
+    save: string;
+    cancel: string;
+    source: string;
+  };
+
   header: {
     world: string;
     confirmDetections: (n: number) => string;
@@ -196,6 +216,25 @@ export const EN: Strings = {
       `Nothing logged in ${continent} yet. ${countries} countries and ${t} weighted places are already on file, so the moment you land somewhere the percentage starts moving.`,
   },
 
+  addVisit: {
+    lead: 'Manual entry. Geolocation and photo recognition fill this same form.',
+    place: 'Place',
+    coverageType: 'Coverage type',
+    neighbourhood: 'Neighbourhood',
+    landmark: 'Landmark',
+    discovery: 'Personal discovery',
+    hint: 'Neighbourhood counts 1, landmark counts 2. Personal discoveries raise your Local Knowledge Score instead of the percentage.',
+    name: 'Neighbourhood or landmark',
+    namePlaceholder: 'e.g. La Floresta',
+    date: 'Date visited',
+    sampleDate: '16 Sep 2026',
+    notes: 'Notes',
+    notesPlaceholder: 'Optional',
+    save: 'Save visit',
+    cancel: 'Cancel',
+    source: 'Source: manual',
+  },
+
   header: {
     world: 'World',
     confirmDetections: (n) => `Confirm ${n} detections`,
@@ -337,6 +376,25 @@ export const ES: Strings = {
     noVisits: 'Aún sin visitas',
     emptyContinent: (continent, countries, t) =>
       `Aún no hay nada registrado en ${continent}. Ya hay ${countries} países y ${t} lugares ponderados en el catálogo, así que en cuanto llegues a algún sitio el porcentaje empezará a moverse.`,
+  },
+
+  addVisit: {
+    lead: 'Entrada manual. La geolocalización y el reconocimiento de fotos rellenan este mismo formulario.',
+    place: 'Lugar',
+    coverageType: 'Tipo de cobertura',
+    neighbourhood: 'Barrio',
+    landmark: 'Monumento',
+    discovery: 'Descubrimiento personal',
+    hint: 'Un barrio cuenta 1 y un monumento cuenta 2. Los descubrimientos personales suben tu puntuación de conocimiento local en lugar del porcentaje.',
+    name: 'Barrio o monumento',
+    namePlaceholder: 'p. ej., La Floresta',
+    date: 'Fecha de la visita',
+    sampleDate: '16 sept 2026',
+    notes: 'Notas',
+    notesPlaceholder: 'Opcional',
+    save: 'Guardar visita',
+    cancel: 'Cancelar',
+    source: 'Origen: manual',
   },
 
   header: {
