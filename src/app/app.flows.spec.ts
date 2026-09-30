@@ -172,6 +172,20 @@ describe('App flows', () => {
       expect(text('.tt-lang .btn')).toContain('ES');
     });
 
+    it('translates the header into the chosen language', async () => {
+      await clickByText('.table tbody tr', 'South America');
+      await click(el.querySelector('.tt-lang .btn'));
+      await clickByText('.tt-lang__item', 'Español');
+      expect(all('.tt-crumb').map((c) => c.textContent?.trim())).toEqual([
+        'Mundo',
+        'South America',
+      ]);
+      expect(text('.tt-header .btn-secondary')).toBe('Confirmar 2 detecciones');
+      expect(text('.tt-header .btn-primary')).toBe('Añadir una visita');
+      await clickByText('.tt-crumb', 'Mundo');
+      expect(text('.tt-crumb.is-active')).toBe('Mundo');
+    });
+
     it('translates the sidebar into the chosen language', async () => {
       await clickByText('.table tbody tr', 'South America');
       await click(el.querySelector('.tt-lang .btn'));

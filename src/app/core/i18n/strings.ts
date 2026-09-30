@@ -12,6 +12,12 @@ export interface Strings {
   countryDiscoveriesNote: string;
   cityDiscoveriesNote: string;
 
+  header: {
+    world: string;
+    confirmDetections: (n: number) => string;
+    addVisit: string;
+  };
+
   sidebar: {
     tagline: string;
     explore: string;
@@ -135,6 +141,12 @@ export const EN: Strings = {
   cityDiscoveriesNote:
     "Personal discoveries — spots you found that aren't on any curated list. Kept out of the explored figure.",
 
+  header: {
+    world: 'World',
+    confirmDetections: (n) => `Confirm ${n} detections`,
+    addVisit: 'Add a visit',
+  },
+
   sidebar: {
     tagline: "Track how much of the world you've truly seen",
     explore: 'Explore',
@@ -245,6 +257,12 @@ export const ES: Strings = {
     'Descubrimientos personales en todo el país. No cuentan para el porcentaje explorado.',
   cityDiscoveriesNote:
     'Descubrimientos personales: lugares que encontraste y que no están en ninguna lista curada. No cuentan para el porcentaje explorado.',
+
+  header: {
+    world: 'Mundo',
+    confirmDetections: (n) => `Confirmar ${n} detecciones`,
+    addVisit: 'Añadir una visita',
+  },
 
   sidebar: {
     tagline: 'Descubre cuánto del mundo has visto de verdad',

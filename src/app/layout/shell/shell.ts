@@ -37,7 +37,7 @@ export class Shell {
   protected readonly crumbs = computed<Crumb[]>(() => {
     const path = this.navigation.path();
     const isExplore = this.navigation.section() === 'explore';
-    const labels = ['World', ...this.store.namesFromPath(path)];
+    const labels = [this.i18n.t().header.world, ...this.store.namesFromPath(path)];
     return labels.map((label, i) => ({
       label,
       sep: i < labels.length - 1 ? '/' : '',
