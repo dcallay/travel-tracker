@@ -46,7 +46,7 @@ function buildWorldView(tree: ContinentData[], totals: WorldTotals, t: Strings):
     const touched = cn.countries.filter((co) => countryWeight(co).v > 0).length;
     return toRow(
       cn.name,
-      touched ? `${touched} of ${cn.countries.length} countries` : 'No visits yet',
+      touched ? t.table.countriesTouched(touched, cn.countries.length) : t.table.noVisits,
       pct(continentWeight(cn)),
       [i],
     );
@@ -54,9 +54,9 @@ function buildWorldView(tree: ContinentData[], totals: WorldTotals, t: Strings):
   const worldPct = pct({ v: totals.worldV, t: totals.worldT });
   return {
     rows,
-    colHead: 'Continent',
-    levelTitle: 'By continent',
-    levelSub: 'Landmarks count double neighbourhoods',
+    colHead: t.table.continent,
+    levelTitle: t.table.byContinent,
+    levelSub: t.table.worldSub,
     stats: [
       {
         label: t.worldMetric,
@@ -103,7 +103,7 @@ function buildContinentView(
     const logged = co.cities.filter((ct) => cityWeight(ct).v > 0).length;
     return toRow(
       co.name,
-      logged ? `${logged} of ${co.cities.length} cities logged` : 'No visits yet',
+      logged ? t.table.citiesLogged(logged, co.cities.length) : t.table.noVisits,
       pct(countryWeight(co)),
       [index, i],
     );
@@ -118,9 +118,9 @@ function buildContinentView(
   );
   return {
     rows,
-    colHead: 'Country',
+    colHead: t.table.country,
     levelTitle: cn.name,
-    levelSub: `${cn.countries.length} countries on file`,
+    levelSub: t.table.continentSub(cn.countries.length),
     stats: [
       {
         label: t.placeMetric(cn.name),
@@ -147,10 +147,7 @@ function buildContinentView(
         hasInfo: false,
       },
     ],
-    emptyNote:
-      w.v === 0
-        ? `Nothing logged in ${cn.name} yet. ${cn.countries.length} countries and ${w.t} weighted places are already on file, so the moment you land somewhere the percentage starts moving.`
-        : '',
+    emptyNote: w.v === 0 ? t.table.emptyContinent(cn.name, cn.countries.length, w.t) : '',
     mapFit: cn.name,
     mapHeight: 360,
     mapCaption: t.continentMapCaption(cn.name),

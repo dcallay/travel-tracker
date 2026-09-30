@@ -87,4 +87,27 @@ describe('buildListView', () => {
       expect(view.stats[2].note).toBe('en este continente');
     });
   });
+
+  describe('table in the chosen language', () => {
+    it('heads and describes the continent rows', () => {
+      const view = buildListView(TRAVEL_TREE, totals, [], ES);
+      expect(view.colHead).toBe('Continente');
+      expect(view.levelTitle).toBe('Por continente');
+      expect(view.levelSub).toBe('Los monumentos cuentan el doble que los barrios');
+      const byName = Object.fromEntries(view.rows.map((r) => [r.name, r]));
+      expect(byName['Africa'].meta).toBe('Aún sin visitas');
+      expect(byName['Europe'].meta).toMatch(/^\d+ de 4 países$/);
+    });
+
+    it('heads and describes the country rows, and explains an empty continent', () => {
+      const view = buildListView(TRAVEL_TREE, totals, [0], ES);
+      expect(view.colHead).toBe('País');
+      expect(view.levelSub).toBe('5 países en el catálogo');
+      expect(view.rows[0].meta).toBe('3 de 4 ciudades registradas');
+      const africa = TRAVEL_TREE.findIndex((c) => c.name === 'Africa');
+      expect(buildListView(TRAVEL_TREE, totals, [africa], ES).emptyNote).toContain(
+        'Aún no hay nada registrado en Africa',
+      );
+    });
+  });
 });

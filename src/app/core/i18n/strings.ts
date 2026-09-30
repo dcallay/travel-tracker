@@ -27,6 +27,20 @@ export interface Strings {
     inThisContinent: string;
   };
 
+  /** The table below the map on the world and continent views. */
+  table: {
+    continent: string;
+    country: string;
+    logged: string;
+    byContinent: string;
+    worldSub: string;
+    continentSub: (countries: number) => string;
+    countriesTouched: (touched: number, total: number) => string;
+    citiesLogged: (logged: number, total: number) => string;
+    noVisits: string;
+    emptyContinent: (continent: string, countries: number, t: number) => string;
+  };
+
   header: {
     world: string;
     confirmDetections: (n: number) => string;
@@ -168,6 +182,20 @@ export const EN: Strings = {
     inThisContinent: 'in this continent',
   },
 
+  table: {
+    continent: 'Continent',
+    country: 'Country',
+    logged: 'Logged',
+    byContinent: 'By continent',
+    worldSub: 'Landmarks count double neighbourhoods',
+    continentSub: (n) => `${n} countries on file`,
+    countriesTouched: (touched, total) => `${touched} of ${total} countries`,
+    citiesLogged: (logged, total) => `${logged} of ${total} cities logged`,
+    noVisits: 'No visits yet',
+    emptyContinent: (continent, countries, t) =>
+      `Nothing logged in ${continent} yet. ${countries} countries and ${t} weighted places are already on file, so the moment you land somewhere the percentage starts moving.`,
+  },
+
   header: {
     world: 'World',
     confirmDetections: (n) => `Confirm ${n} detections`,
@@ -295,6 +323,20 @@ export const ES: Strings = {
     countries: 'Países',
     withVisits: (n) => `${n} con visitas`,
     inThisContinent: 'en este continente',
+  },
+
+  table: {
+    continent: 'Continente',
+    country: 'País',
+    logged: 'Registrado',
+    byContinent: 'Por continente',
+    worldSub: 'Los monumentos cuentan el doble que los barrios',
+    continentSub: (n) => `${n} países en el catálogo`,
+    countriesTouched: (touched, total) => `${touched} de ${total} países`,
+    citiesLogged: (logged, total) => `${logged} de ${total} ciudades registradas`,
+    noVisits: 'Aún sin visitas',
+    emptyContinent: (continent, countries, t) =>
+      `Aún no hay nada registrado en ${continent}. Ya hay ${countries} países y ${t} lugares ponderados en el catálogo, así que en cuanto llegues a algún sitio el porcentaje empezará a moverse.`,
   },
 
   header: {
