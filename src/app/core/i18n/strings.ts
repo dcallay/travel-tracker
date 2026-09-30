@@ -12,6 +12,20 @@ export interface Strings {
   countryDiscoveriesNote: string;
   cityDiscoveriesNote: string;
 
+  sidebar: {
+    tagline: string;
+    explore: string;
+    exploreCount: (continents: number) => string;
+    whatsLeft: string;
+    whatsLeftCount: (places: number) => string;
+    timeline: string;
+    timelineCount: (entries: number) => string;
+    weightedPlaces: (v: number, t: number) => string;
+    countries: (n: number) => string;
+    citiesOnFile: (n: number) => string;
+    sendFeedback: string;
+  };
+
   /** Text shared by the country and city detail pages. */
   detail: {
     reportLink: string;
@@ -100,6 +114,20 @@ export const EN: Strings = {
   cityDiscoveriesNote:
     "Personal discoveries — spots you found that aren't on any curated list. Kept out of the explored figure.",
 
+  sidebar: {
+    tagline: "Track how much of the world you've truly seen",
+    explore: 'Explore',
+    exploreCount: (n) => `${n} continents`,
+    whatsLeft: "What's left",
+    whatsLeftCount: (n) => `${n} places`,
+    timeline: 'Timeline',
+    timelineCount: (n) => `${n} recent`,
+    weightedPlaces: (v, t) => `${v} of ${t} weighted places`,
+    countries: (n) => `${n} countries`,
+    citiesOnFile: (n) => `${n} cities on file`,
+    sendFeedback: 'Send feedback',
+  },
+
   detail: {
     reportLink: 'Something wrong here?',
     nothingLogged: 'Nothing logged here yet',
@@ -175,6 +203,20 @@ export const ES: Strings = {
     'Descubrimientos personales en todo el país. No cuentan para el porcentaje explorado.',
   cityDiscoveriesNote:
     'Descubrimientos personales: lugares que encontraste y que no están en ninguna lista curada. No cuentan para el porcentaje explorado.',
+
+  sidebar: {
+    tagline: 'Descubre cuánto del mundo has visto de verdad',
+    explore: 'Explorar',
+    exploreCount: (n) => `${n} continentes`,
+    whatsLeft: 'Lo que falta',
+    whatsLeftCount: (n) => `${n} lugares`,
+    timeline: 'Cronología',
+    timelineCount: (n) => `${n} recientes`,
+    weightedPlaces: (v, t) => `${v} de ${t} lugares ponderados`,
+    countries: (n) => `${n} países`,
+    citiesOnFile: (n) => `${n} ciudades en el catálogo`,
+    sendFeedback: 'Enviar comentarios',
+  },
 
   detail: {
     reportLink: '¿Algo no está bien?',

@@ -168,6 +168,22 @@ describe('App flows', () => {
       expect(el.querySelector('.tt-lang__menu')).toBeNull();
       expect(text('.tt-lang .btn')).toContain('ES');
     });
+
+    it('translates the sidebar into the chosen language', async () => {
+      await clickByText('.table tbody tr', 'South America');
+      await click(el.querySelector('.tt-lang .btn'));
+      await clickByText('.tt-lang__item', 'Español');
+      expect(text('.tt-sidebar__brand-tag')).toBe('Descubre cuánto del mundo has visto de verdad');
+      expect(all('.tt-nav__item span:first-child').map((n) => n.textContent?.trim())).toEqual([
+        'Explorar',
+        'Lo que falta',
+        'Cronología',
+      ]);
+      expect(text('.tt-nav__count')).toBe(`${TRAVEL_TREE.length} continentes`);
+      expect(text('.tt-parent-score__label')).toBe('Explorado en el mundo');
+      expect(text('.tt-parent-score__note')).toMatch(/^\d+ de \d+ lugares ponderados$/);
+      expect(text('.tt-sidebar__feedback .btn')).toBe('Enviar comentarios');
+    });
   });
 
   describe('dialogs', () => {

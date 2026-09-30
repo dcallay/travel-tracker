@@ -25,11 +25,14 @@ export class Shell {
   private readonly navigation = inject(Navigation);
   private readonly i18n = inject(I18n);
 
-  protected readonly navItems = computed<NavItem[]>(() => [
-    { label: 'Explore', count: `${this.store.tree().length} continents`, link: '/explore' },
-    { label: "What's left", count: `${this.store.leftRows().length} places`, link: '/left' },
-    { label: 'Timeline', count: `${this.store.timeline.length} recent`, link: '/timeline' },
-  ]);
+  protected readonly navItems = computed<NavItem[]>(() => {
+    const t = this.i18n.t().sidebar;
+    return [
+      { label: t.explore, count: t.exploreCount(this.store.tree().length), link: '/explore' },
+      { label: t.whatsLeft, count: t.whatsLeftCount(this.store.leftRows().length), link: '/left' },
+      { label: t.timeline, count: t.timelineCount(this.store.timeline.length), link: '/timeline' },
+    ];
+  });
 
   protected readonly crumbs = computed<Crumb[]>(() => {
     const path = this.navigation.path();
@@ -55,7 +58,7 @@ export class Shell {
         label: t.worldMetric,
         pct: fmtPct(this.store.worldPct()),
         bar: barWidth(this.store.worldPct()),
-        note: `${totals.worldV} of ${totals.worldT} weighted places`,
+        note: t.sidebar.weightedPlaces(totals.worldV, totals.worldT),
       };
     }
     const cn = tree[path[0]];
@@ -66,7 +69,7 @@ export class Shell {
         label: t.placeMetric(cn.name),
         pct: fmtPct(p),
         bar: barWidth(p),
-        note: `${w.v} of ${w.t} weighted places · ${cn.countries.length} countries`,
+        note: `${t.sidebar.weightedPlaces(w.v, w.t)} · ${t.sidebar.countries(cn.countries.length)}`,
       };
     }
     const co = cn.countries[path[1]];
@@ -76,7 +79,7 @@ export class Shell {
       label: t.placeMetric(co.name),
       pct: fmtPct(p),
       bar: barWidth(p),
-      note: `${w.v} of ${w.t} weighted places · ${co.cities.length} cities on file`,
+      note: `${t.sidebar.weightedPlaces(w.v, w.t)} · ${t.sidebar.citiesOnFile(co.cities.length)}`,
     };
   });
 }
