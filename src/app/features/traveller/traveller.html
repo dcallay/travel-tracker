@@ -1,0 +1,8 @@
+<div class="tt-traveller">
+  <a class="tt-traveller__back" routerLink="/leaderboard">{{ t().account.backToLeaderboard }}</a>
+  @if (profile(); as p) {
+    <app-public-profile class="tt-traveller__card" [profile]="p" />
+  } @else {
+    <p class="tt-lead tt-traveller__missing">{{ t().account.notFound }}</p>
+  }
+</div>

@@ -107,8 +107,42 @@ export interface Strings {
     aheadOfNote: string;
     countriesNote: string;
     citiesNote: string;
+    privateTag: string;
     /** Screen-reader text for the gap between the top rows and yours. */
     gap: string;
+  };
+
+  /** The My account page: settings, and a preview of the public profile. */
+  account: {
+    title: string;
+    lead: string;
+    settings: string;
+    settingsNote: string;
+    name: string;
+    nameRequired: string;
+    home: string;
+    nationality: string;
+    nationalityHint: string;
+    language: string;
+    visibility: string;
+    isPublic: string;
+    isPrivate: string;
+    visibilityHint: string;
+    save: string;
+    discard: string;
+    saved: string;
+    publicHead: string;
+    publicNote: string;
+    privateNote: string;
+    rankNote: (total: number) => string;
+    exploredNote: string;
+    citiesNote: string;
+    privateProfile: (name: string) => string;
+    backToLeaderboard: string;
+    notFound: string;
+    topCountries: string;
+    nothingYet: string;
+    neverShown: string;
   };
 
   header: {
@@ -127,6 +161,7 @@ export interface Strings {
     timelineCount: (entries: number) => string;
     leaderboard: string;
     leaderboardCount: (travellers: number) => string;
+    account: string;
     countries: (n: number) => string;
     citiesOnFile: (n: number) => string;
     sendFeedback: string;

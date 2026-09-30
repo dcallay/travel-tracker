@@ -88,6 +88,71 @@ describe('App routing', () => {
       expect(text('.tt-add h4')).toBe('Add a visit');
       await visit('/leaderboard');
       expect(text('.tt-board h4')).toBe('Leaderboard');
+      await visit('/account');
+      expect(text('.tt-account h4')).toBe('My account');
+    });
+  });
+
+  describe('my account', () => {
+    beforeEach(() => visit('/account'));
+
+    const type = async (sel: string, value: string) => {
+      const input = el.querySelector<HTMLInputElement | HTMLSelectElement>(sel)!;
+      input.value = value;
+      input.dispatchEvent(new Event(input instanceof HTMLSelectElement ? 'change' : 'input'));
+      await settle();
+    };
+    const button = (label: string) =>
+      all('.tt-account__actions .btn').find((b) => b.textContent?.trim() === label) as HTMLButtonElement;
+
+    it('shows the public profile with your stats', () => {
+      expect(text('.tt-public__name')).toBe('David');
+      expect(text('.tt-public .tt-row-meta')).toBe('Quito · Ecuador');
+      expect(all('.tt-public__stats .tt-stat__value').map((n) => n.textContent?.trim())).toEqual([
+        '3.8%',
+        '13',
+        '22',
+        '#15',
+      ]);
+      expect(all('.tt-public__country')).toHaveLength(5);
+      expect(button('Save changes').disabled).toBe(true);
+    });
+
+    it('updates the public profile and leaderboard only once saved', async () => {
+      await type('#tt-acc-name', 'Dee');
+      await type('#tt-acc-nat', 'pe');
+      expect(text('.tt-public__name')).toBe('David');
+
+      button('Save changes').click();
+      await settle();
+      expect(text('.tt-account__saved')).toBe('Saved');
+      expect(text('.tt-public__name')).toBe('Dee');
+      expect(text('.tt-public .tt-row-meta')).toBe('Quito · Peru');
+      expect(text('.tt-nav__item.is-active .tt-nav__count')).toBe('Dee');
+
+      await visit('/leaderboard');
+      expect(el.querySelector('.tt-board__you .tt-board__flag')!.getAttribute('title')).toBe('Peru');
+    });
+
+    it('discards unsaved edits and refuses an empty name', async () => {
+      await type('#tt-acc-name', '  ');
+      expect(text('.tt-account__error')).toBe('Enter a display name');
+      expect(button('Save changes').disabled).toBe(true);
+      button('Discard').click();
+      await settle();
+      expect(el.querySelector<HTMLInputElement>('#tt-acc-name')!.value).toBe('David');
+      expect(el.querySelector('.tt-account__error')).toBeNull();
+    });
+
+    it('marks the profile private and switches language on save', async () => {
+      await clickByText('.seg-opt', 'Private');
+      await clickByText('.seg-opt', 'Español');
+      button('Save changes').click();
+      await settle();
+      expect(el.querySelector('.tt-public.is-private')).toBeTruthy();
+      expect(text('.tt-account h4')).toBe('Mi cuenta');
+      expect(text('.tt-public .tt-row-meta')).toBe('Quito · Ecuador');
+      expect(all('.tt-section-note')[1].textContent?.trim()).toBe('Privado: solo tú puedes verlo');
     });
   });
 
@@ -108,6 +173,73 @@ describe('App routing', () => {
       expect(all('.tt-board__flag')).toHaveLength(11);
       expect(all('.tt-board__flag')[0].getAttribute('aria-label')).toBe('Norway');
       expect(el.querySelector('.tt-board__you .tt-board__flag')!.getAttribute('title')).toBe('Ecuador');
+    });
+
+    it("links each public traveller's name to their profile", async () => {
+      await clickByText('.tt-board__link', 'Mei Tanaka');
+      expect(router.url).toBe('/leaderboard/mei-tanaka');
+      expect(text('.tt-public__name')).toBe('Mei Tanaka');
+      expect(text('.tt-public .tt-row-meta')).toBe('Osaka · Japan');
+      expect(all('.tt-public__stats .tt-stat__value').map((n) => n.textContent?.trim())).toEqual([
+        '13.2%',
+        '38',
+        '88',
+        '#3',
+      ]);
+      expect(all('.tt-public__country .tt-row-name').map((n) => n.textContent?.trim())).toEqual([
+        'Japan',
+        'South Korea',
+        'Taiwan',
+        'Thailand',
+        'Vietnam',
+      ]);
+      expect(text('.tt-public__country')).toContain('61.3%');
+      expect(text('.tt-nav__item.is-active')).toContain('Leaderboard');
+      await clickByText('.tt-traveller__back', '← Leaderboard');
+      expect(router.url).toBe('/leaderboard');
+    });
+
+    it('leaves out the country list when a traveller has none on file', async () => {
+      await visit('/leaderboard/sofia-rossi');
+      expect(el.querySelector('.tt-public__stats')).toBeTruthy();
+      expect(el.querySelector('.tt-public__top')).toBeNull();
+    });
+
+    it('opens a profile from anywhere on its row', async () => {
+      const row = (name: string) =>
+        all('.tt-board__table tbody tr').find((r) => r.textContent?.includes(name))!;
+      row('Chloé Martin').querySelector<HTMLElement>('.tt-col-num')!.click();
+      await settle();
+      expect(router.url).toBe('/leaderboard/chloe-martin');
+
+      await visit('/leaderboard');
+      row('Arjun Mehta').querySelector<HTMLElement>('.tt-col-num')!.click();
+      await settle();
+      expect(router.url).toBe('/leaderboard');
+      expect(row('Arjun Mehta').classList).not.toContain('tt-clickable-row');
+
+      el.querySelector<HTMLElement>('.tt-board__you .tt-col-rank')!.click();
+      await settle();
+      expect(router.url).toBe('/account');
+    });
+
+    it('does not link private travellers, and hides their stats', async () => {
+      const links = all('.tt-board__link').map((n) => n.textContent?.trim());
+      expect(links).not.toContain('Arjun Mehta');
+      expect(text('.tt-board__private')).toBe('Private');
+      await visit('/leaderboard/arjun-mehta');
+      expect(el.querySelector('.tt-public__stats')).toBeNull();
+      expect(text('.tt-public__private')).toBe('Arjun Mehta keeps their profile private.');
+    });
+
+    it('links your own row to My account', async () => {
+      await clickByText('.tt-board__link', 'You');
+      expect(router.url).toBe('/account');
+    });
+
+    it('says so when no traveller matches the address', async () => {
+      await visit('/leaderboard/nobody-here');
+      expect(text('.tt-traveller__missing')).toBe('There is no traveller at this address.');
     });
 
     it('is reachable from the sidebar', async () => {

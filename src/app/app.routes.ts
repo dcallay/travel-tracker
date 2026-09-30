@@ -12,6 +12,8 @@ export const routes: Routes = [
       { path: 'left', loadComponent: () => import('./features/whats-left/whats-left').then((m) => m.WhatsLeft) },
       { path: 'timeline', loadComponent: () => import('./features/timeline/timeline').then((m) => m.Timeline) },
       { path: 'leaderboard', loadComponent: () => import('./features/leaderboard/leaderboard').then((m) => m.Leaderboard) },
+      { path: 'leaderboard/:slug', loadComponent: () => import('./features/traveller/traveller').then((m) => m.TravellerPage) },
+      { path: 'account', loadComponent: () => import('./features/account/account').then((m) => m.Account) },
       { path: 'add', loadComponent: () => import('./features/add-visit/add-visit').then((m) => m.AddVisit) },
       { path: '**', redirectTo: 'explore' },
     ],

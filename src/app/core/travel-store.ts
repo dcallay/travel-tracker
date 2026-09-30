@@ -1,4 +1,4 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 
 import {
   barWidth,
@@ -9,8 +9,9 @@ import {
   pct,
 } from './data/travel-calc';
 import { rankTravellers } from './data/leaderboard';
-import { TRAVELLERS, YOUR_NATIONALITY } from './data/traveller-data';
-import { ContinentData, TIMELINE, TRAVEL_TREE } from './data/travel-data';
+import { TRAVELLERS } from './data/traveller-data';
+import { ContinentData, TIMELINE, TRAVEL_TREE, flagImageUrl } from './data/travel-data';
+import { Profile } from './profile';
 import { toSlug } from './slug';
 
 export interface WorldTotals {
@@ -35,6 +36,25 @@ export interface LeftRow {
   disc: string;
   path: number[];
   sort: number;
+}
+
+export interface TopCountryRow {
+  name: string;
+  flag: string;
+  pct: string;
+  bar: string;
+}
+
+/** The `n` countries with the highest explored figure, visited ones only. */
+export function computeTopCountries(tree: ContinentData[], n: number): TopCountryRow[] {
+  return tree
+    .flatMap((cn) => cn.countries)
+    .map((co) => ({ co, w: countryWeight(co) }))
+    .filter(({ w }) => w.v > 0)
+    .map(({ co, w }) => ({ name: co.name, p: pct(w) }))
+    .sort((a, b) => b.p - a.p)
+    .slice(0, n)
+    .map(({ name, p }) => ({ name, flag: flagImageUrl(name), pct: fmtPct(p), bar: barWidth(p) }));
 }
 
 /** The map names some countries differently from the seed data. */
@@ -94,6 +114,7 @@ export function computeLeftRows(tree: ContinentData[]): LeftRow[] {
 /** The travel data and the figures derived from it, shared by every view. */
 @Injectable({ providedIn: 'root' })
 export class TravelStore {
+  private readonly profile = inject(Profile).data;
   private readonly treeState = signal<ContinentData[]>(TRAVEL_TREE);
 
   readonly tree = this.treeState.asReadonly();
@@ -106,13 +127,16 @@ export class TravelStore {
   });
   /** Every visited city, closest to done first. */
   readonly leftRows = computed(() => computeLeftRows(this.tree()));
+  /** Your five most explored countries, for the public profile. */
+  readonly topCountries = computed(() => computeTopCountries(this.tree(), 5));
   /** The top ten travellers by countries then cities, and where you stand among them. */
   readonly leaderboard = computed(() => {
     const t = this.worldTotals();
+    const { name, home, nationality } = this.profile();
     return rankTravellers(TRAVELLERS, {
-      name: '',
-      home: '',
-      nationality: YOUR_NATIONALITY,
+      name,
+      home,
+      nationality,
       countries: t.countriesTouched,
       cities: t.citiesLogged,
       explored: this.worldPct(),

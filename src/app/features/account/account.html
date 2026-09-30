@@ -1,0 +1,120 @@
+@let a = t().account;
+@let d = draft();
+@let p = profile();
+
+<div class="tt-account">
+  <h4>{{ a.title }}</h4>
+  <p class="tt-lead">{{ a.lead }}</p>
+
+  <section class="tt-account__section">
+    <app-section-head [label]="a.settings" [note]="a.settingsNote" />
+    <form class="tt-account__fields" (submit)="$event.preventDefault(); save()">
+      <div class="tt-account__row">
+        <div class="field">
+          <label for="tt-acc-name">{{ a.name }}</label>
+          <input
+            id="tt-acc-name"
+            class="input"
+            type="text"
+            autocomplete="nickname"
+            [value]="d.name"
+            [attr.aria-invalid]="nameMissing()"
+            (input)="edit({ name: $any($event.target).value })"
+          />
+          @if (nameMissing()) {
+            <div class="tt-account__error">{{ a.nameRequired }}</div>
+          }
+        </div>
+        <div class="field">
+          <label for="tt-acc-home">{{ a.home }}</label>
+          <input
+            id="tt-acc-home"
+            class="input"
+            type="text"
+            [value]="d.home"
+            (input)="edit({ home: $any($event.target).value })"
+          />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="tt-acc-nat">{{ a.nationality }}</label>
+        <div class="tt-account__nat">
+          <span
+            class="tt-account__flag"
+            aria-hidden="true"
+            [style.background-image]="flagUrl(d.nationality)"
+          ></span>
+          <select
+            id="tt-acc-nat"
+            class="input"
+            (change)="edit({ nationality: $any($event.target).value })"
+          >
+            @for (n of nationalities(); track n.code) {
+              <option [value]="n.code" [selected]="n.code === d.nationality">{{ n.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="tt-account__hint">{{ a.nationalityHint }}</div>
+      </div>
+
+      <div class="tt-account__row">
+        <div>
+          <div class="tt-account__seg-label">{{ a.language }}</div>
+          <div class="seg">
+            @for (lang of langs; track lang[0]) {
+              <label class="seg-opt">
+                <input
+                  type="radio"
+                  name="tt-acc-lang"
+                  [checked]="d.lang === lang[0]"
+                  (change)="edit({ lang: lang[0] })"
+                /><span>{{ lang[1] }}</span>
+              </label>
+            }
+          </div>
+        </div>
+        <div>
+          <div class="tt-account__seg-label">{{ a.visibility }}</div>
+          <div class="seg">
+            <label class="seg-opt">
+              <input
+                type="radio"
+                name="tt-acc-vis"
+                [checked]="d.isPublic"
+                (change)="edit({ isPublic: true })"
+              /><span>{{ a.isPublic }}</span>
+            </label>
+            <label class="seg-opt">
+              <input
+                type="radio"
+                name="tt-acc-vis"
+                [checked]="!d.isPublic"
+                (change)="edit({ isPublic: false })"
+              /><span>{{ a.isPrivate }}</span>
+            </label>
+          </div>
+          <div class="tt-account__hint">{{ a.visibilityHint }}</div>
+        </div>
+      </div>
+
+      <div class="tt-account__actions">
+        <button type="submit" class="btn btn-primary" [disabled]="!dirty() || nameMissing()">
+          {{ a.save }}
+        </button>
+        <button type="button" class="btn btn-secondary" [disabled]="!dirty()" (click)="discard()">
+          {{ a.discard }}
+        </button>
+        @if (justSaved()) {
+          <span class="tt-account__saved" role="status">{{ a.saved }}</span>
+        }
+      </div>
+    </form>
+  </section>
+
+  <section class="tt-account__section">
+    <app-section-head [label]="a.publicHead" [note]="p.isPublic ? a.publicNote : a.privateNote" />
+    <app-public-profile class="tt-account__card" [profile]="publicProfile()" [preview]="true" />
+    <p class="tt-account__hint">{{ a.neverShown }}</p>
+  </section>
+</div>
