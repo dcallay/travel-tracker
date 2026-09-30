@@ -1,3 +1,6 @@
+import { TimelineEntry } from '../data/travel-data';
+import { MONTHS } from './dates';
+
 /** UI strings in one language. English is the source; every other language must match its shape. */
 export interface Strings {
   /** BCP 47 tag for `lang` attributes (hyphenation) and date formatting. */
@@ -79,6 +82,15 @@ export interface Strings {
     place: string;
     open: string;
     discoveries: string;
+  };
+
+  timeline: {
+    title: string;
+    lead: string;
+    /** Translations of a seed-data entry's `detail`, `source` and `weight`. */
+    details: Record<string, string>;
+    sources: Record<TimelineEntry['source'], string>;
+    weights: Record<string, string>;
   };
 
   header: {
@@ -184,8 +196,6 @@ export interface Strings {
   };
 }
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
 /** Re-formats a seed-data month (`Mar 2026`) for a locale; anything else passes through. */
 function localMonthYear(value: string, locale: string): string {
   const [mon, year] = value.split(' ');
@@ -278,6 +288,14 @@ export const EN: Strings = {
     place: 'Place',
     open: 'Open',
     discoveries: 'Discoveries',
+  },
+
+  timeline: {
+    title: 'Travel history',
+    lead: 'Every visit, newest first, with how it got logged.',
+    details: {},
+    sources: { Geolocation: 'Geolocation', Manual: 'Manual', Photo: 'Photo' },
+    weights: {},
   },
 
   header: {
@@ -461,6 +479,19 @@ export const ES: Strings = {
     place: 'Lugar',
     open: 'Pendiente',
     discoveries: 'Descubrimientos',
+  },
+
+  timeline: {
+    title: 'Historial de viajes',
+    lead: 'Todas las visitas, de la más reciente a la más antigua, con cómo se registró cada una.',
+    details: {
+      'Neighbourhood walked end to end': 'Barrio recorrido de punta a punta',
+      Neighbourhood: 'Barrio',
+      Landmark: 'Monumento',
+      'Personal discovery': 'Descubrimiento personal',
+    },
+    sources: { Geolocation: 'Geolocalización', Manual: 'Manual', Photo: 'Foto' },
+    weights: { 'score +1': 'puntuación +1' },
   },
 
   header: {

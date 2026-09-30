@@ -158,6 +158,19 @@ describe('App flows', () => {
       );
     });
 
+    it('renders the timeline in the chosen language', async () => {
+      await click(el.querySelector('.tt-lang .btn'));
+      await clickByText('.tt-lang__item', 'Español');
+      await clickByText('.tt-nav__item', 'Cronología');
+      expect(text('.tt-timeline h4')).toBe('Historial de viajes');
+      expect(text('.tt-timeline__date')).toBe('14 sept 2026');
+      expect(text('.tt-timeline__detail')).toBe('Barrio recorrido de punta a punta');
+      expect(all('.tt-timeline__tags .tag-accent')[0].textContent?.trim()).toBe('Geolocalización');
+      expect(all('.tt-timeline__tags .tag-neutral').map((t) => t.textContent?.trim())).toContain(
+        'puntuación +1',
+      );
+    });
+
     it('opens the add-visit form and leaves it via Cancel', async () => {
       await click(all('.tt-header .btn-primary')[0]);
       expect(text('.tt-add h4')).toBe('Add a visit');
