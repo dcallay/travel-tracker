@@ -21,3 +21,18 @@ export function parseSeedDate(value: string): Date | null {
   if (!match || month < 0) return null;
   return new Date(Number(match[3]), month, Number(match[1]));
 }
+
+/** Re-formats a seed-data month (`Mar 2026`) for a locale; anything else passes through. */
+export function localMonthYear(value: string, locale: string): string {
+  const [mon, year] = value.split(' ');
+  const month = MONTHS.indexOf(mon);
+  if (month < 0 || !/^\d{4}$/.test(year ?? '')) return value;
+  return new Intl.DateTimeFormat(locale, { month: 'short', year: 'numeric' }).format(
+    new Date(Number(year), month, 1),
+  );
+}
+
+/** `14 Mar 2026`, built by hand so every browser gives the same English. */
+export function englishDate(date: Date): string {
+  return `${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+}

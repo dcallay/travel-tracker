@@ -1,6 +1,8 @@
 import { Injectable, computed, signal } from '@angular/core';
 
-import { EN, ES, Strings } from './strings';
+import { EN } from './en';
+import { ES } from './es';
+import { Strings } from './strings';
 
 export type Lang = 'EN' | 'ES';
 

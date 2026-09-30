@@ -1,5 +1,6 @@
 import { TRAVEL_TREE } from '../../../core/data/travel-data';
-import { EN, ES } from '../../../core/i18n/strings';
+import { EN } from '../../../core/i18n/en';
+import { ES } from '../../../core/i18n/es';
 import { buildCityView } from './city-view';
 
 describe('buildCityView', () => {

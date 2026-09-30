@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
 import { I18n } from './i18n';
-import { EN, ES } from './strings';
+import { EN } from './en';
+import { ES } from './es';
 
 describe('I18n', () => {
   let i18n: I18n;
