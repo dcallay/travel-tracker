@@ -2,6 +2,8 @@
 export interface Strings {
   /** BCP 47 tag for `lang` attributes (hyphenation) and date formatting. */
   locale: string;
+  /** A day, e.g. `14 Mar 2026`. */
+  formatDate: (date: Date) => string;
   /** The headline percentage, as a column or score label. */
   metric: string;
   worldMetric: string;
@@ -52,13 +54,22 @@ export interface Strings {
     name: string;
     namePlaceholder: string;
     date: string;
-    /** The form's prefilled example date. */
-    sampleDate: string;
     notes: string;
     notesPlaceholder: string;
     save: string;
     cancel: string;
     source: string;
+  };
+
+  photo: {
+    kicker: string;
+    title: (place: string) => string;
+    body: (city: string, date: string, metres: number) => string;
+    confidence: string;
+    source: string;
+    sourceValue: string;
+    reject: string;
+    confirm: string;
   };
 
   header: {
@@ -176,8 +187,14 @@ function localMonthYear(value: string, locale: string): string {
   );
 }
 
+/** `14 Mar 2026`, built by hand so every browser gives the same English. */
+function englishDate(date: Date): string {
+  return `${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+}
+
 export const EN: Strings = {
   locale: 'en',
+  formatDate: englishDate,
   metric: 'Explored',
   worldMetric: 'World explored',
   placeMetric: (place) => `${place} explored`,
@@ -227,12 +244,23 @@ export const EN: Strings = {
     name: 'Neighbourhood or landmark',
     namePlaceholder: 'e.g. La Floresta',
     date: 'Date visited',
-    sampleDate: '16 Sep 2026',
     notes: 'Notes',
     notesPlaceholder: 'Optional',
     save: 'Save visit',
     cancel: 'Cancel',
     source: 'Source: manual',
+  },
+
+  photo: {
+    kicker: 'Photo recognition',
+    title: (place) => `Is this ${place}?`,
+    body: (city, date, metres) =>
+      `Matched from a photo taken in ${city} on ${date}, with a location fix ${metres} m away. Confirming logs it as a landmark — weight 2.`,
+    confidence: 'Confidence',
+    source: 'Source',
+    sourceValue: 'Photo + GPS',
+    reject: 'Not this place',
+    confirm: 'Confirm visit',
   },
 
   header: {
@@ -340,6 +368,8 @@ export const EN: Strings = {
 
 export const ES: Strings = {
   locale: 'es',
+  formatDate: (date) =>
+    new Intl.DateTimeFormat('es', { day: 'numeric', month: 'short', year: 'numeric' }).format(date),
   metric: 'Explorado',
   worldMetric: 'Explorado en el mundo',
   placeMetric: (place) => `Explorado en ${place}`,
@@ -389,12 +419,23 @@ export const ES: Strings = {
     name: 'Barrio o monumento',
     namePlaceholder: 'p. ej., La Floresta',
     date: 'Fecha de la visita',
-    sampleDate: '16 sept 2026',
     notes: 'Notas',
     notesPlaceholder: 'Opcional',
     save: 'Guardar visita',
     cancel: 'Cancelar',
     source: 'Origen: manual',
+  },
+
+  photo: {
+    kicker: 'Reconocimiento de fotos',
+    title: (place) => `¿Es ${place}?`,
+    body: (city, date, metres) =>
+      `Identificado a partir de una foto tomada en ${city} el ${date}, con una ubicación a ${metres} m. Si lo confirmas, se registra como monumento, con peso 2.`,
+    confidence: 'Confianza',
+    source: 'Origen',
+    sourceValue: 'Foto + GPS',
+    reject: 'No es este lugar',
+    confirm: 'Confirmar visita',
   },
 
   header: {

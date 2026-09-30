@@ -12,4 +12,6 @@ import { Navigation } from '../../core/navigation';
 export class AddVisit {
   protected readonly navigation = inject(Navigation);
   protected readonly t = inject(I18n).t;
+  /** Example date the form is prefilled with. */
+  protected readonly sampleDate = new Date(2026, 8, 16);
 }

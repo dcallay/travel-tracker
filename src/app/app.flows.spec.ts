@@ -289,7 +289,25 @@ describe('App flows', () => {
     it('opens and dismisses the photo confirmation dialog', async () => {
       await clickByText('.tt-header .btn-secondary', 'Confirm 2 detections');
       expect(text('.dialog-kicker')).toBe('Photo recognition');
+      expect(text('.dialog-body')).toBe(
+        'Matched from a photo taken in Quito on 14 Mar 2026, with a location fix 140 m away. Confirming logs it as a landmark — weight 2.',
+      );
       await clickByText('.dialog-actions .btn', 'Confirm visit');
+      expect(el.querySelector('.dialog')).toBeNull();
+    });
+
+    it('shows the photo confirmation dialog in the chosen language', async () => {
+      await click(el.querySelector('.tt-lang .btn'));
+      await clickByText('.tt-lang__item', 'Español');
+      await clickByText('.tt-header .btn-secondary', 'Confirmar 2 detecciones');
+      expect(text('.dialog-kicker')).toBe('Reconocimiento de fotos');
+      expect(text('.dialog-title')).toBe('¿Es Basílica del Voto Nacional?');
+      expect(text('.dialog-body')).toContain('en Quito el 14 mar 2026, con una ubicación a 140 m');
+      expect(all('.tt-dialog-meta .tt-section-label').map((n) => n.textContent?.trim())).toEqual([
+        'Confianza',
+        'Origen',
+      ]);
+      await clickByText('.dialog-actions .btn', 'No es este lugar');
       expect(el.querySelector('.dialog')).toBeNull();
     });
   });
