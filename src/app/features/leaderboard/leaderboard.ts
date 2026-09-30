@@ -1,7 +1,8 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
+import { RankedTraveller } from '../../core/data/leaderboard';
 import { barWidth, fmtPct } from '../../core/data/travel-calc';
 import { flagUrlForCode } from '../../core/data/travel-data';
 import { I18n } from '../../core/i18n/i18n';
@@ -23,12 +24,24 @@ export class Leaderboard {
   protected readonly barWidth = barWidth;
   protected readonly fmtPct = fmtPct;
   protected readonly flagUrl = flagUrlForCode;
-  protected readonly toSlug = toSlug;
+  private readonly router = inject(Router);
 
   /** Country names in the UI language, for the flags' labels. */
   private readonly regionNames = computed(
     () => new Intl.DisplayNames([this.t().locale], { type: 'region' }),
   );
+
+  /** Where a row leads: your account, a public profile, or nowhere for a private traveller. */
+  protected link(row: RankedTraveller): string[] | null {
+    if (row.isYou) return ['/account'];
+    return row.isPrivate ? null : ['/leaderboard', toSlug(row.name)];
+  }
+
+  /** Opens a row clicked outside its name link; the link handles its own clicks. */
+  protected open(link: string[] | null, event: MouseEvent): void {
+    if (!link || (event.target as Element).closest('a')) return;
+    void this.router.navigate(link);
+  }
 
   protected countryName(code: string): string {
     return this.regionNames().of(code.toUpperCase()) ?? code.toUpperCase();

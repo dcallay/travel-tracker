@@ -186,9 +186,41 @@ describe('App routing', () => {
         '88',
         '#3',
       ]);
+      expect(all('.tt-public__country .tt-row-name').map((n) => n.textContent?.trim())).toEqual([
+        'Japan',
+        'South Korea',
+        'Taiwan',
+        'Thailand',
+        'Vietnam',
+      ]);
+      expect(text('.tt-public__country')).toContain('61.3%');
       expect(text('.tt-nav__item.is-active')).toContain('Leaderboard');
       await clickByText('.tt-traveller__back', '← Leaderboard');
       expect(router.url).toBe('/leaderboard');
+    });
+
+    it('leaves out the country list when a traveller has none on file', async () => {
+      await visit('/leaderboard/sofia-rossi');
+      expect(el.querySelector('.tt-public__stats')).toBeTruthy();
+      expect(el.querySelector('.tt-public__top')).toBeNull();
+    });
+
+    it('opens a profile from anywhere on its row', async () => {
+      const row = (name: string) =>
+        all('.tt-board__table tbody tr').find((r) => r.textContent?.includes(name))!;
+      row('Chloé Martin').querySelector<HTMLElement>('.tt-col-num')!.click();
+      await settle();
+      expect(router.url).toBe('/leaderboard/chloe-martin');
+
+      await visit('/leaderboard');
+      row('Arjun Mehta').querySelector<HTMLElement>('.tt-col-num')!.click();
+      await settle();
+      expect(router.url).toBe('/leaderboard');
+      expect(row('Arjun Mehta').classList).not.toContain('tt-clickable-row');
+
+      el.querySelector<HTMLElement>('.tt-board__you .tt-col-rank')!.click();
+      await settle();
+      expect(router.url).toBe('/account');
     });
 
     it('does not link private travellers, and hides their stats', async () => {

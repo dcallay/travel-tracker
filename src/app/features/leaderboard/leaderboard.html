@@ -37,7 +37,12 @@
 </div>
 
 <ng-template #rowTpl let-row>
-  <tr [class.tt-board__you]="row.isYou">
+  @let rowLink = link(row);
+  <tr
+    [class.tt-board__you]="row.isYou"
+    [class.tt-clickable-row]="rowLink"
+    (click)="open(rowLink, $event)"
+  >
     <td class="tt-col-rank">{{ row.rank }}</td>
     <td>
       <div class="tt-board__name">
@@ -49,14 +54,12 @@
           [attr.title]="countryName(row.nationality)"
         ></span>
         <div>
-          @if (row.isYou) {
-            <a class="tt-row-name tt-board__link" routerLink="/account">{{ l.you }}</a>
-          } @else if (row.isPrivate) {
-            <div class="tt-row-name">{{ row.name }}</div>
-          } @else {
-            <a class="tt-row-name tt-board__link" [routerLink]="['/leaderboard', toSlug(row.name)]">
-              {{ row.name }}
+          @if (rowLink) {
+            <a class="tt-row-name tt-board__link" [routerLink]="rowLink">
+              {{ row.isYou ? l.you : row.name }}
             </a>
+          } @else {
+            <div class="tt-row-name">{{ row.name }}</div>
           }
           <div class="tt-row-meta">
             {{ row.home }}

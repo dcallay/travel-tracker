@@ -63,9 +63,14 @@
   text-decoration: none;
 }
 
-.tt-board__link:hover {
+.tt-clickable-row:hover .tt-board__link {
   color: var(--color-accent);
   text-decoration: underline;
+}
+
+/* Private travellers' rows lead nowhere, so they don't light up on hover. */
+.tt-board__table tbody tr:not(.tt-clickable-row):hover {
+  background: none;
 }
 
 .tt-board__private {
