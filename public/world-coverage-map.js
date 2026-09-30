@@ -174,10 +174,14 @@
       });
 
       if (focusFeat) {
-        cityPts.forEach((ct) => {
+        cityPts.forEach((ct, i) => {
           const xy = projection([ct.lon, ct.lat]);
           if (!xy) return;
           const g = document.createElementNS(svgNS, 'g');
+          g.style.cursor = 'pointer';
+          g.addEventListener('click', () => {
+            this.dispatchEvent(new CustomEvent('city-select', { detail: { name: ct.name, index: i }, bubbles: true, composed: true }));
+          });
           const dot = document.createElementNS(svgNS, 'circle');
           dot.setAttribute('cx', String(xy[0]));
           dot.setAttribute('cy', String(xy[1]));

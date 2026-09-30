@@ -45,6 +45,7 @@
         [cities]="country.citiesGeo"
         [height]="260"
         (countrySelected)="onCountrySelect($event)"
+        (citySelected)="navigation.goTo([path()[0], path()[1], $event])"
       />
     </div>
 
