@@ -175,6 +175,41 @@ describe('App routing', () => {
       expect(el.querySelector('.tt-board__you .tt-board__flag')!.getAttribute('title')).toBe('Ecuador');
     });
 
+    it("links each public traveller's name to their profile", async () => {
+      await clickByText('.tt-board__link', 'Mei Tanaka');
+      expect(router.url).toBe('/leaderboard/mei-tanaka');
+      expect(text('.tt-public__name')).toBe('Mei Tanaka');
+      expect(text('.tt-public .tt-row-meta')).toBe('Osaka · Japan');
+      expect(all('.tt-public__stats .tt-stat__value').map((n) => n.textContent?.trim())).toEqual([
+        '13.2%',
+        '38',
+        '88',
+        '#3',
+      ]);
+      expect(text('.tt-nav__item.is-active')).toContain('Leaderboard');
+      await clickByText('.tt-traveller__back', '← Leaderboard');
+      expect(router.url).toBe('/leaderboard');
+    });
+
+    it('does not link private travellers, and hides their stats', async () => {
+      const links = all('.tt-board__link').map((n) => n.textContent?.trim());
+      expect(links).not.toContain('Arjun Mehta');
+      expect(text('.tt-board__private')).toBe('Private');
+      await visit('/leaderboard/arjun-mehta');
+      expect(el.querySelector('.tt-public__stats')).toBeNull();
+      expect(text('.tt-public__private')).toBe('Arjun Mehta keeps their profile private.');
+    });
+
+    it('links your own row to My account', async () => {
+      await clickByText('.tt-board__link', 'You');
+      expect(router.url).toBe('/account');
+    });
+
+    it('says so when no traveller matches the address', async () => {
+      await visit('/leaderboard/nobody-here');
+      expect(text('.tt-traveller__missing')).toBe('There is no traveller at this address.');
+    });
+
     it('is reachable from the sidebar', async () => {
       await visit('/');
       await clickByText('.tt-nav__item', 'Leaderboard');

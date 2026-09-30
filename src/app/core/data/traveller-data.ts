@@ -8,6 +8,8 @@ export interface Traveller {
   cities: number;
   /** Share of the world explored, as a percentage. */
   explored: number;
+  /** Private travellers are ranked, but only their name and flag are shown. */
+  isPrivate?: boolean;
 }
 
 /** Seed data for the other travellers on the leaderboard. */
@@ -17,7 +19,7 @@ export const TRAVELLERS: Traveller[] = [
   { name: 'Mei Tanaka', home: 'Osaka', nationality: 'jp', countries: 38, cities: 88, explored: 13.2 },
   { name: 'Rafael Duarte', home: 'São Paulo', nationality: 'br', countries: 34, cities: 71, explored: 9.7 },
   { name: 'Chloé Martin', home: 'Lyon', nationality: 'fr', countries: 31, cities: 64, explored: 10.4 },
-  { name: 'Arjun Mehta', home: 'Pune', nationality: 'in', countries: 29, cities: 58, explored: 8.1 },
+  { name: 'Arjun Mehta', home: 'Pune', nationality: 'in', countries: 29, cities: 58, explored: 8.1, isPrivate: true },
   { name: 'Hannah Weiss', home: 'Berlin', nationality: 'de', countries: 27, cities: 61, explored: 8.9 },
   { name: 'Lucas Ferreira', home: 'Porto', nationality: 'pt', countries: 27, cities: 54, explored: 7.6 },
   { name: 'Amara Nwosu', home: 'Accra', nationality: 'gh', countries: 24, cities: 49, explored: 6.8 },
@@ -37,7 +39,7 @@ export const TRAVELLERS: Traveller[] = [
   { name: 'Kenji Sato', home: 'Fukuoka', nationality: 'jp', countries: 5, cities: 9, explored: 1.4 },
   { name: 'Isabel Cruz', home: 'Cebu', nationality: 'ph', countries: 4, cities: 8, explored: 1.1 },
   { name: 'Jonas Berg', home: 'Malmö', nationality: 'se', countries: 3, cities: 6, explored: 0.8 },
-  { name: 'Laila Rahimi', home: 'Herat', nationality: 'af', countries: 3, cities: 4, explored: 0.6 },
+  { name: 'Laila Rahimi', home: 'Herat', nationality: 'af', countries: 3, cities: 4, explored: 0.6, isPrivate: true },
   { name: 'Marco Bianchi', home: 'Bologna', nationality: 'it', countries: 2, cities: 3, explored: 0.5 },
   { name: 'Nora Lindqvist', home: 'Umeå', nationality: 'se', countries: 1, cities: 2, explored: 0.3 },
   { name: 'Sam Taylor', home: 'Leeds', nationality: 'gb', countries: 1, cities: 1, explored: 0.1 },

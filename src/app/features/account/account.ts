@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 
-import { fmtPct } from '../../core/data/travel-calc';
 import { flagUrlForCode } from '../../core/data/travel-data';
 import { I18n, Lang } from '../../core/i18n/i18n';
 import { NATIONALITIES, Profile, ProfileData } from '../../core/profile';
 import { TravelStore } from '../../core/travel-store';
-import { CoverageCell } from '../../shared/ui/coverage-cell/coverage-cell';
+import {
+  PublicProfile,
+  PublicProfileData,
+} from '../../shared/ui/public-profile/public-profile';
 import { SectionHead } from '../../shared/ui/section-head/section-head';
-import { StatTile } from '../../shared/ui/stat-tile/stat-tile';
 
 const LANGS: [code: Lang, name: string][] = [
   ['EN', 'English'],
@@ -16,7 +17,7 @@ const LANGS: [code: Lang, name: string][] = [
 
 @Component({
   selector: 'app-account',
-  imports: [CoverageCell, SectionHead, StatTile],
+  imports: [PublicProfile, SectionHead],
   templateUrl: './account.html',
   styleUrl: './account.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,7 +29,6 @@ export class Account {
   protected readonly t = this.i18n.t;
   protected readonly langs = LANGS;
   protected readonly flagUrl = flagUrlForCode;
-  protected readonly topCountries = this.store.topCountries;
 
   /** Unsaved edits to the settings form. */
   protected readonly draft = signal<ProfileData & { lang: Lang }>(this.saved());
@@ -50,17 +50,18 @@ export class Account {
     ),
   );
 
-  protected readonly stats = computed(() => {
-    const t = this.t();
-    const totals = this.store.worldTotals();
-    const board = this.store.leaderboard();
-    const world = this.store.worldPct();
-    return [
-      { label: t.worldMetric, value: fmtPct(world), note: t.weightedPlaces(totals.worldV, totals.worldT) },
-      { label: t.stats.countriesTouched, value: String(totals.countriesTouched), note: t.stats.acrossTheWorld },
-      { label: t.stats.citiesLogged, value: String(totals.citiesLogged), note: t.stats.landmarksCheckedOff(totals.landmarks) },
-      { label: t.sidebar.leaderboard, value: `#${board.you.rank}`, note: t.account.rankNote(board.total) },
-    ];
+  /** Your saved profile as other travellers see it. */
+  protected readonly publicProfile = computed<PublicProfileData>(() => {
+    const { you, total } = this.store.leaderboard();
+    return {
+      ...this.profile(),
+      explored: this.store.worldPct(),
+      countries: you.countries,
+      cities: you.cities,
+      rank: you.rank,
+      total,
+      topCountries: this.store.topCountries(),
+    };
   });
 
   protected countryName(code: string): string {

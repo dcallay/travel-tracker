@@ -107,6 +107,7 @@ export interface Strings {
     aheadOfNote: string;
     countriesNote: string;
     citiesNote: string;
+    privateTag: string;
     /** Screen-reader text for the gap between the top rows and yours. */
     gap: string;
   };
@@ -134,6 +135,11 @@ export interface Strings {
     publicNote: string;
     privateNote: string;
     rankNote: (total: number) => string;
+    exploredNote: string;
+    citiesNote: string;
+    privateProfile: (name: string) => string;
+    backToLeaderboard: string;
+    notFound: string;
     topCountries: string;
     nothingYet: string;
     neverShown: string;

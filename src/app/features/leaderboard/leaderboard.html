@@ -49,8 +49,21 @@
           [attr.title]="countryName(row.nationality)"
         ></span>
         <div>
-          <div class="tt-row-name">{{ row.isYou ? l.you : row.name }}</div>
-          <div class="tt-row-meta">{{ row.home }}</div>
+          @if (row.isYou) {
+            <a class="tt-row-name tt-board__link" routerLink="/account">{{ l.you }}</a>
+          } @else if (row.isPrivate) {
+            <div class="tt-row-name">{{ row.name }}</div>
+          } @else {
+            <a class="tt-row-name tt-board__link" [routerLink]="['/leaderboard', toSlug(row.name)]">
+              {{ row.name }}
+            </a>
+          }
+          <div class="tt-row-meta">
+            {{ row.home }}
+            @if (row.isPrivate) {
+              · <span class="tt-board__private">{{ l.privateTag }}</span>
+            }
+          </div>
         </div>
       </div>
     </td>

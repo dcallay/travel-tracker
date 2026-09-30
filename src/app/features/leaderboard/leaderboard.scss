@@ -57,6 +57,21 @@
   background-repeat: no-repeat;
 }
 
+.tt-board__link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.tt-board__link:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.tt-board__private {
+  font-style: italic;
+}
+
 .tt-board__gap td {
   text-align: center;
   color: var(--color-neutral-500);

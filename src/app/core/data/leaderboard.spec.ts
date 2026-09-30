@@ -31,6 +31,7 @@ describe('rankTravellers', () => {
   it('reports your rank when you fall outside the top rows', () => {
     const board = rankTravellers(others, t('You', 2, 9), 3);
     expect(board.top).toHaveLength(3);
+    expect(board.all).toHaveLength(6);
     expect(board.youInTop).toBe(false);
     expect(board.you.rank).toBe(5);
     expect(board.aheadOfPct).toBe(20);

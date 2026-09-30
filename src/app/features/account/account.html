@@ -114,49 +114,7 @@
 
   <section class="tt-account__section">
     <app-section-head [label]="a.publicHead" [note]="p.isPublic ? a.publicNote : a.privateNote" />
-    <div class="tt-public" [class.is-private]="!p.isPublic">
-      <div class="tt-public__head">
-        <span
-          class="tt-public__flag"
-          role="img"
-          [style.background-image]="flagUrl(p.nationality)"
-          [attr.aria-label]="countryName(p.nationality)"
-          [attr.title]="countryName(p.nationality)"
-        ></span>
-        <div class="tt-public__who">
-          <div class="tt-public__name">{{ p.name }}</div>
-          <div class="tt-row-meta">
-            {{ p.home ? p.home + ' · ' : '' }}{{ countryName(p.nationality) }}
-          </div>
-        </div>
-        <span class="tag" [class.tag-accent]="p.isPublic" [class.tag-neutral]="!p.isPublic">
-          {{ p.isPublic ? a.isPublic : a.isPrivate }}
-        </span>
-      </div>
-
-      <div class="tt-public__stats">
-        @for (stat of stats(); track stat.label) {
-          <app-stat-tile [label]="stat.label" [value]="stat.value" [note]="stat.note" />
-        }
-      </div>
-
-      <div class="tt-public__top">
-        <div class="tt-section-label">{{ a.topCountries }}</div>
-        @for (row of topCountries(); track row.name) {
-          <div class="tt-public__country">
-            <span
-              class="tt-public__country-flag"
-              aria-hidden="true"
-              [style.background-image]="row.flag"
-            ></span>
-            <span class="tt-row-name">{{ row.name }}</span>
-            <app-coverage-cell [bar]="row.bar" [pct]="row.pct" />
-          </div>
-        } @empty {
-          <div class="tt-row-meta">{{ a.nothingYet }}</div>
-        }
-      </div>
-    </div>
+    <app-public-profile class="tt-account__card" [profile]="publicProfile()" [preview]="true" />
     <p class="tt-account__hint">{{ a.neverShown }}</p>
   </section>
 </div>

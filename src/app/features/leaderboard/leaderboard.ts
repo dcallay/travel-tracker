@@ -1,16 +1,18 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { barWidth, fmtPct } from '../../core/data/travel-calc';
 import { flagUrlForCode } from '../../core/data/travel-data';
 import { I18n } from '../../core/i18n/i18n';
+import { toSlug } from '../../core/slug';
 import { TravelStore } from '../../core/travel-store';
 import { CoverageCell } from '../../shared/ui/coverage-cell/coverage-cell';
 import { StatTile } from '../../shared/ui/stat-tile/stat-tile';
 
 @Component({
   selector: 'app-leaderboard',
-  imports: [CoverageCell, NgTemplateOutlet, StatTile],
+  imports: [CoverageCell, NgTemplateOutlet, RouterLink, StatTile],
   templateUrl: './leaderboard.html',
   styleUrl: './leaderboard.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,6 +23,7 @@ export class Leaderboard {
   protected readonly barWidth = barWidth;
   protected readonly fmtPct = fmtPct;
   protected readonly flagUrl = flagUrlForCode;
+  protected readonly toSlug = toSlug;
 
   /** Country names in the UI language, for the flags' labels. */
   private readonly regionNames = computed(

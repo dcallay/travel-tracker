@@ -7,6 +7,8 @@ export interface RankedTraveller extends Traveller {
 }
 
 export interface Leaderboard {
+  /** Everyone, best first. */
+  all: RankedTraveller[];
   top: RankedTraveller[];
   you: RankedTraveller;
   /** Everyone ranked, you included. */
@@ -37,6 +39,7 @@ export function rankTravellers(others: Traveller[], you: Traveller, size = 10): 
   const youRow = ranked.find((t) => t.isYou)!;
   const behind = others.filter((o) => compare(you, o) < 0).length;
   return {
+    all: ranked,
     top,
     you: youRow,
     total: ranked.length,

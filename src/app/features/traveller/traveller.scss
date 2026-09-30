@@ -1,0 +1,18 @@
+:host {
+  display: block;
+}
+
+.tt-traveller {
+  padding: 24px 20px 32px;
+  max-width: 760px;
+}
+
+.tt-traveller__back {
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.tt-traveller__card,
+.tt-traveller__missing {
+  margin-top: 16px;
+}
