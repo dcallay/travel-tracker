@@ -163,7 +163,10 @@ describe('App flows', () => {
     it('switches language from the menu', async () => {
       expect(el.querySelector('.tt-lang__menu')).toBeNull();
       await click(el.querySelector('.tt-lang .btn'));
-      expect(all('.tt-lang__item')).toHaveLength(5);
+      expect(all('.tt-lang__item').map((n) => n.textContent?.trim())).toEqual([
+        'English EN',
+        'Español ES',
+      ]);
       await clickByText('.tt-lang__item', 'Español');
       expect(el.querySelector('.tt-lang__menu')).toBeNull();
       expect(text('.tt-lang .btn')).toContain('ES');

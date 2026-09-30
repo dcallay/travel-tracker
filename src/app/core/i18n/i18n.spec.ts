@@ -20,9 +20,4 @@ describe('I18n', () => {
     expect(i18n.t()).toBe(ES);
     expect(i18n.t().placeMetric('Ecuador')).toBe('Explorado en Ecuador');
   });
-
-  it('falls back to English for a language without a translation', () => {
-    i18n.lang.set('FR');
-    expect(i18n.t()).toBe(EN);
-  });
 });

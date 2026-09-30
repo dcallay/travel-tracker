@@ -5,9 +5,6 @@ import { I18n, Lang } from '../../../core/i18n/i18n';
 const LANGS: [code: Lang, name: string][] = [
   ['EN', 'English'],
   ['ES', 'Español'],
-  ['PT', 'Português'],
-  ['FR', 'Français'],
-  ['DE', 'Deutsch'],
 ];
 
 @Component({
