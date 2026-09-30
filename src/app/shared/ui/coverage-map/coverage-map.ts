@@ -20,7 +20,7 @@ export interface CityMarker {
 
 /**
  * Typed wrapper around the `<world-coverage-map>` custom element (public/world-coverage-map.js),
- * which only understands string attributes and reports clicks as a DOM event.
+ * which only understands string attributes and reports clicks as DOM events.
  *
  * - World / continent view: pass `data` (coverage % by country name) and optionally `fit`.
  * - Country view: pass `country` and `cities`.
@@ -44,6 +44,8 @@ export class CoverageMap {
 
   /** The country name as the map spells it (e.g. `United States of America`). */
   readonly countrySelected = output<string>();
+  /** Index into `cities` of the clicked city marker. */
+  readonly citySelected = output<number>();
 
   private readonly t = inject(I18n).t;
 
@@ -54,6 +56,11 @@ export class CoverageMap {
   protected onCountrySelect(event: Event): void {
     const name = (event as CustomEvent<{ name?: string }>).detail?.name;
     if (name) this.countrySelected.emit(name);
+  }
+
+  protected onCitySelect(event: Event): void {
+    const index = (event as CustomEvent<{ index?: number }>).detail?.index;
+    if (index != null) this.citySelected.emit(index);
   }
 
   private toJson(value: unknown): string | null {
