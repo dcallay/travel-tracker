@@ -1,5 +1,6 @@
 import { OpenPlace, ContinentData, flagImageUrl } from '../../../core/data/travel-data';
 import { barWidth, cityWeight, fmtPct, pct } from '../../../core/data/travel-calc';
+import { Strings } from '../../../core/i18n/strings';
 
 export interface CityView {
   name: string;
@@ -20,7 +21,7 @@ export interface CityView {
 }
 
 /** A city (path `[continent, country, city]`) with its score breakdown and what is still open. */
-export function buildCityView(tree: ContinentData[], path: number[]): CityView {
+export function buildCityView(tree: ContinentData[], path: number[], t: Strings): CityView {
   const cn = tree[path[0]];
   const co = cn.countries[path[1]];
   const ct = co.cities[path[2]];
@@ -35,19 +36,14 @@ export function buildCityView(tree: ContinentData[], path: number[]): CityView {
     flag: flagImageUrl(co.name),
     pct: fmtPct(p),
     bar: barWidth(p),
-    formula: `${w.v} of ${w.t} weighted places. ${ct.nv} neighbourhoods at weight 1, ${ct.lv} landmarks at weight 2.`,
+    formula: t.city.formula(w.v, w.t, ct.nv, ct.lv),
     nRatio: `${ct.nv} / ${ct.nt}`,
     lRatio: `${ct.lv} / ${ct.lt}`,
     discCount: String(ct.disc.length),
-    discList: ct.disc.length ? ct.disc : ['Nothing logged here yet'],
-    openCount: `${openN} neighbourhoods · ${openL} landmarks`,
+    discList: ct.disc.length ? ct.disc : [t.detail.nothingLogged],
+    openCount: t.city.openCount(openN, openL),
     openList: ct.open.length
-      ? ct.open
-      : [
-          {
-            name: `${openN} neighbourhoods and ${openL} landmarks not itemised yet`,
-            kind: 'Seed data',
-          },
-        ],
+      ? ct.open.map((place) => ({ ...place, kind: t.detail.placeKinds[place.kind] ?? place.kind }))
+      : [{ name: t.city.notItemised(openN, openL), kind: t.city.seedData }],
   };
 }

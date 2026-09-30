@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
-import { METRIC_LOWER } from '../../core/metric';
+import { I18n } from '../../core/i18n/i18n';
 import { Navigation } from '../../core/navigation';
 import { TravelStore } from '../../core/travel-store';
 import { barWidth, continentWeight, countryWeight, fmtPct, pct } from '../../core/data/travel-calc';
@@ -23,17 +23,21 @@ import { Sidebar } from '../sidebar/sidebar';
 export class Shell {
   private readonly store = inject(TravelStore);
   private readonly navigation = inject(Navigation);
+  private readonly i18n = inject(I18n);
 
-  protected readonly navItems = computed<NavItem[]>(() => [
-    { label: 'Explore', count: `${this.store.tree().length} continents`, link: '/explore' },
-    { label: "What's left", count: `${this.store.leftRows().length} places`, link: '/left' },
-    { label: 'Timeline', count: `${this.store.timeline.length} recent`, link: '/timeline' },
-  ]);
+  protected readonly navItems = computed<NavItem[]>(() => {
+    const t = this.i18n.t().sidebar;
+    return [
+      { label: t.explore, count: t.exploreCount(this.store.tree().length), link: '/explore' },
+      { label: t.whatsLeft, count: t.whatsLeftCount(this.store.leftRows().length), link: '/left' },
+      { label: t.timeline, count: t.timelineCount(this.store.timeline.length), link: '/timeline' },
+    ];
+  });
 
   protected readonly crumbs = computed<Crumb[]>(() => {
     const path = this.navigation.path();
     const isExplore = this.navigation.section() === 'explore';
-    const labels = ['World', ...this.store.namesFromPath(path)];
+    const labels = [this.i18n.t().header.world, ...this.store.namesFromPath(path)];
     return labels.map((label, i) => ({
       label,
       sep: i < labels.length - 1 ? '/' : '',
@@ -46,14 +50,15 @@ export class Shell {
   protected readonly parentScore = computed<ParentScore | null>(() => {
     const path = this.navigation.path();
     const tree = this.store.tree();
+    const t = this.i18n.t();
     if (path.length === 0) return null;
     if (path.length === 1) {
-      const t = this.store.worldTotals();
+      const totals = this.store.worldTotals();
       return {
-        label: `World ${METRIC_LOWER}`,
+        label: t.worldMetric,
         pct: fmtPct(this.store.worldPct()),
         bar: barWidth(this.store.worldPct()),
-        note: `${t.worldV} of ${t.worldT} weighted places`,
+        note: t.weightedPlaces(totals.worldV, totals.worldT),
       };
     }
     const cn = tree[path[0]];
@@ -61,20 +66,20 @@ export class Shell {
       const w = continentWeight(cn);
       const p = pct(w);
       return {
-        label: `${cn.name} ${METRIC_LOWER}`,
+        label: t.placeMetric(cn.name),
         pct: fmtPct(p),
         bar: barWidth(p),
-        note: `${w.v} of ${w.t} weighted places · ${cn.countries.length} countries`,
+        note: `${t.weightedPlaces(w.v, w.t)} · ${t.sidebar.countries(cn.countries.length)}`,
       };
     }
     const co = cn.countries[path[1]];
     const w = countryWeight(co);
     const p = pct(w);
     return {
-      label: `${co.name} ${METRIC_LOWER}`,
+      label: t.placeMetric(co.name),
       pct: fmtPct(p),
       bar: barWidth(p),
-      note: `${w.v} of ${w.t} weighted places · ${co.cities.length} cities on file`,
+      note: `${t.weightedPlaces(w.v, w.t)} · ${t.sidebar.citiesOnFile(co.cities.length)}`,
     };
   });
 }

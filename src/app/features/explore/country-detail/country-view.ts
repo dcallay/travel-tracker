@@ -1,6 +1,7 @@
 import { Row, toRow } from '../../../core/place-row';
 import { barWidth, cityWeight, countryWeight, fmtPct, pct } from '../../../core/data/travel-calc';
 import { CITY_GEO, ContinentData, flagImageUrl } from '../../../core/data/travel-data';
+import { Strings } from '../../../core/i18n/strings';
 import { CityMarker } from '../../../shared/ui/coverage-map/coverage-map';
 
 export interface CountryView {
@@ -26,7 +27,7 @@ export interface CountryView {
 }
 
 /** A country (path `[continent, country]`) with its score breakdown, cities and discoveries. */
-export function buildCountryView(tree: ContinentData[], path: number[]): CountryView {
+export function buildCountryView(tree: ContinentData[], path: number[], t: Strings): CountryView {
   const cn = tree[path[0]];
   const co = cn.countries[path[1]];
   const w = countryWeight(co);
@@ -43,7 +44,9 @@ export function buildCountryView(tree: ContinentData[], path: number[]): Country
       const cp = pct(cwt);
       const row = toRow(
         ct.name,
-        cwt.v ? `${ct.nv} neighbourhoods · ${ct.lv} landmarks · ${ct.last}` : 'Not yet visited',
+        cwt.v
+          ? t.country.cityMeta(ct.nv, ct.lv, t.detail.monthYear(ct.last ?? ''))
+          : t.country.cityNotVisited,
         cp,
         [path[0], path[1], i],
       );
@@ -64,16 +67,16 @@ export function buildCountryView(tree: ContinentData[], path: number[]): Country
     flag: flagImageUrl(co.name),
     pct: fmtPct(p),
     bar: barWidth(p),
-    formula: `${w.v} of ${w.t} weighted places. ${nv} neighbourhoods at weight 1, ${lv} landmarks at weight 2, plus ${co.rest} weighted places elsewhere in the country still on file.`,
+    formula: t.country.formula(w.v, w.t, nv, lv, co.rest),
     cRatio: `${logged} / ${co.cities.length}`,
     nRatio: `${nv} / ${nt}`,
     lRatio: `${lv} / ${lt}`,
     discCount: String(disc.length),
-    discList: disc.length ? disc.slice(0, 6) : ['Nothing logged here yet'],
-    cityCount: `${co.cities.length} seeded`,
+    discList: disc.length ? disc.slice(0, 6) : [t.detail.nothingLogged],
+    cityCount: t.country.citiesCount(co.cities.length),
     cities,
     isEmpty: w.v === 0,
-    emptyNote: `No visits in ${co.name} yet. Its ${w.t} weighted places still count against the world figure — that is the point of the denominator.`,
+    emptyNote: t.country.emptyNote(co.name, w.t),
     citiesGeo,
   };
 }

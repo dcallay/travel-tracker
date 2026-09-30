@@ -1,8 +1,8 @@
 <div class="tt-timeline">
-  <h4>Travel history</h4>
-  <p class="tt-lead">Every visit, newest first, with how it got logged.</p>
+  <h4>{{ t().timeline.title }}</h4>
+  <p class="tt-lead">{{ t().timeline.lead }}</p>
   <div class="tt-timeline__list">
-    @for (entry of entries; track entry.date + entry.place) {
+    @for (entry of entries(); track entry.date + entry.place) {
       <div class="tt-timeline__item">
         <div class="tt-timeline__date">{{ entry.date }}</div>
         <div>
@@ -11,7 +11,7 @@
         </div>
         <div class="tt-timeline__tags">
           <span class="tag tag-neutral">{{ entry.weight }}</span>
-          <span [class]="tagClass(entry.source)">{{ entry.source }}</span>
+          <span [class]="tagClass(entry.source)">{{ entry.sourceLabel }}</span>
         </div>
       </div>
     }

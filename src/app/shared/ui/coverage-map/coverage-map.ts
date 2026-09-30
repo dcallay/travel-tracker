@@ -3,9 +3,12 @@ import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   computed,
+  inject,
   input,
   output,
 } from '@angular/core';
+
+import { I18n } from '../../../core/i18n/i18n';
 
 export interface CityMarker {
   name: string;
@@ -42,7 +45,10 @@ export class CoverageMap {
   /** The country name as the map spells it (e.g. `United States of America`). */
   readonly countrySelected = output<string>();
 
+  private readonly t = inject(I18n).t;
+
   protected readonly dataAttr = computed(() => this.toJson(this.data()));
+  protected readonly labelsAttr = computed(() => this.toJson(this.t().map));
   protected readonly citiesAttr = computed(() => this.toJson(this.cities()));
 
   protected onCountrySelect(event: Event): void {

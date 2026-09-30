@@ -1,5 +1,4 @@
 import { WorldTotals } from '../../../core/travel-store';
-import { METRIC_LOWER } from '../../../core/metric';
 import { Row, toRow } from '../../../core/place-row';
 import {
   cityWeight,
@@ -9,6 +8,7 @@ import {
   pct,
 } from '../../../core/data/travel-calc';
 import { ContinentData } from '../../../core/data/travel-data';
+import { Strings } from '../../../core/i18n/strings';
 
 export interface StatItem {
   label: string;
@@ -35,17 +35,18 @@ export function buildListView(
   tree: ContinentData[],
   totals: WorldTotals,
   path: number[],
+  t: Strings,
 ): ListView {
-  if (path.length === 0) return buildWorldView(tree, totals);
-  return buildContinentView(tree, totals, path[0]);
+  if (path.length === 0) return buildWorldView(tree, totals, t);
+  return buildContinentView(tree, totals, path[0], t);
 }
 
-function buildWorldView(tree: ContinentData[], totals: WorldTotals): ListView {
+function buildWorldView(tree: ContinentData[], totals: WorldTotals, t: Strings): ListView {
   const rows = tree.map((cn, i) => {
     const touched = cn.countries.filter((co) => countryWeight(co).v > 0).length;
     return toRow(
       cn.name,
-      touched ? `${touched} of ${cn.countries.length} countries` : 'No visits yet',
+      touched ? t.table.countriesTouched(touched, cn.countries.length) : t.table.noVisits,
       pct(continentWeight(cn)),
       [i],
     );
@@ -53,51 +54,56 @@ function buildWorldView(tree: ContinentData[], totals: WorldTotals): ListView {
   const worldPct = pct({ v: totals.worldV, t: totals.worldT });
   return {
     rows,
-    colHead: 'Continent',
-    levelTitle: 'By continent',
-    levelSub: 'Landmarks count double neighbourhoods',
+    colHead: t.table.continent,
+    levelTitle: t.table.byContinent,
+    levelSub: t.table.worldSub,
     stats: [
       {
-        label: `World ${METRIC_LOWER}`,
+        label: t.worldMetric,
         value: fmtPct(worldPct),
-        note: `${totals.worldV} of ${totals.worldT} weighted places`,
+        note: t.weightedPlaces(totals.worldV, totals.worldT),
         hasInfo: true,
       },
       {
-        label: 'Countries touched',
+        label: t.stats.countriesTouched,
         value: String(totals.countriesTouched),
-        note: 'across the world',
+        note: t.stats.acrossTheWorld,
         hasInfo: false,
       },
       {
-        label: 'Cities logged',
+        label: t.stats.citiesLogged,
         value: String(totals.citiesLogged),
-        note: `${totals.landmarks} landmarks checked off`,
+        note: t.stats.landmarksCheckedOff(totals.landmarks),
         hasInfo: false,
       },
       {
-        label: 'Your discoveries',
+        label: t.stats.discoveries,
         value: String(totals.discoveries),
-        note: 'local knowledge score',
+        note: t.stats.localKnowledgeScore,
         hasInfo: false,
       },
     ],
     emptyNote: '',
     mapFit: '',
     mapHeight: 250,
-    mapCaption: `Countries shaded by ${METRIC_LOWER} — click one for its detail`,
+    mapCaption: t.worldMapCaption,
     mapData: totals.mapData,
   };
 }
 
-function buildContinentView(tree: ContinentData[], totals: WorldTotals, index: number): ListView {
+function buildContinentView(
+  tree: ContinentData[],
+  totals: WorldTotals,
+  index: number,
+  t: Strings,
+): ListView {
   const cn = tree[index];
   const w = continentWeight(cn);
   const rows = cn.countries.map((co, i) => {
     const logged = co.cities.filter((ct) => cityWeight(ct).v > 0).length;
     return toRow(
       co.name,
-      logged ? `${logged} of ${co.cities.length} cities logged` : 'No visits yet',
+      logged ? t.table.citiesLogged(logged, co.cities.length) : t.table.noVisits,
       pct(countryWeight(co)),
       [index, i],
     );
@@ -112,42 +118,39 @@ function buildContinentView(tree: ContinentData[], totals: WorldTotals, index: n
   );
   return {
     rows,
-    colHead: 'Country',
+    colHead: t.table.country,
     levelTitle: cn.name,
-    levelSub: `${cn.countries.length} countries on file`,
+    levelSub: t.table.continentSub(cn.countries.length),
     stats: [
       {
-        label: `${cn.name} ${METRIC_LOWER}`,
+        label: t.placeMetric(cn.name),
         value: fmtPct(pct(w)),
-        note: `${w.v} of ${w.t} weighted places`,
+        note: t.weightedPlaces(w.v, w.t),
         hasInfo: true,
       },
       {
-        label: 'Countries',
+        label: t.stats.countries,
         value: String(cn.countries.length),
-        note: `${cn.countries.filter((co) => countryWeight(co).v > 0).length} with visits`,
+        note: t.stats.withVisits(cn.countries.filter((co) => countryWeight(co).v > 0).length),
         hasInfo: false,
       },
       {
-        label: 'Cities logged',
+        label: t.stats.citiesLogged,
         value: String(citiesLogged),
-        note: 'in this continent',
+        note: t.stats.inThisContinent,
         hasInfo: false,
       },
       {
-        label: 'Your discoveries',
+        label: t.stats.discoveries,
         value: String(discoveries),
-        note: 'local knowledge score',
+        note: t.stats.localKnowledgeScore,
         hasInfo: false,
       },
     ],
-    emptyNote:
-      w.v === 0
-        ? `Nothing logged in ${cn.name} yet. ${cn.countries.length} countries and ${w.t} weighted places are already on file, so the moment you land somewhere the percentage starts moving.`
-        : '',
+    emptyNote: w.v === 0 ? t.table.emptyContinent(cn.name, cn.countries.length, w.t) : '',
     mapFit: cn.name,
     mapHeight: 360,
-    mapCaption: `${cn.name} — shaded by ${METRIC_LOWER}, click a country for its detail`,
+    mapCaption: t.continentMapCaption(cn.name),
     mapData: totals.mapData,
   };
 }

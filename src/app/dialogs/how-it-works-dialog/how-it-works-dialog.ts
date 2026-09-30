@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
 import { DialogState } from '../../core/dialog-state';
-import { METRIC_LOWER } from '../../core/metric';
+import { I18n } from '../../core/i18n/i18n';
 import { Dialog } from '../../shared/ui/dialog/dialog';
 
 @Component({
@@ -13,5 +13,5 @@ import { Dialog } from '../../shared/ui/dialog/dialog';
 })
 export class HowItWorksDialog {
   protected readonly dialogs = inject(DialogState);
-  protected readonly metricLower = METRIC_LOWER;
+  protected readonly t = inject(I18n).t;
 }

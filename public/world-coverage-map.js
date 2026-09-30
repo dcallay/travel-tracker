@@ -55,7 +55,7 @@
   }
 
   class WorldCoverageMap extends HTMLElement {
-    static get observedAttributes() { return ['data', 'height', 'fit', 'country', 'cities']; }
+    static get observedAttributes() { return ['data', 'height', 'fit', 'country', 'cities', 'labels']; }
     connectedCallback() { this.style.display = 'block'; this.render(); }
     attributeChangedCallback() { if (this.isConnected) this.render(); }
 
@@ -66,6 +66,9 @@
       const h = Number(this.getAttribute('height') || 260);
       let data = {};
       try { data = JSON.parse(this.getAttribute('data') || '{}'); } catch (e) { data = {}; }
+      // Hover text, translated by the host page; English if absent.
+      let labels = { explored: 'explored', savedNothingLogged: 'saved, nothing logged' };
+      try { labels = Object.assign(labels, JSON.parse(this.getAttribute('labels') || '{}')); } catch (e) {}
       const byName = {};
       Object.keys(data).forEach((k) => { byName[ALIAS[k] || k] = data[k]; });
 
@@ -160,7 +163,7 @@
         p.addEventListener('mouseenter', () => setHi(pct != null ? p : null));
         if (pct != null) {
           const t = document.createElementNS(svgNS, 'title');
-          t.textContent = name + ' — ' + pct.toFixed(1) + '% explored';
+          t.textContent = name + ' — ' + pct.toFixed(1) + '% ' + labels.explored;
           p.appendChild(t);
           p.style.cursor = 'pointer';
           p.addEventListener('click', () => {
@@ -183,7 +186,7 @@
           dot.setAttribute('stroke', ct.visited ? 'var(--color-bg, #f3f2f2)' : 'var(--color-text, #201e1d)');
           dot.setAttribute('stroke-width', '1.4');
           const t = document.createElementNS(svgNS, 'title');
-          t.textContent = ct.name + (ct.visited ? ' — ' + (ct.pct || 0).toFixed(1) + '% explored' : ' — saved, nothing logged');
+          t.textContent = ct.name + (ct.visited ? ' — ' + (ct.pct || 0).toFixed(1) + '% ' + labels.explored : ' — ' + labels.savedNothingLogged);
           dot.appendChild(t);
           const label = document.createElementNS(svgNS, 'text');
           label.setAttribute('x', String(xy[0] + 9));

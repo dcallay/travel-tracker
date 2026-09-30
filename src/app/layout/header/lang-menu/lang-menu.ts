@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 
-const LANGS: [code: string, name: string][] = [
+import { I18n, Lang } from '../../../core/i18n/i18n';
+
+const LANGS: [code: Lang, name: string][] = [
   ['EN', 'English'],
   ['ES', 'Español'],
-  ['PT', 'Português'],
-  ['FR', 'Français'],
-  ['DE', 'Deutsch'],
 ];
 
 @Component({
@@ -17,14 +16,14 @@ const LANGS: [code: string, name: string][] = [
 })
 export class LangMenu {
   protected readonly langs = LANGS;
-  protected readonly lang = signal('EN');
+  protected readonly lang = inject(I18n).lang;
   protected readonly open = signal(false);
 
   protected toggle(): void {
     this.open.update((v) => !v);
   }
 
-  protected select(code: string): void {
+  protected select(code: Lang): void {
     this.lang.set(code);
     this.open.set(false);
   }

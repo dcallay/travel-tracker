@@ -13,7 +13,7 @@
   <app-lang-menu />
 
   <button type="button" class="btn btn-secondary" (click)="dialogs.openPhoto()">
-    Confirm 2 detections
+    {{ t().header.confirmDetections(2) }}
   </button>
-  <a class="btn btn-primary" routerLink="/add">Add a visit</a>
+  <a class="btn btn-primary" routerLink="/add">{{ t().header.addVisit }}</a>
 </header>

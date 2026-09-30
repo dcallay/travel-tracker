@@ -134,11 +134,40 @@ describe('App flows', () => {
       expect(text('.tt-detail__title')).toBe('Lisbon');
     });
 
+    it("shows What's left in the chosen language", async () => {
+      await click(el.querySelector('.tt-lang .btn'));
+      await clickByText('.tt-lang__item', 'Español');
+      await clickByText('.tt-nav__item', 'Lo que falta');
+      expect(text('.tt-left h4')).toBe('Lo que queda pendiente');
+      expect(all('.tt-left__table th').map((n) => n.textContent?.trim())).toEqual([
+        'Lugar',
+        'Explorado',
+        'Pendiente',
+        'Descubrimientos',
+      ]);
+      expect(all('.tt-left__table tbody .tt-row-meta')[1].textContent?.trim()).toMatch(
+        /^\d+ barrios · \d+ monumentos$/,
+      );
+    });
+
     it('renders the timeline', async () => {
       await clickByText('.tt-nav__item', 'Timeline');
       expect(all('.tt-timeline__item')).toHaveLength(TIMELINE.length);
       expect(all('.tt-timeline__tags .tag-outline').map((t) => t.textContent?.trim())).toEqual(
         TIMELINE.filter((t) => t.source === 'Manual').map(() => 'Manual'),
+      );
+    });
+
+    it('renders the timeline in the chosen language', async () => {
+      await click(el.querySelector('.tt-lang .btn'));
+      await clickByText('.tt-lang__item', 'Español');
+      await clickByText('.tt-nav__item', 'Cronología');
+      expect(text('.tt-timeline h4')).toBe('Historial de viajes');
+      expect(text('.tt-timeline__date')).toBe('14 sept 2026');
+      expect(text('.tt-timeline__detail')).toBe('Barrio recorrido de punta a punta');
+      expect(all('.tt-timeline__tags .tag-accent')[0].textContent?.trim()).toBe('Geolocalización');
+      expect(all('.tt-timeline__tags .tag-neutral').map((t) => t.textContent?.trim())).toContain(
+        'puntuación +1',
       );
     });
 
@@ -163,10 +192,60 @@ describe('App flows', () => {
     it('switches language from the menu', async () => {
       expect(el.querySelector('.tt-lang__menu')).toBeNull();
       await click(el.querySelector('.tt-lang .btn'));
-      expect(all('.tt-lang__item')).toHaveLength(5);
+      expect(all('.tt-lang__item').map((n) => n.textContent?.trim())).toEqual([
+        'English EN',
+        'Español ES',
+      ]);
       await clickByText('.tt-lang__item', 'Español');
       expect(el.querySelector('.tt-lang__menu')).toBeNull();
       expect(text('.tt-lang .btn')).toContain('ES');
+    });
+
+    it('translates the header into the chosen language', async () => {
+      await clickByText('.table tbody tr', 'South America');
+      await click(el.querySelector('.tt-lang .btn'));
+      await clickByText('.tt-lang__item', 'Español');
+      expect(all('.tt-crumb').map((c) => c.textContent?.trim())).toEqual([
+        'Mundo',
+        'South America',
+      ]);
+      expect(text('.tt-header .btn-secondary')).toBe('Confirmar 2 detecciones');
+      expect(text('.tt-header .btn-primary')).toBe('Añadir una visita');
+      await clickByText('.tt-crumb', 'Mundo');
+      expect(text('.tt-crumb.is-active')).toBe('Mundo');
+    });
+
+    it('translates the add-visit page into the chosen language', async () => {
+      await click(el.querySelector('.tt-lang .btn'));
+      await clickByText('.tt-lang__item', 'Español');
+      await clickByText('.tt-header .btn-primary', 'Añadir una visita');
+      expect(text('.tt-add h4')).toBe('Añadir una visita');
+      expect(all('.tt-add .seg-opt').map((n) => n.textContent?.trim())).toEqual([
+        'Barrio',
+        'Monumento',
+        'Descubrimiento personal',
+      ]);
+      expect(el.querySelector<HTMLInputElement>('#tt-date')!.value).toBe('16 sept 2026');
+      expect(el.querySelector('#tt-notes')?.getAttribute('placeholder')).toBe('Opcional');
+      expect(text('.tt-add__source')).toBe('Origen: manual');
+      await clickByText('.tt-add__actions .btn', 'Cancelar');
+      expect(el.querySelector('.tt-add')).toBeNull();
+    });
+
+    it('translates the sidebar into the chosen language', async () => {
+      await clickByText('.table tbody tr', 'South America');
+      await click(el.querySelector('.tt-lang .btn'));
+      await clickByText('.tt-lang__item', 'Español');
+      expect(text('.tt-sidebar__brand-tag')).toBe('Descubre cuánto del mundo has visto de verdad');
+      expect(all('.tt-nav__item span:first-child').map((n) => n.textContent?.trim())).toEqual([
+        'Explorar',
+        'Lo que falta',
+        'Cronología',
+      ]);
+      expect(text('.tt-nav__count')).toBe(`${TRAVEL_TREE.length} continentes`);
+      expect(text('.tt-parent-score__label')).toBe('Explorado en el mundo');
+      expect(text('.tt-parent-score__note')).toMatch(/^\d+ de \d+ lugares ponderados$/);
+      expect(text('.tt-sidebar__feedback .btn')).toBe('Enviar comentarios');
     });
   });
 
@@ -211,10 +290,53 @@ describe('App flows', () => {
       expect(text('.dialog-body')).toContain('Logged against Ecuador · Quito');
     });
 
+    it('shows the feedback dialog in the chosen language', async () => {
+      await clickByText('.table tbody tr', 'South America');
+      await clickByText('.table tbody tr', 'Ecuador');
+      await click(el.querySelector('.tt-lang .btn'));
+      await clickByText('.tt-lang__item', 'Español');
+      await clickByText('.tt-report-row .btn', '¿Algo no está bien?');
+      expect(text('.dialog-kicker')).toBe('Informar de un problema');
+      expect(text('.dialog-title')).toBe('¿Algo no está bien?');
+      expect(all('.dialog .seg-opt').map((n) => n.textContent?.trim())).toEqual([
+        'Recuento incorrecto',
+        'Ciudad incorrecta',
+        'Falta un lugar',
+        'Visita que no hice',
+      ]);
+      expect(el.querySelector<HTMLInputElement>('.dialog .seg-opt input')!.checked).toBe(true);
+      expect(el.querySelector('.tt-dialog-email input')?.getAttribute('placeholder')).toBe(
+        'opcional',
+      );
+      await clickByText('.dialog-actions .btn', 'Enviar');
+      expect(text('.dialog-title')).toBe('Gracias, ya está registrado');
+      expect(text('.dialog-body')).toContain('Registrado para South America · Ecuador');
+      await clickByText('.dialog-actions .btn', 'Cerrar');
+      expect(el.querySelector('.dialog')).toBeNull();
+    });
+
     it('opens and dismisses the photo confirmation dialog', async () => {
       await clickByText('.tt-header .btn-secondary', 'Confirm 2 detections');
       expect(text('.dialog-kicker')).toBe('Photo recognition');
+      expect(text('.dialog-body')).toBe(
+        'Matched from a photo taken in Quito on 14 Mar 2026, with a location fix 140 m away. Confirming logs it as a landmark — weight 2.',
+      );
       await clickByText('.dialog-actions .btn', 'Confirm visit');
+      expect(el.querySelector('.dialog')).toBeNull();
+    });
+
+    it('shows the photo confirmation dialog in the chosen language', async () => {
+      await click(el.querySelector('.tt-lang .btn'));
+      await clickByText('.tt-lang__item', 'Español');
+      await clickByText('.tt-header .btn-secondary', 'Confirmar 2 detecciones');
+      expect(text('.dialog-kicker')).toBe('Reconocimiento de fotos');
+      expect(text('.dialog-title')).toBe('¿Es Basílica del Voto Nacional?');
+      expect(text('.dialog-body')).toContain('en Quito el 14 mar 2026, con una ubicación a 140 m');
+      expect(all('.tt-dialog-meta .tt-section-label').map((n) => n.textContent?.trim())).toEqual([
+        'Confianza',
+        'Origen',
+      ]);
+      await clickByText('.dialog-actions .btn', 'No es este lugar');
       expect(el.querySelector('.dialog')).toBeNull();
     });
   });

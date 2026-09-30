@@ -1,12 +1,14 @@
 import { computeWorldTotals } from '../../../core/travel-store';
 import { TRAVEL_TREE } from '../../../core/data/travel-data';
+import { EN } from '../../../core/i18n/en';
+import { ES } from '../../../core/i18n/es';
 import { buildListView } from './list-view';
 
 const totals = computeWorldTotals(TRAVEL_TREE);
 
 describe('buildListView', () => {
   describe('world level', () => {
-    const view = buildListView(TRAVEL_TREE, totals, []);
+    const view = buildListView(TRAVEL_TREE, totals, [], EN);
 
     it('has a row per continent that drills into that continent', () => {
       expect(view.rows.map((r) => r.name)).toEqual(TRAVEL_TREE.map((c) => c.name));
@@ -35,7 +37,7 @@ describe('buildListView', () => {
 
   describe('continent level', () => {
     it('lists the continent’s countries with paths one level deeper', () => {
-      const view = buildListView(TRAVEL_TREE, totals, [0]);
+      const view = buildListView(TRAVEL_TREE, totals, [0], EN);
       expect(view.levelTitle).toBe('South America');
       expect(view.colHead).toBe('Country');
       expect(view.rows.map((r) => r.path)).toEqual([
@@ -51,13 +53,62 @@ describe('buildListView', () => {
 
     it('explains an empty continent instead of showing zero stats silently', () => {
       const africa = TRAVEL_TREE.findIndex((c) => c.name === 'Africa');
-      const view = buildListView(TRAVEL_TREE, totals, [africa]);
+      const view = buildListView(TRAVEL_TREE, totals, [africa], EN);
       expect(view.emptyNote).toContain('Nothing logged in Africa yet');
       expect(view.stats[0].value).toBe('0.0%');
     });
 
     it('has no empty note once something is logged', () => {
-      expect(buildListView(TRAVEL_TREE, totals, [0]).emptyNote).toBe('');
+      expect(buildListView(TRAVEL_TREE, totals, [0], EN).emptyNote).toBe('');
+    });
+  });
+
+  describe('stats in the chosen language', () => {
+    it('labels the world stats', () => {
+      const view = buildListView(TRAVEL_TREE, totals, [], ES);
+      expect(view.stats.map((s) => s.label)).toEqual([
+        'Explorado en el mundo',
+        'Países visitados',
+        'Ciudades registradas',
+        'Tus descubrimientos',
+      ]);
+      expect(view.stats[0].note).toBe(`${totals.worldV} de ${totals.worldT} lugares ponderados`);
+      expect(view.stats[2].note).toBe(`${totals.landmarks} monumentos visitados`);
+    });
+
+    it('labels the continent stats', () => {
+      const view = buildListView(TRAVEL_TREE, totals, [0], ES);
+      expect(view.stats.map((s) => s.label)).toEqual([
+        'Explorado en South America',
+        'Países',
+        'Ciudades registradas',
+        'Tus descubrimientos',
+      ]);
+      expect(view.stats[1].note).toMatch(/^\d+ con visitas$/);
+      expect(view.stats[2].note).toBe('en este continente');
+    });
+  });
+
+  describe('table in the chosen language', () => {
+    it('heads and describes the continent rows', () => {
+      const view = buildListView(TRAVEL_TREE, totals, [], ES);
+      expect(view.colHead).toBe('Continente');
+      expect(view.levelTitle).toBe('Por continente');
+      expect(view.levelSub).toBe('Los monumentos cuentan el doble que los barrios');
+      const byName = Object.fromEntries(view.rows.map((r) => [r.name, r]));
+      expect(byName['Africa'].meta).toBe('Aún sin visitas');
+      expect(byName['Europe'].meta).toMatch(/^\d+ de 4 países$/);
+    });
+
+    it('heads and describes the country rows, and explains an empty continent', () => {
+      const view = buildListView(TRAVEL_TREE, totals, [0], ES);
+      expect(view.colHead).toBe('País');
+      expect(view.levelSub).toBe('5 países en el catálogo');
+      expect(view.rows[0].meta).toBe('3 de 4 ciudades registradas');
+      const africa = TRAVEL_TREE.findIndex((c) => c.name === 'Africa');
+      expect(buildListView(TRAVEL_TREE, totals, [africa], ES).emptyNote).toContain(
+        'Aún no hay nada registrado en Africa',
+      );
     });
   });
 });

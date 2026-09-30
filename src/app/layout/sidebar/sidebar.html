@@ -1,7 +1,7 @@
 <aside class="tt-sidebar">
   <div class="tt-sidebar__brand">
     <div class="tt-sidebar__brand-name">GEOSCORE</div>
-    <div class="tt-sidebar__brand-tag">Track how much of the world you've truly seen</div>
+    <div class="tt-sidebar__brand-tag">{{ t().sidebar.tagline }}</div>
   </div>
 
   <nav class="tt-nav">
@@ -24,7 +24,7 @@
     }
     <div class="tt-sidebar__feedback">
       <button type="button" class="btn btn-ghost" (click)="dialogs.openFeedback()">
-        Send feedback
+        {{ t().sidebar.sendFeedback }}
       </button>
     </div>
   </div>
