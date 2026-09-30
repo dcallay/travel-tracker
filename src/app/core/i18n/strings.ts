@@ -92,6 +92,25 @@ export interface Strings {
     weights: Record<string, string>;
   };
 
+  /** The Leaderboard page. */
+  leaderboard: {
+    title: string;
+    lead: string;
+    rank: string;
+    traveller: string;
+    countries: string;
+    cities: string;
+    you: string;
+    yourRank: string;
+    ofTravellers: (n: number) => string;
+    aheadOf: string;
+    aheadOfNote: string;
+    countriesNote: string;
+    citiesNote: string;
+    /** Screen-reader text for the gap between the top rows and yours. */
+    gap: string;
+  };
+
   header: {
     world: string;
     confirmDetections: (n: number) => string;
@@ -106,6 +125,8 @@ export interface Strings {
     whatsLeftCount: (places: number) => string;
     timeline: string;
     timelineCount: (entries: number) => string;
+    leaderboard: string;
+    leaderboardCount: (travellers: number) => string;
     countries: (n: number) => string;
     citiesOnFile: (n: number) => string;
     sendFeedback: string;

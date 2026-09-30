@@ -11,6 +11,7 @@ export const routes: Routes = [
       { path: 'explore', loadChildren: () => import('./features/explore/explore.routes').then((m) => m.EXPLORE_ROUTES) },
       { path: 'left', loadComponent: () => import('./features/whats-left/whats-left').then((m) => m.WhatsLeft) },
       { path: 'timeline', loadComponent: () => import('./features/timeline/timeline').then((m) => m.Timeline) },
+      { path: 'leaderboard', loadComponent: () => import('./features/leaderboard/leaderboard').then((m) => m.Leaderboard) },
       { path: 'add', loadComponent: () => import('./features/add-visit/add-visit').then((m) => m.AddVisit) },
       { path: '**', redirectTo: 'explore' },
     ],

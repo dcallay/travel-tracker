@@ -94,6 +94,23 @@ export const ES: Strings = {
     weights: { 'score +1': 'puntuación +1' },
   },
 
+  leaderboard: {
+    title: 'Clasificación',
+    lead: 'Los diez viajeros con más países visitados y, después, más ciudades, con cuánto del mundo ha explorado cada uno. Tu fila siempre aparece.',
+    rank: '#',
+    traveller: 'Viajero',
+    countries: 'Países',
+    cities: 'Ciudades',
+    you: 'Tú',
+    yourRank: 'Tu posición',
+    ofTravellers: (n) => `de ${n} viajeros`,
+    aheadOf: 'Por delante de',
+    aheadOfNote: 'del resto de viajeros',
+    countriesNote: 'con al menos una visita',
+    citiesNote: 'con al menos una visita',
+    gap: 'Viajeros entre los diez primeros y tú',
+  },
+
   header: {
     world: 'Mundo',
     confirmDetections: (n) => `Confirmar ${n} detecciones`,
@@ -108,6 +125,8 @@ export const ES: Strings = {
     whatsLeftCount: (n) => `${n} lugares`,
     timeline: 'Cronología',
     timelineCount: (n) => `${n} recientes`,
+    leaderboard: 'Clasificación',
+    leaderboardCount: (n) => `${n} viajeros`,
     countries: (n) => `${n} países`,
     citiesOnFile: (n) => `${n} ciudades en el catálogo`,
     sendFeedback: 'Enviar comentarios',

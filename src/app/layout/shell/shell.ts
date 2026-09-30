@@ -31,6 +31,11 @@ export class Shell {
       { label: t.explore, count: t.exploreCount(this.store.tree().length), link: '/explore' },
       { label: t.whatsLeft, count: t.whatsLeftCount(this.store.leftRows().length), link: '/left' },
       { label: t.timeline, count: t.timelineCount(this.store.timeline.length), link: '/timeline' },
+      {
+        label: t.leaderboard,
+        count: t.leaderboardCount(this.store.leaderboard().total),
+        link: '/leaderboard',
+      },
     ];
   });
 

@@ -86,6 +86,35 @@ describe('App routing', () => {
       expect(text('.tt-timeline h4')).toBe('Travel history');
       await visit('/add');
       expect(text('.tt-add h4')).toBe('Add a visit');
+      await visit('/leaderboard');
+      expect(text('.tt-board h4')).toBe('Leaderboard');
+    });
+  });
+
+  describe('leaderboard', () => {
+    beforeEach(() => visit('/leaderboard'));
+
+    it('lists the top ten travellers, then your own row with your rank', async () => {
+      const rows = all('.tt-board__table tbody tr:not(.tt-board__gap)');
+      expect(rows).toHaveLength(11);
+      expect(rows[0].textContent).toContain('Ingrid Solberg');
+      expect(all('.tt-board__you')).toHaveLength(1);
+      expect(rows[10].classList).toContain('tt-board__you');
+      expect(el.querySelector('.tt-board__gap')).toBeTruthy();
+      expect(text('.tt-board__you .tt-col-rank')).toBe('15');
+      expect(text('.tt-board__stats .tt-stat__value')).toBe('#15');
+      expect(rows[0].textContent).toContain('14.6%');
+      expect(el.querySelector('.tt-board__you')!.textContent).toContain('3.8%');
+      expect(all('.tt-board__flag')).toHaveLength(11);
+      expect(all('.tt-board__flag')[0].getAttribute('aria-label')).toBe('Norway');
+      expect(el.querySelector('.tt-board__you .tt-board__flag')!.getAttribute('title')).toBe('Ecuador');
+    });
+
+    it('is reachable from the sidebar', async () => {
+      await visit('/');
+      await clickByText('.tt-nav__item', 'Leaderboard');
+      expect(router.url).toBe('/leaderboard');
+      expect(text('.tt-nav__item.is-active')).toContain('Leaderboard');
     });
   });
 
