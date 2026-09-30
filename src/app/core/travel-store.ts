@@ -8,6 +8,8 @@ import {
   fmtPct,
   pct,
 } from './data/travel-calc';
+import { rankTravellers } from './data/leaderboard';
+import { TRAVELLERS } from './data/traveller-data';
 import { ContinentData, TIMELINE, TRAVEL_TREE } from './data/travel-data';
 import { toSlug } from './slug';
 
@@ -104,6 +106,17 @@ export class TravelStore {
   });
   /** Every visited city, closest to done first. */
   readonly leftRows = computed(() => computeLeftRows(this.tree()));
+  /** The top ten travellers by countries then cities, and where you stand among them. */
+  readonly leaderboard = computed(() => {
+    const t = this.worldTotals();
+    return rankTravellers(TRAVELLERS, {
+      name: '',
+      home: '',
+      countries: t.countriesTouched,
+      cities: t.citiesLogged,
+      explored: this.worldPct(),
+    });
+  });
 
   /**
    * Path `[continent, country?, city?]` for URL slugs such as `['south-america', 'ecuador']`,

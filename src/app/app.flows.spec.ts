@@ -241,6 +241,7 @@ describe('App flows', () => {
         'Explorar',
         'Lo que falta',
         'Cronología',
+        'Clasificación',
       ]);
       expect(text('.tt-nav__count')).toBe(`${TRAVEL_TREE.length} continentes`);
       expect(text('.tt-parent-score__label')).toBe('Explorado en el mundo');

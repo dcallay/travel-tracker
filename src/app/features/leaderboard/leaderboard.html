@@ -1,0 +1,54 @@
+@let l = t().leaderboard;
+@let b = board();
+
+<div class="tt-board__stats">
+  @for (stat of stats(); track stat.label) {
+    <app-stat-tile [label]="stat.label" [value]="stat.value" [note]="stat.note" />
+  }
+</div>
+
+<div class="tt-board">
+  <h4>{{ l.title }}</h4>
+  <p class="tt-lead">{{ l.lead }}</p>
+  <table class="table tt-board__table">
+    <thead>
+      <tr>
+        <th class="tt-col-rank">{{ l.rank }}</th>
+        <th>{{ l.traveller }}</th>
+        <th class="tt-col-num">{{ l.countries }}</th>
+        <th class="tt-col-num">{{ l.cities }}</th>
+        <th class="tt-col-metric">{{ t().metric }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of b.top; track row.isYou ? '' : row.name) {
+        <ng-container *ngTemplateOutlet="rowTpl; context: { $implicit: row }" />
+      }
+      @if (!b.youInTop) {
+        @if (b.you.rank > b.top.length + 1) {
+          <tr class="tt-board__gap" [attr.aria-label]="l.gap">
+            <td colspan="5">⋯</td>
+          </tr>
+        }
+        <ng-container *ngTemplateOutlet="rowTpl; context: { $implicit: b.you }" />
+      }
+    </tbody>
+  </table>
+</div>
+
+<ng-template #rowTpl let-row>
+  <tr [class.tt-board__you]="row.isYou">
+    <td class="tt-col-rank">{{ row.rank }}</td>
+    <td>
+      @if (row.isYou) {
+        <div class="tt-row-name">{{ l.you }}</div>
+      } @else {
+        <div class="tt-row-name">{{ row.name }}</div>
+        <div class="tt-row-meta">{{ row.home }}</div>
+      }
+    </td>
+    <td class="tt-col-num">{{ row.countries }}</td>
+    <td class="tt-col-num">{{ row.cities }}</td>
+    <td><app-coverage-cell [bar]="barWidth(row.explored)" [pct]="fmtPct(row.explored)" /></td>
+  </tr>
+</ng-template>

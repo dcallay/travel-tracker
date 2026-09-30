@@ -5,7 +5,7 @@ import { filter } from 'rxjs';
 
 import { TravelStore } from './travel-store';
 
-export type Section = 'explore' | 'left' | 'timeline' | 'add';
+export type Section = 'explore' | 'left' | 'timeline' | 'leaderboard' | 'add';
 
 /** Where the user is, read from the router, and helpers for moving between places. */
 @Injectable({ providedIn: 'root' })
@@ -38,7 +38,9 @@ export class Navigation {
 
   readonly section = computed<Section>(() => {
     const first = this.segments()[0];
-    return first === 'left' || first === 'timeline' || first === 'add' ? first : 'explore';
+    return first === 'left' || first === 'timeline' || first === 'leaderboard' || first === 'add'
+      ? first
+      : 'explore';
   });
 
   /** The place being viewed: `[]` for the world, else `[continent, country?, city?]`. */

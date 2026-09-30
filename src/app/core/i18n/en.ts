@@ -88,6 +88,23 @@ export const EN: Strings = {
     weights: {},
   },
 
+  leaderboard: {
+    title: 'Leaderboard',
+    lead: 'The ten travellers with the most countries visited, then cities, with how much of the world each has explored. Your own row is always shown.',
+    rank: '#',
+    traveller: 'Traveller',
+    countries: 'Countries',
+    cities: 'Cities',
+    you: 'You',
+    yourRank: 'Your rank',
+    ofTravellers: (n) => `of ${n} travellers`,
+    aheadOf: 'Ahead of',
+    aheadOfNote: 'of the other travellers',
+    countriesNote: 'with at least one visit',
+    citiesNote: 'with at least one visit',
+    gap: 'Travellers between the top ten and you',
+  },
+
   header: {
     world: 'World',
     confirmDetections: (n) => `Confirm ${n} detections`,
@@ -102,6 +119,8 @@ export const EN: Strings = {
     whatsLeftCount: (n) => `${n} places`,
     timeline: 'Timeline',
     timelineCount: (n) => `${n} recent`,
+    leaderboard: 'Leaderboard',
+    leaderboardCount: (n) => `${n} travellers`,
     countries: (n) => `${n} countries`,
     citiesOnFile: (n) => `${n} cities on file`,
     sendFeedback: 'Send feedback',
