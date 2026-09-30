@@ -181,7 +181,11 @@ const FLAG_CODES: Record<string, string> = {
 };
 
 export function flagImageUrl(countryName: string): string {
-  const code = FLAG_CODES[countryName] ?? 'un';
+  return flagUrlForCode(FLAG_CODES[countryName] ?? 'un');
+}
+
+/** CSS background image of the flag for a lower-case ISO 3166-1 alpha-2 code. */
+export function flagUrlForCode(code: string): string {
   return `url(https://flagcdn.com/w160/${code}.png)`;
 }
 

@@ -40,12 +40,23 @@
   <tr [class.tt-board__you]="row.isYou">
     <td class="tt-col-rank">{{ row.rank }}</td>
     <td>
-      @if (row.isYou) {
-        <div class="tt-row-name">{{ l.you }}</div>
-      } @else {
-        <div class="tt-row-name">{{ row.name }}</div>
-        <div class="tt-row-meta">{{ row.home }}</div>
-      }
+      <div class="tt-board__name">
+        <span
+          class="tt-board__flag"
+          role="img"
+          [style.background-image]="flagUrl(row.nationality)"
+          [attr.aria-label]="countryName(row.nationality)"
+          [attr.title]="countryName(row.nationality)"
+        ></span>
+        <div>
+          @if (row.isYou) {
+            <div class="tt-row-name">{{ l.you }}</div>
+          } @else {
+            <div class="tt-row-name">{{ row.name }}</div>
+            <div class="tt-row-meta">{{ row.home }}</div>
+          }
+        </div>
+      </div>
     </td>
     <td class="tt-col-num">{{ row.countries }}</td>
     <td class="tt-col-num">{{ row.cities }}</td>

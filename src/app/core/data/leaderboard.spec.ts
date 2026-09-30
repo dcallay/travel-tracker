@@ -4,6 +4,7 @@ import { Traveller } from './traveller-data';
 const t = (name: string, countries: number, cities: number): Traveller => ({
   name,
   home: 'Testville',
+  nationality: 'ec',
   countries,
   cities,
   explored: 0,

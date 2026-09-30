@@ -105,6 +105,9 @@ describe('App routing', () => {
       expect(text('.tt-board__stats .tt-stat__value')).toBe('#15');
       expect(rows[0].textContent).toContain('14.6%');
       expect(el.querySelector('.tt-board__you')!.textContent).toContain('3.8%');
+      expect(all('.tt-board__flag')).toHaveLength(11);
+      expect(all('.tt-board__flag')[0].getAttribute('aria-label')).toBe('Norway');
+      expect(el.querySelector('.tt-board__you .tt-board__flag')!.getAttribute('title')).toBe('Ecuador');
     });
 
     it('is reachable from the sidebar', async () => {

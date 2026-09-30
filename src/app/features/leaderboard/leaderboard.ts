@@ -2,6 +2,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 
 import { barWidth, fmtPct } from '../../core/data/travel-calc';
+import { flagUrlForCode } from '../../core/data/travel-data';
 import { I18n } from '../../core/i18n/i18n';
 import { TravelStore } from '../../core/travel-store';
 import { CoverageCell } from '../../shared/ui/coverage-cell/coverage-cell';
@@ -19,6 +20,16 @@ export class Leaderboard {
   protected readonly t = inject(I18n).t;
   protected readonly barWidth = barWidth;
   protected readonly fmtPct = fmtPct;
+  protected readonly flagUrl = flagUrlForCode;
+
+  /** Country names in the UI language, for the flags' labels. */
+  private readonly regionNames = computed(
+    () => new Intl.DisplayNames([this.t().locale], { type: 'region' }),
+  );
+
+  protected countryName(code: string): string {
+    return this.regionNames().of(code.toUpperCase()) ?? code.toUpperCase();
+  }
 
   protected readonly stats = computed(() => {
     const { you, total, aheadOfPct } = this.board();

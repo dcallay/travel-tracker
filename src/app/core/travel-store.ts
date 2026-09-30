@@ -9,7 +9,7 @@ import {
   pct,
 } from './data/travel-calc';
 import { rankTravellers } from './data/leaderboard';
-import { TRAVELLERS } from './data/traveller-data';
+import { TRAVELLERS, YOUR_NATIONALITY } from './data/traveller-data';
 import { ContinentData, TIMELINE, TRAVEL_TREE } from './data/travel-data';
 import { toSlug } from './slug';
 
@@ -112,6 +112,7 @@ export class TravelStore {
     return rankTravellers(TRAVELLERS, {
       name: '',
       home: '',
+      nationality: YOUR_NATIONALITY,
       countries: t.countriesTouched,
       cities: t.citiesLogged,
       explored: this.worldPct(),
