@@ -72,6 +72,27 @@ export interface Strings {
     savedNothingLogged: string;
   };
 
+  feedback: {
+    kicker: string;
+    reportKicker: string;
+    sentTitle: string;
+    about: string;
+    whatIsWrong: string;
+    /** Report reasons, first one preselected. */
+    reasons: string[];
+    fieldLabel: string;
+    reportFieldLabel: string;
+    placeholder: string;
+    reportPlaceholder: string;
+    email: string;
+    emailPlaceholder: string;
+    thanks: string;
+    reportThanks: (place: string) => string;
+    cancel: string;
+    send: string;
+    close: string;
+  };
+
   how: {
     title: string;
     kicker: string;
@@ -171,6 +192,27 @@ export const EN: Strings = {
     savedNothingLogged: 'saved, nothing logged',
   },
 
+  feedback: {
+    kicker: 'Feedback',
+    reportKicker: 'Report a problem',
+    sentTitle: 'Thanks — it is logged',
+    about: 'About',
+    whatIsWrong: 'What is wrong',
+    reasons: ['Wrong count', 'Wrong city', 'Missing place', "Visit I didn't make"],
+    fieldLabel: 'Would you like to tell us?',
+    reportFieldLabel: 'What did you expect to see?',
+    placeholder: 'Anything — a bug, a missing city, an idea',
+    reportPlaceholder: 'e.g. Guápulo is in Quito, not Cuenca',
+    email: 'Email, if you want a reply',
+    emailPlaceholder: 'optional',
+    thanks: 'Logged with your current view. We read everything, and reply when you leave an email.',
+    reportThanks: (place) =>
+      `Logged against ${place} with your current view. We look at reports weekly and correct the place data at the source.`,
+    cancel: 'Cancel',
+    send: 'Send',
+    close: 'Close',
+  },
+
   how: {
     title: 'How the score is calculated',
     kicker: 'Method',
@@ -259,6 +301,28 @@ export const ES: Strings = {
   map: {
     explored: 'explorado',
     savedNothingLogged: 'guardada, sin registros',
+  },
+
+  feedback: {
+    kicker: 'Comentarios',
+    reportKicker: 'Informar de un problema',
+    sentTitle: 'Gracias, ya está registrado',
+    about: 'Sobre',
+    whatIsWrong: 'Qué está mal',
+    reasons: ['Recuento incorrecto', 'Ciudad incorrecta', 'Falta un lugar', 'Visita que no hice'],
+    fieldLabel: '¿Qué te gustaría contarnos?',
+    reportFieldLabel: '¿Qué esperabas ver?',
+    placeholder: 'Lo que sea: un error, una ciudad que falta, una idea',
+    reportPlaceholder: 'p. ej., Guápulo está en Quito, no en Cuenca',
+    email: 'Correo electrónico, si quieres respuesta',
+    emailPlaceholder: 'opcional',
+    thanks:
+      'Registrado junto con tu vista actual. Lo leemos todo y respondemos si nos dejas un correo.',
+    reportThanks: (place) =>
+      `Registrado para ${place} junto con tu vista actual. Revisamos los informes cada semana y corregimos los datos del lugar en origen.`,
+    cancel: 'Cancelar',
+    send: 'Enviar',
+    close: 'Cerrar',
   },
 
   how: {

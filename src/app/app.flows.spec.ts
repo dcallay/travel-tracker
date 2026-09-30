@@ -227,6 +227,31 @@ describe('App flows', () => {
       expect(text('.dialog-body')).toContain('Logged against Ecuador · Quito');
     });
 
+    it('shows the feedback dialog in the chosen language', async () => {
+      await clickByText('.table tbody tr', 'South America');
+      await clickByText('.table tbody tr', 'Ecuador');
+      await click(el.querySelector('.tt-lang .btn'));
+      await clickByText('.tt-lang__item', 'Español');
+      await clickByText('.tt-report-row .btn', '¿Algo no está bien?');
+      expect(text('.dialog-kicker')).toBe('Informar de un problema');
+      expect(text('.dialog-title')).toBe('¿Algo no está bien?');
+      expect(all('.dialog .seg-opt').map((n) => n.textContent?.trim())).toEqual([
+        'Recuento incorrecto',
+        'Ciudad incorrecta',
+        'Falta un lugar',
+        'Visita que no hice',
+      ]);
+      expect(el.querySelector<HTMLInputElement>('.dialog .seg-opt input')!.checked).toBe(true);
+      expect(el.querySelector('.tt-dialog-email input')?.getAttribute('placeholder')).toBe(
+        'opcional',
+      );
+      await clickByText('.dialog-actions .btn', 'Enviar');
+      expect(text('.dialog-title')).toBe('Gracias, ya está registrado');
+      expect(text('.dialog-body')).toContain('Registrado para South America · Ecuador');
+      await clickByText('.dialog-actions .btn', 'Cerrar');
+      expect(el.querySelector('.dialog')).toBeNull();
+    });
+
     it('opens and dismisses the photo confirmation dialog', async () => {
       await clickByText('.tt-header .btn-secondary', 'Confirm 2 detections');
       expect(text('.dialog-kicker')).toBe('Photo recognition');
