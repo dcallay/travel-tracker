@@ -10,9 +10,6 @@ export interface Traveller {
   explored: number;
 }
 
-/** Your nationality, shown as a flag on your leaderboard row. */
-export const YOUR_NATIONALITY = 'ec';
-
 /** Seed data for the other travellers on the leaderboard. */
 export const TRAVELLERS: Traveller[] = [
   { name: 'Ingrid Solberg', home: 'Oslo', nationality: 'no', countries: 47, cities: 112, explored: 14.6 },

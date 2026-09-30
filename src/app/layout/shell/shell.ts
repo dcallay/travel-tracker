@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 
 import { I18n } from '../../core/i18n/i18n';
 import { Navigation } from '../../core/navigation';
+import { Profile } from '../../core/profile';
 import { TravelStore } from '../../core/travel-store';
 import { barWidth, continentWeight, countryWeight, fmtPct, pct } from '../../core/data/travel-calc';
 import { FeedbackDialog } from '../../dialogs/feedback-dialog/feedback-dialog';
@@ -24,6 +25,7 @@ export class Shell {
   private readonly store = inject(TravelStore);
   private readonly navigation = inject(Navigation);
   private readonly i18n = inject(I18n);
+  private readonly profile = inject(Profile).data;
 
   protected readonly navItems = computed<NavItem[]>(() => {
     const t = this.i18n.t().sidebar;
@@ -36,6 +38,7 @@ export class Shell {
         count: t.leaderboardCount(this.store.leaderboard().total),
         link: '/leaderboard',
       },
+      { label: t.account, count: this.profile().name, link: '/account' },
     ];
   });
 

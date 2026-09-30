@@ -49,12 +49,8 @@
           [attr.title]="countryName(row.nationality)"
         ></span>
         <div>
-          @if (row.isYou) {
-            <div class="tt-row-name">{{ l.you }}</div>
-          } @else {
-            <div class="tt-row-name">{{ row.name }}</div>
-            <div class="tt-row-meta">{{ row.home }}</div>
-          }
+          <div class="tt-row-name">{{ row.isYou ? l.you : row.name }}</div>
+          <div class="tt-row-meta">{{ row.home }}</div>
         </div>
       </div>
     </td>
