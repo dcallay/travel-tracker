@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 
 import { DialogState } from '../../../core/dialog-state';
-import { METRIC_LABEL, METRIC_LOWER } from '../../../core/metric';
+import { I18n } from '../../../core/i18n/i18n';
 import { Navigation } from '../../../core/navigation';
 import { TravelStore } from '../../../core/travel-store';
 import { CoverageMap } from '../../../shared/ui/coverage-map/coverage-map';
@@ -34,13 +34,14 @@ export class CountryDetail {
   private readonly store = inject(TravelStore);
   protected readonly navigation = inject(Navigation);
   protected readonly dialogs = inject(DialogState);
-  protected readonly metricLabel = METRIC_LABEL;
-  protected readonly metricLower = METRIC_LOWER;
+  protected readonly t = inject(I18n).t;
 
   /** `[continent, country]`. */
   readonly path = input.required<number[]>();
 
-  protected readonly view = computed(() => buildCountryView(this.store.tree(), this.path()));
+  protected readonly view = computed(() =>
+    buildCountryView(this.store.tree(), this.path(), this.t()),
+  );
 
   protected onCountrySelect(mapName: string): void {
     const path = this.store.countryPathForMapName(mapName);

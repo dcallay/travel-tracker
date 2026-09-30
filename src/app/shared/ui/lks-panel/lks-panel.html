@@ -1,9 +1,9 @@
 <div class="tt-lks">
   <button type="button" class="tt-lks__toggle" [attr.aria-expanded]="open()" (click)="toggle()">
     <div class="tt-lks__value">{{ count() }}</div>
-    <div class="tt-lks__label">Local knowledge<br />score</div>
+    <div class="tt-lks__label">{{ t().detail.lksLabel[0] }}<br />{{ t().detail.lksLabel[1] }}</div>
     <div class="tt-lks__hint">
-      {{ open() ? 'Hide the list' : 'See the list' }}
+      {{ open() ? t().detail.lksHide : t().detail.lksShow }}
       <span class="tt-lks__chev">{{ open() ? '−' : '+' }}</span>
     </div>
   </button>

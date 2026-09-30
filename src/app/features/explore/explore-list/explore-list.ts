@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 
 import { DialogState } from '../../../core/dialog-state';
-import { METRIC_LABEL } from '../../../core/metric';
+import { I18n } from '../../../core/i18n/i18n';
 import { Navigation } from '../../../core/navigation';
 import { TravelStore } from '../../../core/travel-store';
 import { CoverageCell } from '../../../shared/ui/coverage-cell/coverage-cell';
@@ -22,13 +22,13 @@ export class ExploreList {
   private readonly store = inject(TravelStore);
   protected readonly navigation = inject(Navigation);
   protected readonly dialogs = inject(DialogState);
-  protected readonly metricLabel = METRIC_LABEL;
+  protected readonly t = inject(I18n).t;
 
   /** `[]` for the world, `[continent]` for a continent. */
   readonly path = input.required<number[]>();
 
   protected readonly view = computed(() =>
-    buildListView(this.store.tree(), this.store.worldTotals(), this.path()),
+    buildListView(this.store.tree(), this.store.worldTotals(), this.path(), this.t()),
   );
 
   protected onCountrySelect(mapName: string): void {

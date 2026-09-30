@@ -4,5 +4,6 @@
   [attr.height]="height()"
   [attr.country]="country() ?? null"
   [attr.cities]="citiesAttr()"
+  [attr.labels]="labelsAttr()"
   (country-select)="onCountrySelect($event)"
 ></world-coverage-map>

@@ -1,5 +1,4 @@
 import { WorldTotals } from '../../../core/travel-store';
-import { METRIC_LOWER } from '../../../core/metric';
 import { Row, toRow } from '../../../core/place-row';
 import {
   cityWeight,
@@ -9,6 +8,7 @@ import {
   pct,
 } from '../../../core/data/travel-calc';
 import { ContinentData } from '../../../core/data/travel-data';
+import { Strings } from '../../../core/i18n/strings';
 
 export interface StatItem {
   label: string;
@@ -35,12 +35,13 @@ export function buildListView(
   tree: ContinentData[],
   totals: WorldTotals,
   path: number[],
+  t: Strings,
 ): ListView {
-  if (path.length === 0) return buildWorldView(tree, totals);
-  return buildContinentView(tree, totals, path[0]);
+  if (path.length === 0) return buildWorldView(tree, totals, t);
+  return buildContinentView(tree, totals, path[0], t);
 }
 
-function buildWorldView(tree: ContinentData[], totals: WorldTotals): ListView {
+function buildWorldView(tree: ContinentData[], totals: WorldTotals, t: Strings): ListView {
   const rows = tree.map((cn, i) => {
     const touched = cn.countries.filter((co) => countryWeight(co).v > 0).length;
     return toRow(
@@ -58,7 +59,7 @@ function buildWorldView(tree: ContinentData[], totals: WorldTotals): ListView {
     levelSub: 'Landmarks count double neighbourhoods',
     stats: [
       {
-        label: `World ${METRIC_LOWER}`,
+        label: t.worldMetric,
         value: fmtPct(worldPct),
         note: `${totals.worldV} of ${totals.worldT} weighted places`,
         hasInfo: true,
@@ -85,12 +86,17 @@ function buildWorldView(tree: ContinentData[], totals: WorldTotals): ListView {
     emptyNote: '',
     mapFit: '',
     mapHeight: 250,
-    mapCaption: `Countries shaded by ${METRIC_LOWER} — click one for its detail`,
+    mapCaption: t.worldMapCaption,
     mapData: totals.mapData,
   };
 }
 
-function buildContinentView(tree: ContinentData[], totals: WorldTotals, index: number): ListView {
+function buildContinentView(
+  tree: ContinentData[],
+  totals: WorldTotals,
+  index: number,
+  t: Strings,
+): ListView {
   const cn = tree[index];
   const w = continentWeight(cn);
   const rows = cn.countries.map((co, i) => {
@@ -117,7 +123,7 @@ function buildContinentView(tree: ContinentData[], totals: WorldTotals, index: n
     levelSub: `${cn.countries.length} countries on file`,
     stats: [
       {
-        label: `${cn.name} ${METRIC_LOWER}`,
+        label: t.placeMetric(cn.name),
         value: fmtPct(pct(w)),
         note: `${w.v} of ${w.t} weighted places`,
         hasInfo: true,
@@ -147,7 +153,7 @@ function buildContinentView(tree: ContinentData[], totals: WorldTotals, index: n
         : '',
     mapFit: cn.name,
     mapHeight: 360,
-    mapCaption: `${cn.name} — shaded by ${METRIC_LOWER}, click a country for its detail`,
+    mapCaption: t.continentMapCaption(cn.name),
     mapData: totals.mapData,
   };
 }

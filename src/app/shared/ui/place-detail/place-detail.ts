@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 
 import { DialogState } from '../../../core/dialog-state';
+import { I18n } from '../../../core/i18n/i18n';
 
 /**
  * Frame for a country or city detail page: flag, kicker and title on top, two columns below and a
@@ -14,6 +15,7 @@ import { DialogState } from '../../../core/dialog-state';
 })
 export class PlaceDetail {
   protected readonly dialogs = inject(DialogState);
+  protected readonly t = inject(I18n).t;
 
   /** CSS `url(...)` of the flag image. */
   readonly flag = input.required<string>();
