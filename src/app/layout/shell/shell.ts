@@ -58,7 +58,7 @@ export class Shell {
         label: t.worldMetric,
         pct: fmtPct(this.store.worldPct()),
         bar: barWidth(this.store.worldPct()),
-        note: t.sidebar.weightedPlaces(totals.worldV, totals.worldT),
+        note: t.weightedPlaces(totals.worldV, totals.worldT),
       };
     }
     const cn = tree[path[0]];
@@ -69,7 +69,7 @@ export class Shell {
         label: t.placeMetric(cn.name),
         pct: fmtPct(p),
         bar: barWidth(p),
-        note: `${t.sidebar.weightedPlaces(w.v, w.t)} · ${t.sidebar.countries(cn.countries.length)}`,
+        note: `${t.weightedPlaces(w.v, w.t)} · ${t.sidebar.countries(cn.countries.length)}`,
       };
     }
     const co = cn.countries[path[1]];
@@ -79,7 +79,7 @@ export class Shell {
       label: t.placeMetric(co.name),
       pct: fmtPct(p),
       bar: barWidth(p),
-      note: `${t.sidebar.weightedPlaces(w.v, w.t)} · ${t.sidebar.citiesOnFile(co.cities.length)}`,
+      note: `${t.weightedPlaces(w.v, w.t)} · ${t.sidebar.citiesOnFile(co.cities.length)}`,
     };
   });
 }

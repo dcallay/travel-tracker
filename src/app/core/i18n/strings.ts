@@ -7,10 +7,25 @@ export interface Strings {
   worldMetric: string;
   /** The headline percentage for a named continent or country. */
   placeMetric: (place: string) => string;
+  /** `43 of 320 weighted places`. */
+  weightedPlaces: (v: number, t: number) => string;
   worldMapCaption: string;
   continentMapCaption: (continent: string) => string;
   countryDiscoveriesNote: string;
   cityDiscoveriesNote: string;
+
+  /** The stat tiles above the map on the world and continent views. */
+  stats: {
+    countriesTouched: string;
+    acrossTheWorld: string;
+    citiesLogged: string;
+    landmarksCheckedOff: (n: number) => string;
+    discoveries: string;
+    localKnowledgeScore: string;
+    countries: string;
+    withVisits: (n: number) => string;
+    inThisContinent: string;
+  };
 
   header: {
     world: string;
@@ -26,7 +41,6 @@ export interface Strings {
     whatsLeftCount: (places: number) => string;
     timeline: string;
     timelineCount: (entries: number) => string;
-    weightedPlaces: (v: number, t: number) => string;
     countries: (n: number) => string;
     citiesOnFile: (n: number) => string;
     sendFeedback: string;
@@ -133,6 +147,7 @@ export const EN: Strings = {
   metric: 'Explored',
   worldMetric: 'World explored',
   placeMetric: (place) => `${place} explored`,
+  weightedPlaces: (v, t) => `${v} of ${t} weighted places`,
   worldMapCaption: 'Countries shaded by explored — click one for its detail',
   continentMapCaption: (continent) =>
     `${continent} — shaded by explored, click a country for its detail`,
@@ -140,6 +155,18 @@ export const EN: Strings = {
     'Personal discoveries across the whole country. Kept out of the explored figure.',
   cityDiscoveriesNote:
     "Personal discoveries — spots you found that aren't on any curated list. Kept out of the explored figure.",
+
+  stats: {
+    countriesTouched: 'Countries touched',
+    acrossTheWorld: 'across the world',
+    citiesLogged: 'Cities logged',
+    landmarksCheckedOff: (n) => `${n} landmarks checked off`,
+    discoveries: 'Your discoveries',
+    localKnowledgeScore: 'local knowledge score',
+    countries: 'Countries',
+    withVisits: (n) => `${n} with visits`,
+    inThisContinent: 'in this continent',
+  },
 
   header: {
     world: 'World',
@@ -155,7 +182,6 @@ export const EN: Strings = {
     whatsLeftCount: (n) => `${n} places`,
     timeline: 'Timeline',
     timelineCount: (n) => `${n} recent`,
-    weightedPlaces: (v, t) => `${v} of ${t} weighted places`,
     countries: (n) => `${n} countries`,
     citiesOnFile: (n) => `${n} cities on file`,
     sendFeedback: 'Send feedback',
@@ -250,6 +276,7 @@ export const ES: Strings = {
   metric: 'Explorado',
   worldMetric: 'Explorado en el mundo',
   placeMetric: (place) => `Explorado en ${place}`,
+  weightedPlaces: (v, t) => `${v} de ${t} lugares ponderados`,
   worldMapCaption: 'Países sombreados según lo explorado; haz clic en uno para ver su detalle',
   continentMapCaption: (continent) =>
     `${continent}: sombreado según lo explorado, haz clic en un país para ver su detalle`,
@@ -257,6 +284,18 @@ export const ES: Strings = {
     'Descubrimientos personales en todo el país. No cuentan para el porcentaje explorado.',
   cityDiscoveriesNote:
     'Descubrimientos personales: lugares que encontraste y que no están en ninguna lista curada. No cuentan para el porcentaje explorado.',
+
+  stats: {
+    countriesTouched: 'Países visitados',
+    acrossTheWorld: 'en todo el mundo',
+    citiesLogged: 'Ciudades registradas',
+    landmarksCheckedOff: (n) => `${n} monumentos visitados`,
+    discoveries: 'Tus descubrimientos',
+    localKnowledgeScore: 'puntuación de conocimiento local',
+    countries: 'Países',
+    withVisits: (n) => `${n} con visitas`,
+    inThisContinent: 'en este continente',
+  },
 
   header: {
     world: 'Mundo',
@@ -272,7 +311,6 @@ export const ES: Strings = {
     whatsLeftCount: (n) => `${n} lugares`,
     timeline: 'Cronología',
     timelineCount: (n) => `${n} recientes`,
-    weightedPlaces: (v, t) => `${v} de ${t} lugares ponderados`,
     countries: (n) => `${n} países`,
     citiesOnFile: (n) => `${n} ciudades en el catálogo`,
     sendFeedback: 'Enviar comentarios',

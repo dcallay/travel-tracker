@@ -1,6 +1,6 @@
 import { computeWorldTotals } from '../../../core/travel-store';
 import { TRAVEL_TREE } from '../../../core/data/travel-data';
-import { EN } from '../../../core/i18n/strings';
+import { EN, ES } from '../../../core/i18n/strings';
 import { buildListView } from './list-view';
 
 const totals = computeWorldTotals(TRAVEL_TREE);
@@ -59,6 +59,32 @@ describe('buildListView', () => {
 
     it('has no empty note once something is logged', () => {
       expect(buildListView(TRAVEL_TREE, totals, [0], EN).emptyNote).toBe('');
+    });
+  });
+
+  describe('stats in the chosen language', () => {
+    it('labels the world stats', () => {
+      const view = buildListView(TRAVEL_TREE, totals, [], ES);
+      expect(view.stats.map((s) => s.label)).toEqual([
+        'Explorado en el mundo',
+        'Países visitados',
+        'Ciudades registradas',
+        'Tus descubrimientos',
+      ]);
+      expect(view.stats[0].note).toBe(`${totals.worldV} de ${totals.worldT} lugares ponderados`);
+      expect(view.stats[2].note).toBe(`${totals.landmarks} monumentos visitados`);
+    });
+
+    it('labels the continent stats', () => {
+      const view = buildListView(TRAVEL_TREE, totals, [0], ES);
+      expect(view.stats.map((s) => s.label)).toEqual([
+        'Explorado en South America',
+        'Países',
+        'Ciudades registradas',
+        'Tus descubrimientos',
+      ]);
+      expect(view.stats[1].note).toMatch(/^\d+ con visitas$/);
+      expect(view.stats[2].note).toBe('en este continente');
     });
   });
 });
