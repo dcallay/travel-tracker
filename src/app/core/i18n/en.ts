@@ -43,7 +43,7 @@ export const EN: Strings = {
   },
 
   addVisit: {
-    lead: 'Manual entry. Geolocation and photo recognition fill this same form.',
+    lead: 'Start from a photo to fill in the date and place, or enter the visit by hand.',
     place: 'Place',
     coverageType: 'Coverage type',
     neighbourhood: 'Neighbourhood',
@@ -58,6 +58,19 @@ export const EN: Strings = {
     save: 'Save visit',
     cancel: 'Cancel',
     source: 'Source: manual',
+    sourcePhoto: 'Source: photo',
+    sourcePhotoGps: 'Source: photo + GPS',
+    photoTitle: 'Add a photo',
+    photoHint:
+      'Drop one here or browse. Its date and location fill in the form below — the photo stays on this device.',
+    photoReading: 'Reading the photo…',
+    photoTaken: (date) => `Taken ${date}`,
+    photoFileDate: (date) => `No capture date in the photo — using the file date, ${date}`,
+    photoNear: (city, km) => `Taken near ${city} (${km < 1 ? 'under 1' : Math.round(km)} km away)`,
+    photoFar: 'Taken away from the cities on file — choose the place below',
+    photoNoLocation: 'No location in this photo — choose the place below',
+    photoLandmark: "Recognising the landmark itself isn't available yet — name it below",
+    removePhoto: 'Remove photo',
   },
 
   photo: {

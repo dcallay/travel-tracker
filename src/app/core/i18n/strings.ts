@@ -61,6 +61,18 @@ export interface Strings {
     save: string;
     cancel: string;
     source: string;
+    sourcePhoto: string;
+    sourcePhotoGps: string;
+    photoTitle: string;
+    photoHint: string;
+    photoReading: string;
+    photoTaken: (date: string) => string;
+    photoFileDate: (date: string) => string;
+    photoNear: (city: string, km: number) => string;
+    photoFar: string;
+    photoNoLocation: string;
+    photoLandmark: string;
+    removePhoto: string;
   };
 
   photo: {
