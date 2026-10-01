@@ -9,7 +9,8 @@ import {
 
 import { I18n } from '../../core/i18n/i18n';
 import { Navigation } from '../../core/navigation';
-import { NearbyCity, nearestCity, readPhotoMetadata } from '../../core/photo-metadata';
+import { NearbyCity, nearestCity } from '../../core/geo';
+import { readPhotoMetadata } from '../../core/photo-metadata';
 
 type Coverage = 'neighbourhood' | 'landmark' | 'discovery';
 

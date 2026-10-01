@@ -43,7 +43,7 @@ export const EN: Strings = {
   },
 
   addVisit: {
-    lead: 'Start from a photo to fill in the date and place, or enter the visit by hand.',
+    lead: 'Start from a photo to fill in the date and place, or enter the visit by hand. Visits detected from your location are confirmed from the header instead.',
     place: 'Place',
     coverageType: 'Coverage type',
     neighbourhood: 'Neighbourhood',
@@ -73,16 +73,46 @@ export const EN: Strings = {
     removePhoto: 'Remove photo',
   },
 
-  photo: {
-    kicker: 'Photo recognition',
-    title: (place) => `Is this ${place}?`,
-    body: (city, date, metres) =>
-      `Matched from a photo taken in ${city} on ${date}, with a location fix ${metres} m away. Confirming logs it as a landmark — weight 2.`,
-    confidence: 'Confidence',
-    source: 'Source',
-    sourceValue: 'Photo + GPS',
+  detect: {
+    kicker: 'Automatic detection',
+    button: {
+      off: 'Turn on detection',
+      starting: 'Starting detection…',
+      on: 'Detection on',
+      pending: (n) => (n === 1 ? 'Confirm 1 detection' : `Confirm ${n} detections`),
+      denied: 'Detection blocked',
+      unavailable: 'Detection unavailable',
+    },
+    offTitle: 'Log visits as you go',
+    offBody:
+      'While this app is open, it checks your location against the neighbourhoods and landmarks on file. Stay somewhere for 5 minutes and it asks you to confirm the visit — nothing is logged without you. Your location stays on this device.',
+    deniedBody:
+      "Location is blocked for this site. Allow it in your browser's site settings, then try again.",
+    unavailableBody:
+      "This browser can't share its location. Add visits by hand or from a photo instead.",
+    notNow: 'Not now',
+    turnOn: 'Turn on detection',
+    tryAgain: 'Try again',
+    onTitle: (n) =>
+      n === 0 ? 'Watching for visits' : n === 1 ? '1 visit to confirm' : `${n} visits to confirm`,
+    waiting: 'Waiting for a first location fix…',
+    lastFix: (time, accuracy) => `Last fix at ${time}, accurate to ${accuracy} m`,
+    empty: 'Nothing yet. Stay somewhere for a few minutes and it will show up here.',
+    stayed: (date, minutes) => `${date} · stayed ${minutes} min`,
+    kinds: { Landmark: 'Landmark', Neighbourhood: 'Neighbourhood' },
+    weight: (n) => `weight ${n}`,
+    unknownTitle: (city) => (city ? `Somewhere in ${city}` : 'Somewhere new'),
+    unknownBody: "This spot isn't on file yet. What was it?",
+    outsideBody: "You're not near any city on file. What was it?",
+    rejectedBody: 'Then what was it?',
+    nameLabel: 'Place name',
+    namePlaceholder: 'e.g. Café Galletti',
     reject: 'Not this place',
-    confirm: 'Confirm visit',
+    confirm: 'Confirm',
+    skip: 'Skip',
+    save: 'Save visit',
+    turnOff: 'Turn off detection',
+    close: 'Close',
   },
 
   left: {
@@ -153,7 +183,6 @@ export const EN: Strings = {
 
   header: {
     world: 'World',
-    confirmDetections: (n) => `Confirm ${n} detections`,
     addVisit: 'Add a visit',
   },
 

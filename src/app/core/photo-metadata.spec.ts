@@ -1,4 +1,5 @@
-import { nearestCity, readPhotoMetadata } from './photo-metadata';
+import { nearestCity } from './geo';
+import { readPhotoMetadata } from './photo-metadata';
 import { jpegWithExif } from './testing/photo-fixtures';
 
 describe('readPhotoMetadata', () => {

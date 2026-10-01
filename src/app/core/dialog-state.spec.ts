@@ -9,15 +9,15 @@ describe('DialogState', () => {
     state = TestBed.inject(DialogState);
   });
 
-  it('opens and closes the method and photo dialogs independently', () => {
+  it('opens and closes the method and detection dialogs independently', () => {
     state.openHow();
-    state.openPhoto();
+    state.openDetections();
     expect(state.howOpen()).toBe(true);
-    expect(state.photoOpen()).toBe(true);
+    expect(state.detectionsOpen()).toBe(true);
 
     state.closeHow();
     expect(state.howOpen()).toBe(false);
-    expect(state.photoOpen()).toBe(true);
+    expect(state.detectionsOpen()).toBe(true);
   });
 
   it('opens general feedback without a place', () => {

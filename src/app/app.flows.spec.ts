@@ -5,6 +5,7 @@ import { App } from './app';
 import { provideAppRouter } from './app.routes';
 import { TIMELINE, TRAVEL_TREE } from './core/data/travel-data';
 import { cityWeight } from './core/data/travel-calc';
+import { FakeGeolocation } from './core/testing/fake-geolocation';
 import { jpegWithExif } from './core/testing/photo-fixtures';
 
 /**
@@ -272,7 +273,7 @@ describe('App flows', () => {
         'Mundo',
         'South America',
       ]);
-      expect(text('.tt-header .btn-secondary')).toBe('Confirmar 2 detecciones');
+      expect(text('.tt-header .btn-secondary')).toBe('Activar detección');
       expect(text('.tt-header .btn-primary')).toBe('Añadir una visita');
       await clickByText('.tt-crumb', 'Mundo');
       expect(text('.tt-crumb.is-active')).toBe('Mundo');
@@ -380,29 +381,100 @@ describe('App flows', () => {
       expect(el.querySelector('.dialog')).toBeNull();
     });
 
-    it('opens and dismisses the photo confirmation dialog', async () => {
-      await clickByText('.tt-header .btn-secondary', 'Confirm 2 detections');
-      expect(text('.dialog-kicker')).toBe('Photo recognition');
-      expect(text('.dialog-body')).toBe(
-        'Matched from a photo taken in Quito on 14 Mar 2026, with a location fix 140 m away. Confirming logs it as a landmark — weight 2.',
-      );
-      await clickByText('.dialog-actions .btn', 'Confirm visit');
-      expect(el.querySelector('.dialog')).toBeNull();
-    });
+    describe('automatic detection', () => {
+      let geo: FakeGeolocation;
+      const BASILICA = [-0.2147, -78.5072] as const;
+      const UNKNOWN = [-0.17, -78.49] as const;
+      const stay = async ([lat, lng]: readonly [number, number], from: number) => {
+        for (let m = from; m <= from + 5; m++) geo.emit(lat, lng, m);
+        await settle();
+      };
+      const detectButton = () => el.querySelector<HTMLElement>('.tt-header .btn-secondary')!;
 
-    it('shows the photo confirmation dialog in the chosen language', async () => {
-      await click(el.querySelector('.tt-lang .btn'));
-      await clickByText('.tt-lang__item', 'Español');
-      await clickByText('.tt-header .btn-secondary', 'Confirmar 2 detecciones');
-      expect(text('.dialog-kicker')).toBe('Reconocimiento de fotos');
-      expect(text('.dialog-title')).toBe('¿Es Basílica del Voto Nacional?');
-      expect(text('.dialog-body')).toContain('en Quito el 14 mar 2026, con una ubicación a 140 m');
-      expect(all('.tt-dialog-meta .tt-section-label').map((n) => n.textContent?.trim())).toEqual([
-        'Confianza',
-        'Origen',
-      ]);
-      await clickByText('.dialog-actions .btn', 'No es este lugar');
-      expect(el.querySelector('.dialog')).toBeNull();
+      beforeEach(() => {
+        localStorage.clear();
+        geo = new FakeGeolocation();
+        geo.install();
+      });
+
+      it('explains detection before turning it on, and can be put off', async () => {
+        expect(detectButton().textContent?.trim()).toBe('Turn on detection');
+        await click(detectButton());
+        expect(text('.dialog-kicker')).toBe('Automatic detection');
+        expect(text('.dialog-title')).toBe('Log visits as you go');
+        expect(text('.dialog-body')).toContain('nothing is logged without you');
+        await clickByText('.dialog-actions .btn', 'Not now');
+        expect(el.querySelector('.dialog')).toBeNull();
+        expect(geo.watching).toBe(false);
+      });
+
+      it('confirms a matched landmark and names a place the app did not know', async () => {
+        await click(detectButton());
+        await clickByText('.dialog-actions .btn', 'Turn on detection');
+        expect(text('.dialog-title')).toBe('Watching for visits');
+        expect(text('.tt-detect-status')).toBe('Waiting for a first location fix…');
+
+        await stay(BASILICA, 0);
+        await stay(UNKNOWN, 10);
+        expect(detectButton().textContent?.trim()).toBe('Confirm 2 detections');
+        expect(text('.dialog-title')).toBe('2 visits to confirm');
+        expect(all('.tt-detect__title').map((n) => n.textContent?.trim())).toEqual([
+          'Basílica del Voto Nacional',
+          'Somewhere in Quito',
+        ]);
+        expect(text('.tt-detect__meta')).toBe('Landmark · Quito · weight 2');
+
+        await clickByText('.tt-detect .btn', 'Confirm');
+        expect(text('.dialog-title')).toBe('1 visit to confirm');
+        expect(text('.tt-detect__ask')).toBe("This spot isn't on file yet. What was it?");
+        const save = all('.tt-detect .btn').find((b) => b.textContent?.trim() === 'Save visit')!;
+        expect(save.hasAttribute('disabled')).toBe(true);
+        const name = el.querySelector<HTMLInputElement>('.tt-detect input[type=text]')!;
+        name.value = 'Café Galletti';
+        name.dispatchEvent(new Event('input'));
+        await settle();
+        await click(save);
+        expect(text('.dialog-title')).toBe('Watching for visits');
+        expect(detectButton().textContent?.trim()).toBe('Detection on');
+
+        await clickByText('.dialog-actions .btn', 'Turn off detection');
+        expect(el.querySelector('.dialog')).toBeNull();
+        expect(geo.watching).toBe(false);
+        expect(detectButton().textContent?.trim()).toBe('Turn on detection');
+      });
+
+      it('asks what a place was when the match is rejected', async () => {
+        await click(detectButton());
+        await clickByText('.dialog-actions .btn', 'Turn on detection');
+        await stay(BASILICA, 0);
+        await clickByText('.tt-detect .btn', 'Not this place');
+        expect(text('.tt-detect__title')).toBe('Somewhere in Quito');
+        expect(text('.tt-detect__ask')).toBe('Then what was it?');
+        await clickByText('.tt-detect .btn', 'Skip');
+        expect(el.querySelector('.tt-detect')).toBeNull();
+      });
+
+      it('explains a blocked location permission', async () => {
+        await click(detectButton());
+        await clickByText('.dialog-actions .btn', 'Turn on detection');
+        geo.deny();
+        await settle();
+        expect(text('.dialog-body')).toContain('Location is blocked for this site');
+        expect(detectButton().textContent?.trim()).toBe('Detection blocked');
+      });
+
+      it('shows detection in the chosen language', async () => {
+        await click(el.querySelector('.tt-lang .btn'));
+        await clickByText('.tt-lang__item', 'Español');
+        await clickByText('.tt-header .btn-secondary', 'Activar detección');
+        expect(text('.dialog-kicker')).toBe('Detección automática');
+        await clickByText('.dialog-actions .btn', 'Activar detección');
+        await stay(BASILICA, 0);
+        expect(text('.dialog-title')).toBe('1 visita por confirmar');
+        expect(text('.tt-detect__meta')).toBe('Monumento · Quito · peso 2');
+        await clickByText('.tt-detect .btn', 'No es este lugar');
+        expect(text('.tt-detect__ask')).toBe('Entonces, ¿qué era?');
+      });
     });
   });
 });
