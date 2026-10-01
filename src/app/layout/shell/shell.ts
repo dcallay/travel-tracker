@@ -6,9 +6,9 @@ import { Navigation } from '../../core/navigation';
 import { Profile } from '../../core/profile';
 import { TravelStore } from '../../core/travel-store';
 import { barWidth, continentWeight, countryWeight, fmtPct, pct } from '../../core/data/travel-calc';
+import { DetectionsDialog } from '../../dialogs/detections-dialog/detections-dialog';
 import { FeedbackDialog } from '../../dialogs/feedback-dialog/feedback-dialog';
 import { HowItWorksDialog } from '../../dialogs/how-it-works-dialog/how-it-works-dialog';
-import { PhotoConfirmDialog } from '../../dialogs/photo-confirm-dialog/photo-confirm-dialog';
 import { Header } from '../header/header';
 import { Crumb, NavItem, ParentScore } from '../nav.model';
 import { Sidebar } from '../sidebar/sidebar';
@@ -16,7 +16,7 @@ import { Sidebar } from '../sidebar/sidebar';
 /** The app frame: sidebar, header and the routed view, plus the app-level dialogs. */
 @Component({
   selector: 'app-shell',
-  imports: [FeedbackDialog, Header, HowItWorksDialog, PhotoConfirmDialog, RouterOutlet, Sidebar],
+  imports: [DetectionsDialog, FeedbackDialog, Header, HowItWorksDialog, RouterOutlet, Sidebar],
   templateUrl: './shell.html',
   styleUrl: './shell.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

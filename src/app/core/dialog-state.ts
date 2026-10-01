@@ -12,7 +12,7 @@ export interface FeedbackRequest {
 @Injectable({ providedIn: 'root' })
 export class DialogState {
   readonly howOpen = signal(false);
-  readonly photoOpen = signal(false);
+  readonly detectionsOpen = signal(false);
   readonly feedback = signal<FeedbackRequest | null>(null);
   readonly feedbackSent = signal(false);
 
@@ -24,12 +24,12 @@ export class DialogState {
     this.howOpen.set(false);
   }
 
-  openPhoto(): void {
-    this.photoOpen.set(true);
+  openDetections(): void {
+    this.detectionsOpen.set(true);
   }
 
-  closePhoto(): void {
-    this.photoOpen.set(false);
+  closeDetections(): void {
+    this.detectionsOpen.set(false);
   }
 
   openFeedback(): void {

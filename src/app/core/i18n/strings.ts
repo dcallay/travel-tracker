@@ -75,15 +75,43 @@ export interface Strings {
     removePhoto: string;
   };
 
-  photo: {
+  /** Automatic detection: the header button and its dialog. */
+  detect: {
     kicker: string;
-    title: (place: string) => string;
-    body: (city: string, date: string, metres: number) => string;
-    confidence: string;
-    source: string;
-    sourceValue: string;
+    button: {
+      off: string;
+      starting: string;
+      on: string;
+      pending: (n: number) => string;
+      denied: string;
+      unavailable: string;
+    };
+    offTitle: string;
+    offBody: string;
+    deniedBody: string;
+    unavailableBody: string;
+    notNow: string;
+    turnOn: string;
+    tryAgain: string;
+    onTitle: (pending: number) => string;
+    waiting: string;
+    lastFix: (time: string, accuracy: number) => string;
+    empty: string;
+    stayed: (date: string, minutes: number) => string;
+    kinds: { Landmark: string; Neighbourhood: string };
+    weight: (n: number) => string;
+    unknownTitle: (city: string | null) => string;
+    unknownBody: string;
+    outsideBody: string;
+    rejectedBody: string;
+    nameLabel: string;
+    namePlaceholder: string;
     reject: string;
     confirm: string;
+    skip: string;
+    save: string;
+    turnOff: string;
+    close: string;
   };
 
   /** The What's left page. */
@@ -159,7 +187,6 @@ export interface Strings {
 
   header: {
     world: string;
-    confirmDetections: (n: number) => string;
     addVisit: string;
   };
 

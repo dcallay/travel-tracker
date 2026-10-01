@@ -12,8 +12,13 @@
 
   <app-lang-menu />
 
-  <button type="button" class="btn btn-secondary" (click)="dialogs.openPhoto()">
-    {{ t().header.confirmDetections(2) }}
+  <button
+    type="button"
+    class="btn btn-secondary tt-detect-btn"
+    [class.is-pending]="detection.pending().length"
+    (click)="dialogs.openDetections()"
+  >
+    {{ detectLabel() }}
   </button>
   <a class="btn btn-primary" routerLink="/add">{{ t().header.addVisit }}</a>
 </header>

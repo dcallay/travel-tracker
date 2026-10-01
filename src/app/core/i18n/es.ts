@@ -44,7 +44,7 @@ export const ES: Strings = {
   },
 
   addVisit: {
-    lead: 'Empieza con una foto para rellenar la fecha y el lugar, o introduce la visita a mano.',
+    lead: 'Empieza con una foto para rellenar la fecha y el lugar, o introduce la visita a mano. Las visitas detectadas por tu ubicación se confirman desde la cabecera.',
     place: 'Lugar',
     coverageType: 'Tipo de cobertura',
     neighbourhood: 'Barrio',
@@ -75,16 +75,50 @@ export const ES: Strings = {
     removePhoto: 'Quitar foto',
   },
 
-  photo: {
-    kicker: 'Reconocimiento de fotos',
-    title: (place) => `¿Es ${place}?`,
-    body: (city, date, metres) =>
-      `Identificado a partir de una foto tomada en ${city} el ${date}, con una ubicación a ${metres} m. Si lo confirmas, se registra como monumento, con peso 2.`,
-    confidence: 'Confianza',
-    source: 'Origen',
-    sourceValue: 'Foto + GPS',
+  detect: {
+    kicker: 'Detección automática',
+    button: {
+      off: 'Activar detección',
+      starting: 'Activando detección…',
+      on: 'Detección activa',
+      pending: (n) => (n === 1 ? 'Confirmar 1 detección' : `Confirmar ${n} detecciones`),
+      denied: 'Detección bloqueada',
+      unavailable: 'Detección no disponible',
+    },
+    offTitle: 'Registra visitas sobre la marcha',
+    offBody:
+      'Mientras la app está abierta, compara tu ubicación con los barrios y monumentos del catálogo. Si te quedas 5 minutos en un sitio, te pide que confirmes la visita; no se registra nada sin ti. Tu ubicación no sale de este dispositivo.',
+    deniedBody:
+      'La ubicación está bloqueada para este sitio. Permítela en los ajustes del navegador y vuelve a intentarlo.',
+    unavailableBody:
+      'Este navegador no puede compartir su ubicación. Añade las visitas a mano o desde una foto.',
+    notNow: 'Ahora no',
+    turnOn: 'Activar detección',
+    tryAgain: 'Reintentar',
+    onTitle: (n) =>
+      n === 0
+        ? 'Atento a tus visitas'
+        : n === 1
+          ? '1 visita por confirmar'
+          : `${n} visitas por confirmar`,
+    waiting: 'Esperando la primera ubicación…',
+    lastFix: (time, accuracy) => `Última ubicación a las ${time}, con precisión de ${accuracy} m`,
+    empty: 'Nada todavía. Quédate unos minutos en un sitio y aparecerá aquí.',
+    stayed: (date, minutes) => `${date} · ${minutes} min allí`,
+    kinds: { Landmark: 'Monumento', Neighbourhood: 'Barrio' },
+    weight: (n) => `peso ${n}`,
+    unknownTitle: (city) => (city ? `Un lugar en ${city}` : 'Un lugar nuevo'),
+    unknownBody: 'Este sitio aún no está en el catálogo. ¿Qué era?',
+    outsideBody: 'No estás cerca de ninguna ciudad del catálogo. ¿Qué era?',
+    rejectedBody: 'Entonces, ¿qué era?',
+    nameLabel: 'Nombre del lugar',
+    namePlaceholder: 'p. ej., Café Galletti',
     reject: 'No es este lugar',
-    confirm: 'Confirmar visita',
+    confirm: 'Confirmar',
+    skip: 'Omitir',
+    save: 'Guardar visita',
+    turnOff: 'Desactivar detección',
+    close: 'Cerrar',
   },
 
   left: {
@@ -161,7 +195,6 @@ export const ES: Strings = {
 
   header: {
     world: 'Mundo',
-    confirmDetections: (n) => `Confirmar ${n} detecciones`,
     addVisit: 'Añadir una visita',
   },
 

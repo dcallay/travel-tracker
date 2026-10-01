@@ -1,0 +1,138 @@
+@if (dialogs.detectionsOpen()) {
+  @let d = t().detect;
+  @let a = t().addVisit;
+  @let status = detection.status();
+  <app-dialog (dismissed)="dialogs.closeDetections()">
+    <div class="dialog-kicker">{{ d.kicker }}</div>
+
+    @if (status === 'on' || status === 'starting') {
+      @let pending = detection.pending();
+      <div class="dialog-title">{{ d.onTitle(pending.length) }}</div>
+      <div class="tt-detect-status">
+        @if (detection.lastFix(); as fix) {
+          {{ d.lastFix(time(fix.time), round(fix.accuracy)) }}
+        } @else {
+          {{ d.waiting }}
+        }
+      </div>
+
+      @if (pending.length) {
+        <ul class="tt-detect-list">
+          @for (item of pending; track item.id) {
+            <li class="tt-detect">
+              @if (item.place; as place) {
+                <div class="tt-detect__title">{{ place.name }}</div>
+                <div class="tt-detect__meta">
+                  {{ d.kinds[place.kind] }} · {{ place.city }} ·
+                  {{ d.weight(place.kind === 'Landmark' ? 2 : 1) }}
+                </div>
+                <div class="tt-detect__meta">
+                  {{ d.stayed(t().formatDate(item.start), item.minutes) }}
+                </div>
+                <div class="tt-detect__actions">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    (click)="detection.reject(item.id)"
+                  >
+                    {{ d.reject }}
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="detection.confirm(item.id)"
+                  >
+                    {{ d.confirm }}
+                  </button>
+                </div>
+              } @else {
+                @let ans = answer(item);
+                <div class="tt-detect__title">{{ d.unknownTitle(item.city?.city ?? null) }}</div>
+                <div class="tt-detect__meta">
+                  {{ d.stayed(t().formatDate(item.start), item.minutes) }}
+                </div>
+                <div class="tt-detect__ask">
+                  {{ item.rejected ? d.rejectedBody : item.city ? d.unknownBody : d.outsideBody }}
+                </div>
+                <div class="field">
+                  <label [for]="'tt-detect-name-' + item.id">{{ d.nameLabel }}</label>
+                  <input
+                    class="input"
+                    type="text"
+                    [id]="'tt-detect-name-' + item.id"
+                    [placeholder]="d.namePlaceholder"
+                    [value]="ans.name"
+                    (input)="setAnswer(item, { name: $any($event.target).value })"
+                  />
+                </div>
+                <div class="seg">
+                  @for (c of coverages; track c) {
+                    <label class="seg-opt">
+                      <input
+                        type="radio"
+                        [name]="'tt-detect-cov-' + item.id"
+                        [checked]="ans.coverage === c"
+                        (change)="setAnswer(item, { coverage: c })"
+                      /><span>{{ a[c] }}</span>
+                    </label>
+                  }
+                </div>
+                <div class="tt-detect__actions">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    (click)="detection.dismiss(item.id)"
+                  >
+                    {{ d.skip }}
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    [disabled]="!ans.name.trim()"
+                    (click)="save(item)"
+                  >
+                    {{ d.save }}
+                  </button>
+                </div>
+              }
+            </li>
+          }
+        </ul>
+      } @else {
+        <div class="dialog-body">{{ d.empty }}</div>
+      }
+
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-secondary" (click)="turnOff()">{{ d.turnOff }}</button>
+        <button type="button" class="btn btn-primary" (click)="dialogs.closeDetections()">
+          {{ d.close }}
+        </button>
+      </div>
+    } @else {
+      <div class="dialog-title">{{ d.offTitle }}</div>
+      <div class="dialog-body">
+        @switch (status) {
+          @case ('denied') {
+            {{ d.deniedBody }}
+          }
+          @case ('unavailable') {
+            {{ d.unavailableBody }}
+          }
+          @default {
+            {{ d.offBody }}
+          }
+        }
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-secondary" (click)="dialogs.closeDetections()">
+          {{ d.notNow }}
+        </button>
+        @if (status !== 'unavailable') {
+          <button type="button" class="btn btn-primary" (click)="turnOn()">
+            {{ status === 'denied' ? d.tryAgain : d.turnOn }}
+          </button>
+        }
+      </div>
+    }
+  </app-dialog>
+}

@@ -1,14 +1,9 @@
-import { CITY_GEO, TRAVEL_TREE } from './data/travel-data';
-
-export interface PhotoPosition {
-  lat: number;
-  lng: number;
-}
+import { GeoPosition } from './geo';
 
 /** What a photo's EXIF block says about when and where it was taken. */
 export interface PhotoMetadata {
   takenAt: Date | null;
-  position: PhotoPosition | null;
+  position: GeoPosition | null;
 }
 
 const EXIF_IFD = 0x8769;
@@ -80,7 +75,7 @@ function readTiff(view: DataView, tiff: number): PhotoMetadata | null {
     }
   }
 
-  let position: PhotoPosition | null = null;
+  let position: GeoPosition | null = null;
   const gpsPointer = ifd0.get(GPS_IFD);
   if (gpsPointer !== undefined) {
     const gps = readIfd(u32(gpsPointer));
@@ -112,38 +107,4 @@ function ascii(view: DataView, at: number, len: number): string {
     out += String.fromCharCode(view.getUint8(at + i));
   }
   return out;
-}
-
-export interface NearbyCity {
-  city: string;
-  country: string;
-  km: number;
-}
-
-/** Photos further than this from every city on file aren't matched to one. */
-export const MAX_CITY_KM = 50;
-
-/** The closest city on file to a position, if one lies within {@link MAX_CITY_KM}. */
-export function nearestCity(position: PhotoPosition): NearbyCity | null {
-  let best: NearbyCity | null = null;
-  for (const continent of TRAVEL_TREE) {
-    for (const country of continent.countries) {
-      for (const city of country.cities) {
-        const geo = CITY_GEO[city.name];
-        if (!geo) continue;
-        const km = haversineKm(position, { lng: geo[0], lat: geo[1] });
-        if (!best || km < best.km) best = { city: city.name, country: country.name, km };
-      }
-    }
-  }
-  return best && best.km <= MAX_CITY_KM ? best : null;
-}
-
-function haversineKm(a: PhotoPosition, b: PhotoPosition): number {
-  const rad = (deg: number) => (deg * Math.PI) / 180;
-  const dLat = rad(b.lat - a.lat);
-  const dLng = rad(b.lng - a.lng);
-  const h =
-    Math.sin(dLat / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLng / 2) ** 2;
-  return 2 * 6371 * Math.asin(Math.sqrt(h));
 }
