@@ -44,7 +44,7 @@ export const ES: Strings = {
   },
 
   addVisit: {
-    lead: 'Entrada manual. La geolocalización y el reconocimiento de fotos rellenan este mismo formulario.',
+    lead: 'Empieza con una foto para rellenar la fecha y el lugar, o introduce la visita a mano.',
     place: 'Lugar',
     coverageType: 'Tipo de cobertura',
     neighbourhood: 'Barrio',
@@ -59,6 +59,20 @@ export const ES: Strings = {
     save: 'Guardar visita',
     cancel: 'Cancelar',
     source: 'Origen: manual',
+    sourcePhoto: 'Origen: foto',
+    sourcePhotoGps: 'Origen: foto + GPS',
+    photoTitle: 'Añadir una foto',
+    photoHint:
+      'Suéltala aquí o búscala. Su fecha y ubicación rellenan el formulario de abajo; la foto no sale de este dispositivo.',
+    photoReading: 'Leyendo la foto…',
+    photoTaken: (date) => `Tomada el ${date}`,
+    photoFileDate: (date) => `La foto no tiene fecha de captura; se usa la del archivo, ${date}`,
+    photoNear: (city, km) =>
+      `Tomada cerca de ${city} (a ${km < 1 ? 'menos de 1' : Math.round(km)} km)`,
+    photoFar: 'Tomada lejos de las ciudades del catálogo; elige el lugar abajo',
+    photoNoLocation: 'Esta foto no tiene ubicación; elige el lugar abajo',
+    photoLandmark: 'Aún no se reconoce el monumento en sí; ponle nombre abajo',
+    removePhoto: 'Quitar foto',
   },
 
   photo: {
@@ -141,7 +155,8 @@ export const ES: Strings = {
     notFound: 'No hay ningún viajero en esta dirección.',
     topCountries: 'Países más explorados',
     nothingYet: 'Aún no has explorado ningún país',
-    neverShown: 'Tu cronología, tus notas y los nombres de tus descubrimientos personales nunca se muestran.',
+    neverShown:
+      'Tu cronología, tus notas y los nombres de tus descubrimientos personales nunca se muestran.',
   },
 
   header: {

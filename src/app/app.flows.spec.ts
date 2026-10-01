@@ -5,6 +5,7 @@ import { App } from './app';
 import { provideAppRouter } from './app.routes';
 import { TIMELINE, TRAVEL_TREE } from './core/data/travel-data';
 import { cityWeight } from './core/data/travel-calc';
+import { jpegWithExif } from './core/testing/photo-fixtures';
 
 /**
  * User-flow tests that drive the rendered UI through clicks and read it back through the DOM.
@@ -178,6 +179,68 @@ describe('App flows', () => {
       await clickByText('.tt-add__actions .btn', 'Cancel');
       expect(el.querySelector('.tt-add')).toBeNull();
       expect(text('.tt-table-head h4')).toBe('By continent');
+    });
+
+    describe('starting from a photo', () => {
+      const choosePhoto = async (file: File) => {
+        const input = el.querySelector<HTMLInputElement>('.tt-drop__input')!;
+        Object.defineProperty(input, 'files', { value: [file], configurable: true });
+        input.dispatchEvent(new Event('change'));
+        await vi.waitFor(() => {
+          fixture.detectChanges();
+          expect(el.querySelector('.tt-photo__facts')).toBeTruthy();
+        });
+      };
+      const value = (sel: string) => el.querySelector<HTMLInputElement>(sel)!.value;
+
+      beforeEach(async () => {
+        vi.stubGlobal(
+          'URL',
+          Object.assign(URL, { createObjectURL: () => 'blob:photo', revokeObjectURL: () => {} }),
+        );
+        await click(all('.tt-header .btn-primary')[0]);
+      });
+
+      it('fills the date and place from the photo, and restores them when it is removed', async () => {
+        await choosePhoto(
+          new File(
+            [jpegWithExif({ date: '2026:03:14 10:22:05', lat: -0.2153, lng: -78.5036 })],
+            'basilica.jpg',
+            {
+              type: 'image/jpeg',
+            },
+          ),
+        );
+        expect(all('.tt-photo__facts li').map((n) => n.textContent?.trim())).toEqual([
+          'Taken 14 Mar 2026',
+          'Taken near Quito (5 km away)',
+          "Recognising the landmark itself isn't available yet — name it below",
+        ]);
+        expect(value('#tt-place')).toBe('Quito, Ecuador');
+        expect(value('#tt-date')).toBe('14 Mar 2026');
+        expect(text('.tt-add__source')).toBe('Source: photo + GPS');
+
+        await clickByText('.tt-photo .btn', 'Remove photo');
+        expect(el.querySelector('.tt-photo')).toBeNull();
+        expect(value('#tt-date')).toBe('16 Sep 2026');
+        expect(text('.tt-add__source')).toBe('Source: manual');
+      });
+
+      it('falls back to the file date and leaves the place to the user without GPS', async () => {
+        await choosePhoto(
+          new File([jpegWithExif()], 'screenshot.jpg', {
+            type: 'image/jpeg',
+            lastModified: new Date(2026, 6, 2).getTime(),
+          }),
+        );
+        expect(all('.tt-photo__facts li').map((n) => n.textContent?.trim())).toEqual([
+          'No capture date in the photo — using the file date, 2 Jul 2026',
+          'No location in this photo — choose the place below',
+          "Recognising the landmark itself isn't available yet — name it below",
+        ]);
+        expect(value('#tt-place')).toBe('Quito, Ecuador');
+        expect(text('.tt-add__source')).toBe('Source: photo');
+      });
     });
 
     it('resets to the top level when switching nav from a drilled-down place', async () => {

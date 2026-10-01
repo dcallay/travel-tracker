@@ -3,22 +3,91 @@
 <div class="tt-add">
   <h4>{{ t().header.addVisit }}</h4>
   <p class="tt-lead">{{ a.lead }}</p>
+
+  @if (photo(); as p) {
+    <div class="tt-photo">
+      <img class="tt-photo__thumb" [src]="p.url" alt="" />
+      <div class="tt-photo__body">
+        <div class="tt-photo__name">{{ p.name }}</div>
+        @if (p.result; as r) {
+          <ul class="tt-photo__facts">
+            <li>
+              {{
+                r.dateFrom === 'exif'
+                  ? a.photoTaken(t().formatDate(r.date))
+                  : a.photoFileDate(t().formatDate(r.date))
+              }}
+            </li>
+            <li [class.is-missing]="!r.city">
+              @if (r.city; as c) {
+                {{ a.photoNear(c.city, c.km) }}
+              } @else if (r.hasPosition) {
+                {{ a.photoFar }}
+              } @else {
+                {{ a.photoNoLocation }}
+              }
+            </li>
+            <li class="is-missing">{{ a.photoLandmark }}</li>
+          </ul>
+        } @else {
+          <div class="tt-photo__reading">{{ a.photoReading }}</div>
+        }
+      </div>
+      <button type="button" class="btn btn-secondary tt-photo__remove" (click)="removePhoto()">
+        {{ a.removePhoto }}
+      </button>
+    </div>
+  } @else {
+    <label
+      class="tt-drop"
+      [class.is-dragging]="dragging()"
+      (dragover)="onDragOver($event)"
+      (dragleave)="dragging.set(false)"
+      (drop)="onDrop($event)"
+    >
+      <input class="tt-drop__input" type="file" accept="image/*" (change)="onFileInput($event)" />
+      <span class="tt-drop__title">{{ a.photoTitle }}</span>
+      <span class="tt-drop__hint">{{ a.photoHint }}</span>
+    </label>
+  }
+
   <div class="tt-add__fields">
     <div class="field">
       <label for="tt-place">{{ a.place }}</label>
-      <input id="tt-place" class="input" type="text" value="Quito, Ecuador" />
+      <input
+        id="tt-place"
+        class="input"
+        type="text"
+        [value]="place()"
+        (input)="place.set($any($event.target).value)"
+      />
     </div>
     <div>
       <div class="tt-add__seg-label">{{ a.coverageType }}</div>
       <div class="seg">
         <label class="seg-opt">
-          <input type="radio" name="tt-cov" checked /><span>{{ a.neighbourhood }}</span>
+          <input
+            type="radio"
+            name="tt-cov"
+            [checked]="coverage() === 'neighbourhood'"
+            (change)="coverage.set('neighbourhood')"
+          /><span>{{ a.neighbourhood }}</span>
         </label>
         <label class="seg-opt">
-          <input type="radio" name="tt-cov" /><span>{{ a.landmark }}</span>
+          <input
+            type="radio"
+            name="tt-cov"
+            [checked]="coverage() === 'landmark'"
+            (change)="coverage.set('landmark')"
+          /><span>{{ a.landmark }}</span>
         </label>
         <label class="seg-opt">
-          <input type="radio" name="tt-cov" /><span>{{ a.discovery }}</span>
+          <input
+            type="radio"
+            name="tt-cov"
+            [checked]="coverage() === 'discovery'"
+            (change)="coverage.set('discovery')"
+          /><span>{{ a.discovery }}</span>
         </label>
       </div>
       <div class="tt-add__hint">{{ a.hint }}</div>
@@ -30,7 +99,7 @@
       </div>
       <div class="field">
         <label for="tt-date">{{ a.date }}</label>
-        <input id="tt-date" class="input" type="text" [value]="t().formatDate(sampleDate)" />
+        <input id="tt-date" class="input" type="text" [value]="t().formatDate(date())" />
       </div>
     </div>
     <div class="field">
@@ -44,7 +113,7 @@
       <button type="button" class="btn btn-secondary" (click)="navigation.finishAdd()">
         {{ a.cancel }}
       </button>
-      <span class="tt-add__source">{{ a.source }}</span>
+      <span class="tt-add__source">{{ source() }}</span>
     </div>
   </div>
 </div>
