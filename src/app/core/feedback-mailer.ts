@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { FeedbackKind } from './dialog-state';
+import { FeedbackKind, FeedbackTopic } from './dialog-state';
 import { EN } from './i18n/en';
 
 export const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
@@ -16,6 +16,8 @@ export interface FeedbackMessage {
   place: string;
   /** Index into the report reasons; null for general feedback. */
   reason: number | null;
+  /** What general feedback is about; null for a report. */
+  topic: FeedbackTopic | null;
   message: string;
   /** Where to reply; empty when the user left none. */
   email: string;
@@ -25,13 +27,17 @@ export interface FeedbackMessage {
   page: string;
 }
 
-/** The JSON body Web3Forms expects. Reasons go out in English so the inbox reads consistently. */
+/**
+ * The JSON body Web3Forms expects. Reasons and topics go out in English so the inbox reads
+ * consistently, and sit in the subject so it can be sorted at a glance.
+ */
 export function buildSubmission(msg: FeedbackMessage): Record<string, string> {
   const reason = msg.reason === null ? '' : (EN.feedback.reasons[msg.reason] ?? '');
+  const topic = msg.topic === null ? '' : EN.feedback.topics[msg.topic];
   const subject =
     msg.kind === 'report'
       ? `GEOSCORE report: ${[msg.place, reason].filter(Boolean).join(' — ')}`
-      : 'GEOSCORE feedback';
+      : `GEOSCORE feedback${topic ? `: ${topic}` : ''}`;
   const body: Record<string, string> = {
     access_key: WEB3FORMS_KEY,
     subject,
@@ -43,6 +49,8 @@ export function buildSubmission(msg: FeedbackMessage): Record<string, string> {
   if (msg.kind === 'report') {
     body['place'] = msg.place;
     body['reason'] = reason;
+  } else if (topic) {
+    body['topic'] = topic;
   }
   // Web3Forms uses `email` as the reply-to address.
   const email = msg.email.trim();

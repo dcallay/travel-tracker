@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { DialogState } from '../../core/dialog-state';
+import { DialogState, FEEDBACK_TOPICS, FeedbackTopic } from '../../core/dialog-state';
 import { FeedbackMailer, looksLikeEmail } from '../../core/feedback-mailer';
 import { I18n } from '../../core/i18n/i18n';
 import { Dialog } from '../../shared/ui/dialog/dialog';
@@ -28,6 +28,11 @@ export class FeedbackDialog {
   });
   protected readonly email = linkedSignal({ source: this.dialogs.feedback, computation: () => '' });
   protected readonly reason = linkedSignal({ source: this.dialogs.feedback, computation: () => 0 });
+  protected readonly topic = linkedSignal<unknown, FeedbackTopic>({
+    source: this.dialogs.feedback,
+    computation: () => FEEDBACK_TOPICS[0],
+  });
+  protected readonly topics = FEEDBACK_TOPICS;
   /** Honeypot: hidden from people, ticked by bots that fill in every field. */
   protected readonly botcheck = linkedSignal({
     source: this.dialogs.feedback,
@@ -43,12 +48,14 @@ export class FeedbackDialog {
     return email !== '' && !looksLikeEmail(email);
   });
 
-  /** A report says something with its reason alone; general feedback needs a message. */
+  /** A report's reason or an "I like this" says something alone; anything else needs a message. */
   protected readonly canSend = computed(
     () =>
       this.state() !== 'sending' &&
       !this.emailInvalid() &&
-      (this.dialogs.feedback()?.kind === 'report' || this.message().trim() !== ''),
+      (this.dialogs.feedback()?.kind === 'report' ||
+        this.topic() === 'like' ||
+        this.message().trim() !== ''),
   );
 
   protected readonly copy = computed(() => {
@@ -67,7 +74,7 @@ export class FeedbackDialog {
       title: sent ? f.sentTitle : isReport ? t.detail.reportLink : t.sidebar.sendFeedback,
       thanks: hasPlace ? f.reportThanks(request.place) : f.thanks,
       fieldLabel: isReport ? f.reportFieldLabel : f.fieldLabel,
-      placeholder: isReport ? f.reportPlaceholder : f.placeholder,
+      placeholder: isReport ? f.reportPlaceholder : f.placeholders[this.topic()],
     };
   });
 
@@ -84,6 +91,7 @@ export class FeedbackDialog {
         kind: request.kind,
         place: request.place,
         reason: request.kind === 'report' ? this.reason() : null,
+        topic: request.kind === 'general' ? this.topic() : null,
         message: this.message(),
         email: this.email(),
         locale: this.t().locale,
