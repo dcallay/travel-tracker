@@ -44,7 +44,18 @@ export const ES: Strings = {
   },
 
   addVisit: {
-    lead: 'Empieza con una foto para rellenar la fecha y el lugar, o introduce la visita a mano. Las visitas detectadas por tu ubicación se confirman desde la cabecera.',
+    lead: 'Hay tres formas de registrar una visita. Elige la que mejor te venga: todas acaban en la misma cronología.',
+    ways: {
+      title: 'Formas de añadir una visita',
+      photoTitle: 'Desde una foto',
+      photoBody:
+        'Suelta una foto abajo. Su fecha de captura y su ubicación GPS rellenan la fecha y el lugar por ti.',
+      manualTitle: 'A mano',
+      manualBody: 'Rellena el formulario tú mismo; útil para viajes anteriores a la app.',
+      detectTitle: 'Detección automática',
+      detectBody:
+        'Con la app abierta, quédate 5 minutos en un sitio del catálogo y te pedirá que confirmes la visita. No se registra nada sin ti.',
+    },
     place: 'Lugar',
     coverageType: 'Tipo de cobertura',
     neighbourhood: 'Barrio',

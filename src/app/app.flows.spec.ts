@@ -408,6 +408,23 @@ describe('App flows', () => {
         expect(geo.watching).toBe(false);
       });
 
+      it('lists every way to add a visit and opens detection from the add page', async () => {
+        await click(all('.tt-header .btn-primary')[0]);
+        expect(all('.tt-ways .tt-section-label').map((n) => n.textContent?.trim())).toEqual([
+          'From a photo',
+          'By hand',
+          'Automatic detection',
+        ]);
+        const waysButton = () => el.querySelector<HTMLElement>('.tt-ways__detect')!;
+        expect(waysButton().textContent?.trim()).toBe('Turn on detection');
+
+        await click(waysButton());
+        await clickByText('.dialog-actions .btn', 'Turn on detection');
+        await stay(BASILICA, 0);
+        expect(waysButton().textContent?.trim()).toBe('Confirm 1 detection');
+        expect(waysButton().classList).toContain('is-pending');
+      });
+
       it('confirms a matched landmark and names a place the app did not know', async () => {
         await click(detectButton());
         await clickByText('.dialog-actions .btn', 'Turn on detection');

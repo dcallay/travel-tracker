@@ -1,6 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DWELL_MS, LocationDetection, StayDetector, matchSavedPlace } from './location-detection';
+import { EN } from './i18n/en';
+import { ES } from './i18n/es';
+import {
+  DWELL_MS,
+  LocationDetection,
+  StayDetector,
+  detectionLabel,
+  matchSavedPlace,
+} from './location-detection';
 import { FakeGeolocation } from './testing/fake-geolocation';
 
 const BASILICA = { lat: -0.2147, lng: -78.5072 };
@@ -29,6 +37,26 @@ describe('matchSavedPlace', () => {
     const edge = { lat: -0.2147, lng: -78.50846 };
     expect(matchSavedPlace(edge, 30)?.name).toBe('Basílica del Voto Nacional');
     expect(matchSavedPlace(edge, 5)).toBeNull();
+  });
+});
+
+describe('detectionLabel', () => {
+  it('names the status when nothing is waiting', () => {
+    expect(detectionLabel(EN, 'off', 0)).toBe('Turn on detection');
+    expect(detectionLabel(EN, 'starting', 0)).toBe('Starting detection…');
+    expect(detectionLabel(EN, 'on', 0)).toBe('Detection on');
+    expect(detectionLabel(EN, 'denied', 0)).toBe('Detection blocked');
+    expect(detectionLabel(EN, 'unavailable', 0)).toBe('Detection unavailable');
+  });
+
+  it('counts visits waiting to be confirmed ahead of the status', () => {
+    expect(detectionLabel(EN, 'on', 1)).toBe('Confirm 1 detection');
+    expect(detectionLabel(EN, 'off', 3)).toBe('Confirm 3 detections');
+  });
+
+  it('follows the chosen language', () => {
+    expect(detectionLabel(ES, 'off', 0)).toBe('Activar detección');
+    expect(detectionLabel(ES, 'on', 2)).toBe('Confirmar 2 detecciones');
   });
 });
 

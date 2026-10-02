@@ -4,6 +4,29 @@
   <h4>{{ t().header.addVisit }}</h4>
   <p class="tt-lead">{{ a.lead }}</p>
 
+  <section class="tt-ways" [attr.aria-label]="a.ways.title">
+    <div class="tt-ways__cell">
+      <div class="tt-section-label">{{ a.ways.photoTitle }}</div>
+      <p class="tt-ways__body">{{ a.ways.photoBody }}</p>
+    </div>
+    <div class="tt-ways__cell">
+      <div class="tt-section-label">{{ a.ways.manualTitle }}</div>
+      <p class="tt-ways__body">{{ a.ways.manualBody }}</p>
+    </div>
+    <div class="tt-ways__cell">
+      <div class="tt-section-label">{{ a.ways.detectTitle }}</div>
+      <p class="tt-ways__body">{{ a.ways.detectBody }}</p>
+      <button
+        type="button"
+        class="btn btn-secondary tt-ways__detect"
+        [class.is-pending]="detection.pending().length"
+        (click)="dialogs.openDetections()"
+      >
+        {{ detectLabel() }}
+      </button>
+    </div>
+  </section>
+
   @if (photo(); as p) {
     <div class="tt-photo">
       <img class="tt-photo__thumb" [src]="p.url" alt="" />

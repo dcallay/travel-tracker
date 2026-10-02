@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 
 import { DialogState } from '../../core/dialog-state';
 import { I18n } from '../../core/i18n/i18n';
-import { LocationDetection } from '../../core/location-detection';
+import { LocationDetection, detectionLabel } from '../../core/location-detection';
 import { Crumb } from '../nav.model';
 import { LangMenu } from './lang-menu/lang-menu';
 
@@ -22,11 +22,7 @@ export class Header {
 
   readonly crumbs = input.required<Crumb[]>();
 
-  protected readonly detectLabel = computed(() => {
-    const b = this.t().detect.button;
-    const pending = this.detection.pending().length;
-    const status = this.detection.status();
-    if (pending) return b.pending(pending);
-    return status === 'on' ? b.on : b[status];
-  });
+  protected readonly detectLabel = computed(() =>
+    detectionLabel(this.t(), this.detection.status(), this.detection.pending().length),
+  );
 }

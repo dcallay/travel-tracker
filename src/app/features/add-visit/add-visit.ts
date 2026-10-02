@@ -7,7 +7,9 @@ import {
   signal,
 } from '@angular/core';
 
+import { DialogState } from '../../core/dialog-state';
 import { I18n } from '../../core/i18n/i18n';
+import { LocationDetection, detectionLabel } from '../../core/location-detection';
 import { Navigation } from '../../core/navigation';
 import { NearbyCity, nearestCity } from '../../core/geo';
 import { readPhotoMetadata } from '../../core/photo-metadata';
@@ -39,6 +41,8 @@ const METADATA_BYTES = 256 * 1024;
 export class AddVisit {
   protected readonly navigation = inject(Navigation);
   protected readonly t = inject(I18n).t;
+  protected readonly dialogs = inject(DialogState);
+  protected readonly detection = inject(LocationDetection);
 
   protected readonly place = signal('Quito, Ecuador');
   protected readonly coverage = signal<Coverage>('neighbourhood');
@@ -56,6 +60,11 @@ export class AddVisit {
     if (!result) return a.source;
     return result.city ? a.sourcePhotoGps : a.sourcePhoto;
   });
+
+  /** Same wording as the header button, so the two read as one control. */
+  protected readonly detectLabel = computed(() =>
+    detectionLabel(this.t(), this.detection.status(), this.detection.pending().length),
+  );
 
   constructor() {
     inject(DestroyRef).onDestroy(() => this.releasePreview());

@@ -2,6 +2,7 @@ import { DestroyRef, Injectable, inject, signal } from '@angular/core';
 
 import { SAVED_PLACES, SavedPlace } from './data/saved-places';
 import { GeoPosition, NearbyCity, haversineKm, nearestCity } from './geo';
+import { Strings } from './i18n/strings';
 
 /** One location reading from the browser. */
 export interface Fix {
@@ -54,6 +55,12 @@ export function matchSavedPlace(position: GeoPosition, accuracy: number): SavedP
     if (!best || place.radius < best.radius) best = place;
   }
   return best;
+}
+
+/** Label for a button that opens the detections dialog: visits waiting to confirm win over status. */
+export function detectionLabel(t: Strings, status: DetectionStatus, pending: number): string {
+  const b = t.detect.button;
+  return pending ? b.pending(pending) : b[status];
 }
 
 /** Turns a stream of location fixes into stays worth asking about, at most once per place a day. */

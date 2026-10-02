@@ -47,6 +47,16 @@ export interface Strings {
 
   addVisit: {
     lead: string;
+    /** The panel listing every way a visit can be logged. */
+    ways: {
+      title: string;
+      photoTitle: string;
+      photoBody: string;
+      manualTitle: string;
+      manualBody: string;
+      detectTitle: string;
+      detectBody: string;
+    };
     place: string;
     coverageType: string;
     neighbourhood: string;
