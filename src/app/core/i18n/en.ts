@@ -43,7 +43,18 @@ export const EN: Strings = {
   },
 
   addVisit: {
-    lead: 'Start from a photo to fill in the date and place, or enter the visit by hand. Visits detected from your location are confirmed from the header instead.',
+    lead: 'There are three ways to log a visit. Pick whichever fits — they all end up in the same timeline.',
+    ways: {
+      title: 'Ways to add a visit',
+      photoTitle: 'From a photo',
+      photoBody:
+        'Drop a photo below. Its capture date and GPS location fill in the date and place for you.',
+      manualTitle: 'By hand',
+      manualBody: 'Fill in the form yourself — handy for trips you took before you had the app.',
+      detectTitle: 'Automatic detection',
+      detectBody:
+        'While the app is open, stay somewhere on file for 5 minutes and it asks you to confirm the visit. Nothing is logged without you.',
+    },
     place: 'Place',
     coverageType: 'Coverage type',
     neighbourhood: 'Neighbourhood',
