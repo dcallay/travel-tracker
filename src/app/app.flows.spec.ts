@@ -388,7 +388,8 @@ describe('App flows', () => {
         expect(text('.dialog-title')).toBe('Thanks — it is logged');
         expect(fetch).toHaveBeenCalledTimes(1);
         expect(sentBody()).toMatchObject({
-          subject: 'GEOSCORE feedback',
+          subject: 'GEOSCORE feedback: Build this',
+          topic: 'Build this',
           message: 'Add Cuenca neighbourhoods please',
           email: 'ana@example.com',
           page: '/explore',
@@ -396,6 +397,32 @@ describe('App flows', () => {
 
         await clickByText('.dialog-actions .btn', 'Close');
         expect(el.querySelector('.dialog')).toBeNull();
+      });
+
+      it('asks what kind of feedback it is, and lets an "I like this" go without a message', async () => {
+        await clickByText('.tt-sidebar__feedback .btn', 'Send feedback');
+        expect(text('.tt-dialog-mvp')).toContain('early version');
+        expect(all('.dialog .seg-opt').map((n) => n.textContent?.trim())).toEqual([
+          'Build this',
+          'I like this',
+          "Something's wrong",
+          'Other',
+        ]);
+        expect(el.querySelector<HTMLInputElement>('.dialog .seg-opt input')!.checked).toBe(true);
+        expect(sendButton()!.disabled).toBe(true);
+
+        await clickByText('.dialog .seg-opt', 'I like this');
+        expect(el.querySelector('#tt-fb-message')?.getAttribute('placeholder')).toBe(
+          'Optional — what do you like about it?',
+        );
+        expect(sendButton()!.disabled).toBe(false);
+        await send();
+        expect(text('.dialog-title')).toBe('Thanks — it is logged');
+        expect(sentBody()).toMatchObject({
+          subject: 'GEOSCORE feedback: I like this',
+          topic: 'I like this',
+          message: '(no message)',
+        });
       });
 
       it('files a report against the current city, prefilled with the place', async () => {

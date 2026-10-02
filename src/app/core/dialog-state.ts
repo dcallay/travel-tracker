@@ -2,6 +2,10 @@ import { Injectable, signal } from '@angular/core';
 
 export type FeedbackKind = 'general' | 'report';
 
+/** What general feedback is about, in the order the picker shows them. The first is preselected. */
+export const FEEDBACK_TOPICS = ['build', 'like', 'bug', 'other'] as const;
+export type FeedbackTopic = (typeof FEEDBACK_TOPICS)[number];
+
 export interface FeedbackRequest {
   kind: FeedbackKind;
   /** Label of the place being reported on, e.g. `Ecuador · Quito`; empty when there is none. */

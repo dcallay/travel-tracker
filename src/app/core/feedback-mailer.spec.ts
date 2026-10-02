@@ -12,6 +12,7 @@ const general: FeedbackMessage = {
   kind: 'general',
   place: '',
   reason: null,
+  topic: 'build',
   message: '  Love the map  ',
   email: '',
   locale: 'en',
@@ -22,6 +23,7 @@ const report: FeedbackMessage = {
   kind: 'report',
   place: 'Ecuador · Quito',
   reason: 1,
+  topic: null,
   message: '',
   email: ' ana@example.com ',
   locale: 'es',
@@ -32,12 +34,19 @@ describe('buildSubmission', () => {
   it('sends general feedback with a plain subject and no reply-to', () => {
     const body = buildSubmission(general);
     expect(body['access_key']).toMatch(/^[0-9a-f-]{36}$/);
-    expect(body['subject']).toBe('GEOSCORE feedback');
+    expect(body['subject']).toBe('GEOSCORE feedback: Build this');
+    expect(body['topic']).toBe('Build this');
     expect(body['message']).toBe('Love the map');
     expect(body['page']).toBe('/explore');
     expect(body['language']).toBe('en');
     expect(body).not.toHaveProperty('email');
     expect(body).not.toHaveProperty('place');
+  });
+
+  it('labels the topic in English whatever language the user was in', () => {
+    const body = buildSubmission({ ...general, topic: 'like', locale: 'es' });
+    expect(body['subject']).toBe('GEOSCORE feedback: I like this');
+    expect(body['topic']).toBe('I like this');
   });
 
   it('names the place and the reason, in English, on a report', () => {
@@ -48,6 +57,7 @@ describe('buildSubmission', () => {
     expect(body['message']).toBe('(no message)');
     expect(body['email']).toBe('ana@example.com');
     expect(body['language']).toBe('es');
+    expect(body).not.toHaveProperty('topic');
   });
 });
 

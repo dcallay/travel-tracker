@@ -19,6 +19,24 @@
             <div class="tt-dialog-about__place">{{ c.place }}</div>
           </div>
         }
+        @if (!c.isReport) {
+          <p class="dialog-body tt-dialog-mvp">{{ t().feedback.mvpNote }}</p>
+          <div class="field tt-dialog-seg">
+            <label>{{ t().feedback.topicLabel }}</label>
+            <div class="seg">
+              @for (option of topics; track option) {
+                <label class="seg-opt">
+                  <input
+                    type="radio"
+                    name="tt-fb-topic"
+                    [checked]="topic() === option"
+                    (change)="topic.set(option)"
+                  /><span>{{ t().feedback.topics[option] }}</span>
+                </label>
+              }
+            </div>
+          </div>
+        }
         @if (c.isReport) {
           <div class="field tt-dialog-seg">
             <label>{{ t().feedback.whatIsWrong }}</label>

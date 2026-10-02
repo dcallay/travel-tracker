@@ -1,3 +1,4 @@
+import { FeedbackTopic } from '../dialog-state';
 import { TimelineEntry } from '../data/travel-data';
 
 /** UI strings in one language. English is the source; every other language must match its shape. */
@@ -270,9 +271,14 @@ export interface Strings {
     whatIsWrong: string;
     /** Report reasons, first one preselected. */
     reasons: string[];
+    /** Early-version note at the top of general feedback. */
+    mvpNote: string;
+    topicLabel: string;
+    topics: Record<FeedbackTopic, string>;
     fieldLabel: string;
     reportFieldLabel: string;
-    placeholder: string;
+    /** Message placeholder for each topic of general feedback. */
+    placeholders: Record<FeedbackTopic, string>;
     reportPlaceholder: string;
     email: string;
     emailPlaceholder: string;
