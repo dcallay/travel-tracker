@@ -244,6 +244,18 @@ describe('App flows', () => {
       });
     });
 
+    it('goes back to the top of Explore from the site name', async () => {
+      await clickByText('.table tbody tr', 'South America');
+      await clickByText('.table tbody tr', 'Ecuador');
+      await click(el.querySelector('.tt-sidebar__brand-name'));
+      expect(text('.tt-table-head h4')).toBe('By continent');
+
+      await clickByText('.tt-nav__item', 'Timeline');
+      await click(el.querySelector('.tt-sidebar__brand-name'));
+      expect(text('.tt-crumb.is-active')).toBe('World');
+      expect(text('.tt-table-head h4')).toBe('By continent');
+    });
+
     it('resets to the top level when switching nav from a drilled-down place', async () => {
       await clickByText('.table tbody tr', 'Europe');
       await clickByText('.tt-nav__item', 'Timeline');
