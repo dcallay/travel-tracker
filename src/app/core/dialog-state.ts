@@ -42,7 +42,8 @@ export class DialogState {
     this.feedbackSent.set(false);
   }
 
-  sendFeedback(): void {
+  /** Called once the message has actually been delivered. */
+  markFeedbackSent(): void {
     this.feedbackSent.set(true);
   }
 

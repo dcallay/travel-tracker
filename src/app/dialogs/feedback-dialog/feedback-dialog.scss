@@ -19,3 +19,22 @@
 .tt-dialog-email {
   margin-top: 12px;
 }
+
+.tt-dialog-privacy {
+  margin-top: 12px;
+}
+
+.tt-dialog-error {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--color-accent-700);
+}
+
+/* Honeypot: out of sight and out of the tab order, but still in the DOM for bots to find. */
+.tt-dialog-botcheck {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}

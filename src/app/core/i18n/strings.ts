@@ -276,6 +276,11 @@ export interface Strings {
     reportPlaceholder: string;
     email: string;
     emailPlaceholder: string;
+    invalidEmail: string;
+    /** Where the message goes, shown under the form. */
+    privacyNote: string;
+    sending: string;
+    sendError: string;
     thanks: string;
     reportThanks: (place: string) => string;
     cancel: string;

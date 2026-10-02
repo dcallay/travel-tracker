@@ -345,52 +345,141 @@ describe('App flows', () => {
       expect(el.querySelector('.dialog')).toBeNull();
     });
 
-    it('sends general feedback from the sidebar', async () => {
-      await clickByText('.tt-sidebar__feedback .btn', 'Send feedback');
-      expect(text('.dialog-kicker')).toBe('Feedback');
-      expect(text('.dialog-title')).toBe('Send feedback');
-      expect(el.querySelector('.tt-dialog-about')).toBeNull();
-      await clickByText('.dialog-actions .btn', 'Send');
-      expect(text('.dialog-title')).toBe('Thanks — it is logged');
-      await clickByText('.dialog-actions .btn', 'Close');
-      expect(el.querySelector('.dialog')).toBeNull();
-    });
+    describe('feedback', () => {
+      let fetch: ReturnType<typeof vi.fn>;
+      const sentBody = (call = 0) => JSON.parse(fetch.mock.calls[call][1].body);
+      const type = async (sel: string, value: string) => {
+        const field = el.querySelector<HTMLInputElement | HTMLTextAreaElement>(sel)!;
+        field.value = value;
+        field.dispatchEvent(new Event('input'));
+        await settle();
+      };
+      const sendButton = () =>
+        all('.dialog-actions .btn-primary')[0] as HTMLButtonElement | undefined;
+      /** Clicks Send and waits for the request to come back. */
+      const send = async () => {
+        await click(sendButton());
+        await vi.waitFor(() => {
+          fixture.detectChanges();
+          expect(sendButton()?.textContent?.trim()).not.toMatch(/…$/);
+        });
+        await settle();
+      };
 
-    it('files a report against the current city, prefilled with the place', async () => {
-      await clickByText('.table tbody tr', 'South America');
-      await clickByText('.table tbody tr', 'Ecuador');
-      await clickByText('.tt-city-row', 'Quito');
-      await clickByText('.tt-report-row .btn', 'Something wrong here?');
-      expect(text('.dialog-kicker')).toBe('Report a problem');
-      expect(text('.tt-dialog-about__place')).toBe('Ecuador · Quito');
-      expect(all('.dialog .seg-opt')).toHaveLength(4);
-      await clickByText('.dialog-actions .btn', 'Send');
-      expect(text('.dialog-body')).toContain('Logged against Ecuador · Quito');
-    });
+      beforeEach(() => {
+        fetch = vi
+          .fn()
+          .mockResolvedValue(new Response(JSON.stringify({ success: true }), { status: 200 }));
+        vi.stubGlobal('fetch', fetch);
+      });
 
-    it('shows the feedback dialog in the chosen language', async () => {
-      await clickByText('.table tbody tr', 'South America');
-      await clickByText('.table tbody tr', 'Ecuador');
-      await click(el.querySelector('.tt-lang .btn'));
-      await clickByText('.tt-lang__item', 'Español');
-      await clickByText('.tt-report-row .btn', '¿Algo no está bien?');
-      expect(text('.dialog-kicker')).toBe('Informar de un problema');
-      expect(text('.dialog-title')).toBe('¿Algo no está bien?');
-      expect(all('.dialog .seg-opt').map((n) => n.textContent?.trim())).toEqual([
-        'Recuento incorrecto',
-        'Ciudad incorrecta',
-        'Falta un lugar',
-        'Visita que no hice',
-      ]);
-      expect(el.querySelector<HTMLInputElement>('.dialog .seg-opt input')!.checked).toBe(true);
-      expect(el.querySelector('.tt-dialog-email input')?.getAttribute('placeholder')).toBe(
-        'opcional',
-      );
-      await clickByText('.dialog-actions .btn', 'Enviar');
-      expect(text('.dialog-title')).toBe('Gracias, ya está registrado');
-      expect(text('.dialog-body')).toContain('Registrado para South America · Ecuador');
-      await clickByText('.dialog-actions .btn', 'Cerrar');
-      expect(el.querySelector('.dialog')).toBeNull();
+      afterEach(() => vi.unstubAllGlobals());
+
+      it('emails general feedback from the sidebar', async () => {
+        await clickByText('.tt-sidebar__feedback .btn', 'Send feedback');
+        expect(text('.dialog-kicker')).toBe('Feedback');
+        expect(text('.dialog-title')).toBe('Send feedback');
+        expect(el.querySelector('.tt-dialog-about')).toBeNull();
+        expect(sendButton()!.disabled).toBe(true);
+
+        await type('#tt-fb-message', 'Add Cuenca neighbourhoods please');
+        await type('#tt-fb-email', 'ana@example.com');
+        await send();
+        expect(text('.dialog-title')).toBe('Thanks — it is logged');
+        expect(fetch).toHaveBeenCalledTimes(1);
+        expect(sentBody()).toMatchObject({
+          subject: 'GEOSCORE feedback',
+          message: 'Add Cuenca neighbourhoods please',
+          email: 'ana@example.com',
+          page: '/explore',
+        });
+
+        await clickByText('.dialog-actions .btn', 'Close');
+        expect(el.querySelector('.dialog')).toBeNull();
+      });
+
+      it('files a report against the current city, prefilled with the place', async () => {
+        await clickByText('.table tbody tr', 'South America');
+        await clickByText('.table tbody tr', 'Ecuador');
+        await clickByText('.tt-city-row', 'Quito');
+        await clickByText('.tt-report-row .btn', 'Something wrong here?');
+        expect(text('.dialog-kicker')).toBe('Report a problem');
+        expect(text('.tt-dialog-about__place')).toBe('Ecuador · Quito');
+        expect(all('.dialog .seg-opt')).toHaveLength(4);
+
+        await click(all('.dialog .seg-opt input')[2]);
+        await send();
+        expect(text('.dialog-body')).toContain('Logged against Ecuador · Quito');
+        expect(sentBody()).toMatchObject({
+          subject: 'GEOSCORE report: Ecuador · Quito — Missing place',
+          place: 'Ecuador · Quito',
+          reason: 'Missing place',
+        });
+      });
+
+      it('holds a mistyped email back and keeps the message when sending fails', async () => {
+        fetch.mockRejectedValueOnce(new TypeError('Failed to fetch'));
+        await clickByText('.tt-sidebar__feedback .btn', 'Send feedback');
+        await type('#tt-fb-message', 'Hello');
+        await type('#tt-fb-email', 'ana@example');
+        expect(text('.tt-dialog-email .tt-dialog-error')).toBe(
+          "That doesn't look like an email address.",
+        );
+        expect(sendButton()!.disabled).toBe(true);
+
+        await type('#tt-fb-email', '');
+        await send();
+        expect(text('[role=alert]')).toBe("Couldn't send it. Check your connection and try again.");
+        expect(text('.dialog-title')).toBe('Send feedback');
+        expect(el.querySelector<HTMLTextAreaElement>('#tt-fb-message')!.value).toBe('Hello');
+
+        await send();
+        expect(text('.dialog-title')).toBe('Thanks — it is logged');
+        expect(fetch).toHaveBeenCalledTimes(2);
+      });
+
+      it('pretends to send, but sends nothing, when the honeypot is ticked', async () => {
+        await clickByText('.tt-sidebar__feedback .btn', 'Send feedback');
+        await type('#tt-fb-message', 'Cheap watches');
+        await click(el.querySelector('.tt-dialog-botcheck'));
+        await click(sendButton());
+        expect(text('.dialog-title')).toBe('Thanks — it is logged');
+        expect(fetch).not.toHaveBeenCalled();
+      });
+
+      it('starts with a blank form each time it opens', async () => {
+        await clickByText('.tt-sidebar__feedback .btn', 'Send feedback');
+        await type('#tt-fb-message', 'Half a thought');
+        await clickByText('.dialog-actions .btn', 'Cancel');
+        await clickByText('.tt-sidebar__feedback .btn', 'Send feedback');
+        expect(el.querySelector<HTMLTextAreaElement>('#tt-fb-message')!.value).toBe('');
+      });
+
+      it('shows the feedback dialog in the chosen language', async () => {
+        await clickByText('.table tbody tr', 'South America');
+        await clickByText('.table tbody tr', 'Ecuador');
+        await click(el.querySelector('.tt-lang .btn'));
+        await clickByText('.tt-lang__item', 'Español');
+        await clickByText('.tt-report-row .btn', '¿Algo no está bien?');
+        expect(text('.dialog-kicker')).toBe('Informar de un problema');
+        expect(text('.dialog-title')).toBe('¿Algo no está bien?');
+        expect(all('.dialog .seg-opt').map((n) => n.textContent?.trim())).toEqual([
+          'Recuento incorrecto',
+          'Ciudad incorrecta',
+          'Falta un lugar',
+          'Visita que no hice',
+        ]);
+        expect(el.querySelector<HTMLInputElement>('.dialog .seg-opt input')!.checked).toBe(true);
+        expect(el.querySelector('.tt-dialog-email input')?.getAttribute('placeholder')).toBe(
+          'opcional',
+        );
+        await send();
+        expect(text('.dialog-title')).toBe('Gracias, ya está registrado');
+        expect(text('.dialog-body')).toContain('Registrado para South America · Ecuador');
+        expect(sentBody()).toMatchObject({ reason: 'Wrong count', language: 'es' });
+        await clickByText('.dialog-actions .btn', 'Cerrar');
+        expect(el.querySelector('.dialog')).toBeNull();
+      });
     });
 
     describe('automatic detection', () => {

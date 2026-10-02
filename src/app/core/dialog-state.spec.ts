@@ -27,7 +27,7 @@ describe('DialogState', () => {
 
   it('opens a report against a place and clears a previous "sent" state', () => {
     state.openFeedback();
-    state.sendFeedback();
+    state.markFeedbackSent();
     expect(state.feedbackSent()).toBe(true);
 
     state.openReport('Ecuador · Quito');
@@ -37,7 +37,7 @@ describe('DialogState', () => {
 
   it('resets feedback fully when closed', () => {
     state.openReport('Peru · Lima');
-    state.sendFeedback();
+    state.markFeedbackSent();
     state.closeFeedback();
     expect(state.feedback()).toBeNull();
     expect(state.feedbackSent()).toBe(false);

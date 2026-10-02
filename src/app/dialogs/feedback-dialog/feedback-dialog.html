@@ -23,28 +23,66 @@
           <div class="field tt-dialog-seg">
             <label>{{ t().feedback.whatIsWrong }}</label>
             <div class="seg">
-              @for (reason of t().feedback.reasons; track $index) {
+              @for (option of t().feedback.reasons; track $index) {
                 <label class="seg-opt">
-                  <input type="radio" name="tt-fb" [checked]="$first" /><span>{{ reason }}</span>
+                  <input
+                    type="radio"
+                    name="tt-fb"
+                    [checked]="reason() === $index"
+                    (change)="reason.set($index)"
+                  /><span>{{ option }}</span>
                 </label>
               }
             </div>
           </div>
         }
         <div class="field">
-          <label>{{ c.fieldLabel }}</label>
-          <textarea class="input" rows="4" [placeholder]="c.placeholder"></textarea>
+          <label for="tt-fb-message">{{ c.fieldLabel }}</label>
+          <textarea
+            id="tt-fb-message"
+            class="input"
+            rows="4"
+            [placeholder]="c.placeholder"
+            [value]="message()"
+            (input)="message.set($any($event.target).value)"
+          ></textarea>
         </div>
         <div class="field tt-dialog-email">
-          <label>{{ t().feedback.email }}</label>
-          <input class="input" type="email" [placeholder]="t().feedback.emailPlaceholder" />
+          <label for="tt-fb-email">{{ t().feedback.email }}</label>
+          <input
+            id="tt-fb-email"
+            class="input"
+            type="email"
+            autocomplete="email"
+            [placeholder]="t().feedback.emailPlaceholder"
+            [value]="email()"
+            [attr.aria-invalid]="emailInvalid()"
+            (input)="email.set($any($event.target).value)"
+          />
+          @if (emailInvalid()) {
+            <div class="tt-dialog-error">{{ t().feedback.invalidEmail }}</div>
+          }
         </div>
+        <input
+          class="tt-dialog-botcheck"
+          type="checkbox"
+          name="botcheck"
+          tabindex="-1"
+          autocomplete="off"
+          aria-hidden="true"
+          [checked]="botcheck()"
+          (change)="botcheck.set($any($event.target).checked)"
+        />
+        <div class="tt-section-note tt-dialog-privacy">{{ t().feedback.privacyNote }}</div>
+        @if (state() === 'error') {
+          <div class="tt-dialog-error" role="alert">{{ t().feedback.sendError }}</div>
+        }
         <div class="dialog-actions">
           <button type="button" class="btn btn-secondary" (click)="dialogs.closeFeedback()">
             {{ t().feedback.cancel }}
           </button>
-          <button type="button" class="btn btn-primary" (click)="dialogs.sendFeedback()">
-            {{ t().feedback.send }}
+          <button type="button" class="btn btn-primary" [disabled]="!canSend()" (click)="send()">
+            {{ state() === 'sending' ? t().feedback.sending : t().feedback.send }}
           </button>
         </div>
       </div>
