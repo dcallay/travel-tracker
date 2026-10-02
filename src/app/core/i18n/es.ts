@@ -281,6 +281,10 @@ export const ES: Strings = {
     reportPlaceholder: 'p. ej., Guápulo está en Quito, no en Cuenca',
     email: 'Correo electrónico, si quieres respuesta',
     emailPlaceholder: 'opcional',
+    invalidEmail: 'Eso no parece un correo electrónico.',
+    privacyNote: 'Nos llega por correo a través de Web3Forms, junto con la página en la que estás.',
+    sending: 'Enviando…',
+    sendError: 'No se pudo enviar. Revisa tu conexión e inténtalo de nuevo.',
     thanks:
       'Registrado junto con tu vista actual. Lo leemos todo y respondemos si nos dejas un correo.',
     reportThanks: (place) =>

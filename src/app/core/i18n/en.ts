@@ -269,6 +269,10 @@ export const EN: Strings = {
     reportPlaceholder: 'e.g. Guápulo is in Quito, not Cuenca',
     email: 'Email, if you want a reply',
     emailPlaceholder: 'optional',
+    invalidEmail: "That doesn't look like an email address.",
+    privacyNote: 'Sent to us by email through Web3Forms, along with the page you are on.',
+    sending: 'Sending…',
+    sendError: "Couldn't send it. Check your connection and try again.",
     thanks: 'Logged with your current view. We read everything, and reply when you leave an email.',
     reportThanks: (place) =>
       `Logged against ${place} with your current view. We look at reports weekly and correct the place data at the source.`,
